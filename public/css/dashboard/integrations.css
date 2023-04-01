@@ -1,0 +1,30 @@
+body{
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    max-width: 1100px;
+    margin: auto;
+    padding: 12px;
+    flex: 1;
+}
+
+.integrationSection input{
+    width: 100%;
+}
+
+.integrationSection .header{
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.integrationSection .subtext{
+    color: gray;
+}
+
+.integrationSection .btnSave{
+    width: 100%;
+    font-weight: 400;
+    font-size: 16px;
+}

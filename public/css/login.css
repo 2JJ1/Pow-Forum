@@ -1,0 +1,33 @@
+@media only screen and (max-width: 500px) {
+    body #login_leftpanel{
+        display: none;
+    }
+
+    body #login_rightpanel{
+        padding: 20px !important;
+    }
+}
+
+#login_leftpanel{
+    background-image: url('https://media.discordapp.net/attachments/423644248156667951/501706675388940288/loginbg.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+#loginContainer{
+    margin: auto;
+}
+
+#login_form input[type=text], #login_form input[type=password]{
+    width: 350px;
+}
+
+#login_form button{
+    width: 100%;
+    cursor: pointer;
+}
+
+.g-recaptcha{
+    display: flex;
+    justify-content: center;
+}

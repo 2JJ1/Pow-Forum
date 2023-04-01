@@ -1,0 +1,368 @@
+<% if(accInfo._id){ %>
+<link href="/css/chatwindow.css?v=20&v2=5" rel="stylesheet" type="text/css">
+<p class="chat-btnopen theme1 border1 round">Open Chat</p>
+<div id="chat-window" class="theme1 round border1 less-padding">
+    <div id="chat-windowheader">
+        <p class="chat-btnlist">&lt;<span class="userlistnotif" title="online"></span></p>
+        <p class="chat-headername">Loading chat...</p>
+        <p class="chat-btnminimize">-</p>
+    </div>
+    <ul class="chat-userslist lessgapchildren">
+    </ul>
+    <div class="chat-chats">
+        <ul class="chat-groups lessgapchildren"></ul>
+        <textarea class="chat-input theme2 border1 round padding" placeholder="What do you want to say?"></textarea>
+        <p class="chat-error"></p>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script>
+        let chatWindow = document.querySelector('#chat-window')
+
+        //Minimize controls
+        function OpenChat(){
+            document.querySelector('.chat-btnopen').style.display = "none"
+            chatWindow.style.display = "flex"
+            localStorage.setItem('chatMinimized', 0)
+            //Auto scroll to bottom to view latest message
+            document.querySelector('.chat-groups').scrollTop = document.querySelector('.chat-groups').scrollHeight
+        }
+        document.querySelector('.chat-btnopen').onclick = OpenChat
+        document.querySelector('.chat-btnminimize').onclick = function(){
+            document.querySelector('.chat-btnopen').style.display = "block"
+            chatWindow.style.display = "none"
+            localStorage.setItem('chatMinimized', 1)
+        }
+
+        function chatScrollBottom(){
+            //Auto scroll to bottom to view latest message
+            document.querySelector('.chat-groups').scrollTop = document.querySelector('.chat-groups').scrollHeight
+            //CSS loads a lil late and adds a gap after initial load?
+            setTimeout(()=>{
+                document.querySelector('.chat-groups').scrollTop = document.querySelector('.chat-groups').scrollHeight
+            }, 200)
+        }
+
+        //Opens conversation list
+        document.querySelector('.chat-btnlist').onclick = function(){
+            document.querySelector('.chat-chats').style.display = 'none'
+            document.querySelector('.chat-userslist').style.display = 'block'
+            document.querySelector('.chat-btnlist').style.display = 'none'
+            document.querySelector('.chat-headername').textContent = "Conversations"
+            //Temporary until I make it clear only when they open the new chat
+            document.querySelector('.userlistnotif').style.display = 'none'
+
+            //Populate conversations
+            document.querySelector('.chat-userslist').innerHTML = ''
+            fetch('/api/message/dmslist')
+            .then(res => res.json())
+            .then(res => {
+                let usersList = document.querySelector('.chat-userslist')
+                res.forEach(conversation => {
+                    usersList.innerHTML += `<li class="cursorpointer" onclick="LoadConversation(${conversation.account._id})">
+                        <img 
+                        class="chat-pfp border1" 
+                        src="${conversation.account.profilepicture}" 
+                        alt="Profile Picture"/>
+                        <div class="chat-metadata">
+                            <span class="chat-username ${conversation.account.highestRole}">${conversation.account.username}</span>
+                            <span class="chat-timestamp">${TimeStamp.Beautify(conversation.time)}</span>
+                        </div>
+                        <div class="chat-content">
+                            <p>${conversation.content.slice(0,60)}${conversation.content.length > 60 ? "..." : ""}</p>
+                        </div>
+                    </li>`
+                })
+            })
+        }
+        
+        async function LoadConversation(uid, refuseOpenChat){
+            lastChat = {}
+            document.querySelector('.chat-chats').style.display = 'flex'
+            document.querySelector('.chat-userslist').style.display = 'none'
+            document.querySelector('.chat-btnlist').style.display = 'flex'
+
+            //Saves so the conversation reopens on page load
+            localStorage.setItem("viewingChatUID", uid)
+
+            document.querySelector('.chat-groups').innerHTML = ""
+            socket.emit('load-converstion', uid, async function(conversation){
+                for(let message of conversation.messages){
+                    await DrawChat(message)
+                }
+                document.querySelector('.chat-headername').textContent = conversation.account.username
+                chatScrollBottom()
+            })
+
+            //If a notification exists for this converstion, delete it
+            uid !== 0 && document.querySelector(`a[data-chatroom="${uid}"]`) && DeleteNotifications({chatroom: uid})
+        }
+
+        //Connect websocket
+        var socket = io()
+
+        socket.on("connect", () => {
+            //Open global chat by default
+            setTimeout(function(){
+                LoadConversation(parseInt(localStorage.getItem("viewingChatUID")) || 0)
+
+                //Auto-open chat if they did not leave it minimized
+                //Mobile should always start minimized
+                if(localStorage.getItem('chatMinimized') != 1 && screen.width > 400) OpenChat()
+            }, 200)
+        })
+
+        //Receives global chats
+        socket.on("message", async msg => {
+            //Auto-scroll to bottom only if they're already at the bottom
+            let chatRows = document.querySelector('.chat-groups')
+            let scrollBottom = true
+            if(chatRows.scrollTop < chatRows.scrollHeight - chatRows.offsetHeight - 50) scrollBottom = false
+
+            let viewingChatUID = localStorage.getItem("viewingChatUID")
+            //Draw chat if you're viewing the associated conversation
+            if(
+                //Message to global chat
+                (viewingChatUID == 0 && msg.to == 0) || 
+                //Received DM
+                ((msg.from == viewingChatUID && msg.to == <%= accInfo._id %>) || (msg.to == viewingChatUID && msg.from == <%= accInfo._id %>))
+            ){
+                await DrawChat({
+                    ...msg
+                }, msg.content)
+
+                if(scrollBottom) {
+                    setTimeout(function(){
+                        chatRows.scrollTop = chatRows.scrollHeight
+                    }, 100)
+                }
+            }
+            //You've received a message from another conversation
+            else {
+                //Display grey dot to signify global chat
+                document.querySelector('.userlistnotif').style.display = "block"
+                //Display red dot to signify DM
+                if(msg.to != 0) document.querySelector('.userlistnotif').style.backgroundColor = 'red'
+            }
+        })
+        
+        document.querySelector('.chat-input').addEventListener("keydown", async function(e){
+            if (e.which === 13 && !e.shiftKey) {
+                if (!e.repeat) {
+                    //Sends message
+                    let emitter = socket.emit('message', {
+                        to: localStorage.getItem("viewingChatUID"),
+                        content: e.target.value,
+                    }, async function(ack){
+                        if(ack.success){
+                            //Clears message box
+                            e.target.value = ""
+
+                            //Scroll to bottom of chat
+                            document.querySelector('.chat-groups').scrollTop = document.querySelector('.chat-groups').scrollHeight
+                        }
+                        else {
+                            document.querySelector('.chat-error').style.display = "block"
+                            document.querySelector('.chat-error').innerHTML = ack.reason || 'A connection error or other unknown server error as occured...'
+
+                            setTimeout(function(){
+                                document.querySelector('.chat-error').style.display = "none"
+                            }, 5000)
+                        }
+                    })
+                }
+
+                event.preventDefault(); // Prevents the addition of a new line in the text field
+            }
+        })
+
+        // Draw new message
+        let lastChat = {}
+        async function DrawChat(msg){
+            msg.content = await HTMLToOembed(msg.content, { fileDomainWhitelist: true })
+            
+            //If different last chatter, create new chat row
+            if(msg.from != lastChat.from) {
+                let card = `<li class="chat-group">
+                    <a href="/profile?uid=${msg.from}">
+                        <img 
+                        class="chat-pfp round border1" 
+                        src="${msg.sender.profilepicture}" 
+                        alt="Profile Picture"/>
+                    </a>
+                    <div class="chat-metadata">
+                        <span class="chat-username ${msg.sender.highestRole}">${msg.sender.username}</span>
+                        <span class="chat-timestamp">${TimeStamp.Beautify(msg.time)}</span>
+                    </div>
+                    <div class="chat-content"></div>
+                </li>`
+                document.querySelector(".chat-groups").innerHTML += card
+            }
+
+            let chatContent = document.querySelector(".chat-group:last-of-type .chat-content")
+
+            //Adds timestamp if repeat sender's last message older than 5 minutes
+            if(msg.from == lastChat.from && msg.time-lastChat.time > 1000*60*5)
+                chatContent.innerHTML += `<p class="chat-timestamp">${TimeStamp.Beautify(msg.time)}</p>`
+
+            //Check if mentioned
+            let isMentioned, mentionMatch = new RegExp(`@<%= accInfo.username %>`).exec(msg.content)
+            if(mentionMatch) isMentioned = / ?/.test(msg.content.charAt(mentionMatch[0].length))
+
+            let canDelete = <%= accInfo._id %> == msg.sender._id || pFUtils.isClientOverpowerTarget(<%- JSON.stringify(accInfo.roles) %>, msg.sender.roles)
+
+            //Adds actual chat content
+            chatContent.innerHTML += `<p class="chat-row ${isMentioned ? "highlight" : ""}" data-id="${msg._id}">
+                <span class="content">${msg.content}</span>
+                ${canDelete ? `<span class="chat-row-delete" onclick="RequestDeleteChat(this)">x</span>` : ""}
+            </p>`
+
+            //Limit chats to prevent lag from bulk
+            let chatGroups = document.querySelector('.chat-groups')
+            let chats = document.querySelectorAll(".chat-row")
+            if(
+                chats.length > 100 
+                //Only delete if scrolled to bottom
+                //User convenience because if scrolled up and deleting messages, it shifts the scroll
+                && chatGroups.scrollTop > chatGroups.scrollHeight - chatGroups.offsetHeight - 50
+            ){
+                for(let i=0; i<chats.length - 100; i++){
+                    chats[i].remove()
+                }
+            }
+
+            lastChat = msg
+        }
+
+        // Message deletion
+        function RequestDeleteChat(e){
+            let chatId = e.parentElement.getAttribute("data-id")
+
+            socket.emit("delete-message", {id: chatId}, function(ack){
+                if(!ack.success) alert(ack.reason || "Unknown server error")
+            })
+        }
+
+        socket.on("delete-message", msg => {
+            let chat = document.querySelector(`.chat-row[data-id="${msg.id}"]`)
+            //Considers if delete was from another conversation
+            if(!chat) return
+
+            if(chat.parentElement.children.length === 1) chat.parentElement.parentElement.remove()
+            else chat.remove()
+
+            //If the conversation is clear, clear lastChat
+            if(!document.querySelector("chat-group")) lastChat = {}
+        })
+
+        // Drag and resize controls
+        let chatWindowCache = function(chatWindow){
+            let cache = localStorage.getItem("chatWindowSettings")
+            cache = JSON.parse(cache) || {}
+
+            if(chatWindow) {
+                let x = parseFloat(chatWindow.getAttribute('data-x')) || 0
+                let y = parseFloat(chatWindow.getAttribute('data-y')) || 0
+                let width = chatWindow.offsetWidth
+                let height = chatWindow.offsetHeight
+                
+                Object.assign(cache, {x, y, width, height})
+                localStorage.setItem("chatWindowSettings", JSON.stringify(cache))
+            }
+
+            return cache
+        }
+
+        interact('#chat-window').draggable({
+            allowFrom: '#chat-windowheader',
+            // enable inertial throwing
+            inertia: true,
+            // keep the element within the area of it's parent
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: 'parent',
+                    endOnly: true
+                })
+            ],
+            listeners: {
+                // call this function on every dragmove event
+                move(event) {
+                    let target = event.target
+                    // keep the dragged position in the data-x/data-y attributes
+                    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+                    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+                    //Forces chat to remain above screen
+                    if(y > 0) y=0
+
+                    // translate the element
+                    target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+                    // update the posiion attributes
+                    target.setAttribute('data-x', x)
+                    target.setAttribute('data-y', y)
+                },
+                end(e){
+                    chatWindowCache(e.target)
+                }
+            }
+        })
+        .resizable({
+            edges: { left: true, top: true },
+            listeners: {
+                move(event) {
+                    var target = event.target
+                    var x = (parseFloat(target.getAttribute('data-x')) || 0)
+                    var y = (parseFloat(target.getAttribute('data-y')) || 0)
+
+                    // update the element's style
+                    target.style.width = event.rect.width + 'px'
+                    target.style.height = event.rect.height + 'px'
+
+
+                    target.style.transform = 'translate(' + x + 'px,' + y + 'px)'
+
+                    target.setAttribute('data-x', x)
+                    target.setAttribute('data-y', y)
+                },
+                end(e){
+                    chatWindowCache(e.target)
+                }
+            },
+            modifiers: [
+                // keep the edges inside the parent
+                interact.modifiers.restrictEdges({
+                    outer: 'parent'
+                }),
+                // minimum size
+                interact.modifiers.restrictSize({
+                    min: { 
+                        width: 310, 
+                        height: 410, 
+                    }
+                })
+            ],
+            inertia: true
+        })
+        //Load cached chat window position and size
+        if(screen.width > 400 && chatWindowCache()) {
+            //Fetches cache
+            let cache = chatWindowCache()
+            
+            //If browser window loads with different size, ensures chat window loads in bounds
+            let x = cache.x < (window.innerWidth-cache.width)*-1 ? (window.innerWidth-cache.width-50)*-1 : cache.x
+            let y = cache.y < (window.innerHeight-cache.height)*-1 ? (window.innerHeight-cache.height-50)*-1 : cache.y
+
+            //Loads cached position
+            chatWindow.setAttribute('data-x', x)
+            chatWindow.setAttribute('data-y', x)
+            chatWindow.style.transform = `translate(${x}px,${y}px)`
+
+            //Loads cached height and width
+            chatWindow.style.height = cache.height+"px"
+            chatWindow.style.width = cache.width+"px"
+        }
+    </script>
+</div>
+<% } %>

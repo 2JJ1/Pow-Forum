@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Use your password reset token to change your password here." />
+	
+		<title>Password Reset Request - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+        <link href="/css/register.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <main style="display: flex; min-height: 100vh;">
+            <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="theme1 round border1 padding gapchildren">
+                <h1><%- powForum.title %> Account Password Reset</h1>
+                <div id="register_passwords">
+                    <div class="register_inputfield lessgapchildren" style="margin-right: 5px">
+                        <p>Password</p>
+                        <input id="password" class="theme2 border1 round padding" type="password"  placeholder="Password"/>
+                        <div class="register_highlight"></div>
+                    </div>
+                    <br/>
+                    <div class="register_inputfield lessgapchildren" style="margin-left: 5px">
+                        <p>Confirm</p>
+                        <input id="confirmpassword" class="theme2 border1 round padding" type="password" placeholder="Confirm"/>
+                        <div class="register_highlight"></div>
+                    </div>
+                </div>
+                <button
+                class="g-recaptcha theme2 border1 round padding"
+                data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>"
+                data-callback="captchacallback"
+                data-error-callback="captchaErrorCallback">
+                    Submit
+                </button>
+                <a href="/login">Back to Login</a>
+                <p id="req_Response" style="text-align: center; color: red;"></p>
+            </form>
+		</main>
+		
+		<script>
+            function captchacallback(){
+                fetch('/api/account/recovery/passreset', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        grecaptcharesponse: grecaptcha.getResponse(),
+                        token: '<%= token %>',
+                        password: $("#password").val(),
+                        confirmpassword: $("#confirmpassword").val(),
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.location.href = "/login"
+                        document.getElementById('req_Response').innerHTML = "Success!"
+                    } else {
+                        document.getElementById('req_Response').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
+
+				grecaptcha.reset();
+			}
+            
+            function captchaErrorCallback() {
+                // Re-initialize reCaptcha
+                grecaptcha.reset();
+                // Fire reCaptcha
+                grecaptcha.execute();
+            }
+		</script>
+	</body>
+</html>

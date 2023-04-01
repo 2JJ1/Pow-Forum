@@ -1,0 +1,89 @@
+<% if(accInfo && Object.keys(accInfo).length > 0){ %>
+<script>
+    // Push notifications setup
+    
+    var registration = null
+    
+    function urlBase64ToUint8Array(base64String) {
+		const padding = '='.repeat((4 - base64String.length % 4) % 4);
+		const base64 = (base64String + padding)
+			.replace(/\-/g, '+')
+			.replace(/_/g, '/')
+		;
+		const rawData = window.atob(base64);
+		return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+    }
+    
+    function askPermission() {
+		return new Promise(function(resolve, reject) {
+			const permissionResult = Notification.requestPermission(function(result) {
+			resolve(result);
+			});
+
+			if (permissionResult) {
+			permissionResult.then(resolve, reject);
+			}
+		})
+		.then(async function(permissionResult) {
+			if (permissionResult === 'granted') {
+				//Notifications are enabled
+				//Create subscription
+				const subscribeOptions = {
+					userVisibleOnly: true,
+					applicationServerKey: urlBase64ToUint8Array('<%- process.env.PUBLIC_VAPID_KEY %>')
+				};
+
+				let pushSubscription = await registration.pushManager.subscribe(subscribeOptions);
+
+				fetch('/api/notifications/subscribe', {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(pushSubscription)
+				})
+				.then(res => res.json())
+				.then(res => {
+					if(!res.success) {
+						if(res.reason) alert("Error: " + res.reason)
+						else alert("An unexpected error occured...")
+					}
+				})
+				.catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+			}
+			else {
+				throw new Error('We weren\'t granted permission.');
+			}
+		});
+    }
+    
+    if ('serviceWorker' in navigator) { 
+        //Service worker is supported on this browser
+        
+        //Register the service worker
+        navigator.serviceWorker.register('/js/service-worker.js')
+        .then(function(_registration) {
+            console.log('Service worker successfully registered.');
+            
+            registration = _registration
+            
+            if ('PushManager' in window) { 
+                //Push manager is supported on this browser(Used for push notifications)
+                if (Notification.permission !== "granted") {
+                    askPermission();
+                } 
+				//Push notifications are already enabled
+				else {
+					<% if(!accInfo.webpushsub){ %>
+					//Attaches subscription information to new sessions
+					askPermission()
+					<% } %>
+				}
+            }
+        })
+        .catch(function(err) {
+            console.warn('Unable to register service worker.', err);
+        });
+    }
+</script>
+<% } %>

@@ -1,0 +1,11 @@
+body{
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    max-width: 1100px;
+    margin: auto;
+    padding: 12px;
+    flex: 1;
+}

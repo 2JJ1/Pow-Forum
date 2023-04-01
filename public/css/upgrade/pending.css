@@ -1,0 +1,7 @@
+main{
+    max-width: 800px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

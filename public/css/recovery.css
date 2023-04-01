@@ -1,0 +1,59 @@
+@media only screen and (max-width: 815px) {
+    body #register_passwords{
+        display: block;
+    }
+
+    body #register_passwords .register_inputfield{
+        margin: 0px !important;
+    }
+}
+
+main{
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    box-shadow: 0px 0px 10px -2px #888888;
+    padding: 10px;
+}
+
+#registerform{
+    max-width: 500px;
+    width: 100%;
+    padding: 20px var(--gap);
+    margin: auto;
+}
+
+.descriptor{
+    margin-bottom: 20px;
+}
+
+.descriptor h1{
+    font-weight: 400;
+    text-align: center;
+}
+
+.descriptor p{
+    text-align: center;
+    color: gray;
+}
+
+.register_inputfield input{
+    width: 100%;
+    outline: none;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+#register_passwords{
+    display: flex;
+}
+
+#register_passwords .register_inputfield{
+    flex: 1;
+}
+
+#registerform button{
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}

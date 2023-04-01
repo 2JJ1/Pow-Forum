@@ -1,0 +1,25 @@
+header a#foologo{
+    display: flex;
+}
+
+#foologo::after{
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: url(/icons/christmastree.svg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-left: 4px;
+}
+
+/* This requires an empty div under the header with id#hristmasloights 
+   Looks particularly good if the next element has a black background and a 12px gap 
+   from the previous element */
+#hristmasloights{
+    background-image: url(/images/christmas-strip.png?V=1.0.0);
+    background-size: contain;
+    background-repeat: repeat-x;
+    height: 16px;
+    width: 100%;
+}

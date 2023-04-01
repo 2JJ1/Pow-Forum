@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Modify your <%- powForum.title %> account security settings here." />
+	
+		<title>Account Security Manager - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/acc/manager.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <div id="passwordprompt" style="display: none; position: fixed; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); justify-content: center">
+            <div style="margin: auto; position: relative;">
+                <p id="btn_exit">X</p>
+                <div class="theme1 round border1" style="padding: 20px 12px;">
+                    <p>Enter your current password</p>
+                    <br>
+                    <input id="currentpassword" class="theme2 border1" type="password" placeholder="****"/>
+                    <button id="btn_updateinfo" class="theme2 border1">Submit</button>
+                </div>
+            </div>
+        </div>
+        <% include ../../partials/global %>
+        <br>
+        <main class="screenPadding">
+            <% include ./nav %>
+			<br>
+            <div class="theme1 round border1 manager_container gapchildren">
+                <h2>Security</h2>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Password: <span style="font-style: italic; font-size: 14px">Leave field empty if you don't want to change it</span></p>
+                    <input id="newpassword" class="theme2 border1" type="password" placeholder="New password">
+                    <input id="confirmpassword" class="theme2 border1" type="password" placeholder="Confirm password">
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Email:</p>
+                    <input id="email" type="text" class="theme2 border1" placeholder="mail@domain.com" value="<%= accInfo.email %>" data-curval="<%= accInfo.email %>">
+                </div>
+                <button class="theme2 border1" type="submit" onclick="PromptPassword()">Save</button>
+                <% if(pendingEmailVerification){ %>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor" style="color: red; margin-bottom: 8px;">Your account does not have a verified email, so you may be restricted from posting content. Please check your email for the verification page. If you can't find it, click the resend button.</p>
+                    <button class="theme2 border1" onclick="ResendEmailVerification()">Resend Email Verification</button>
+                </div>
+                <% } %>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Sign out of all sessions</p>
+                    <button class="theme2 border1" onclick="SecureSignOut()" style="margin-bottom: 8px">Secure Sign Out</button>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Increase account security with two factor authentication</p>
+                    <% if(accInfo.tfaEnabled != true) { %>
+                    <button id="btnenabled2fa" class="theme2 border1" onclick="Enable2FA()" style="margin-bottom: 8px">Turn On 2FA</button>
+                    <div id="tfa-qr" style="display: none;">
+                        <img src="">
+                        <div style="margin-left: 12px;">
+                            <p>Scan this code with the Google Authenticator app then submit your authentication code below. It will not activate until verified.</p>
+                            <input id="token2fa" class="theme2 border1" type="number" min="000000" max="999999"/>
+                            <div id="tfaverifbtns">
+                                <button class="theme2 border1" onclick="Verify2FA()">Verify</button>
+                                <button class="theme2 border1" onclick="CancelVerify2FA()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    <% } else { %>
+                    <button class="theme2 border1" onclick="Disable2FA()" style="margin-bottom: 8px">Turn Off 2FA</button>
+                    <% } %>
+                </div>
+            </div>
+            <br>
+            <p id="errormsg" style="color: red; text-align: center"><p>
+        </main>
+        <% include ../../partials/footer %>
+		
+		<script>
+            $("#newpassword").on('input', function(){
+                $('#errormsg').text("")
+                var ValidatedPasswordResponse = ValidatePassword($(this).val())
+
+                if(ValidatedPasswordResponse === true){
+                    if($(this).val() === ""){
+                        //Users chooses not to change passwords
+                        $('#confirmpassword').hide()
+                    } else{
+                        $('#confirmpassword').show()
+                    }
+                } else {
+                    $('#confirmpassword').hide()
+                    $("#confirmpassword").val('')
+                    $('#errormsg').text("Password error: " + ValidatedPasswordResponse)
+                }
+            })
+
+            $("#confirmpassword").on('input', function(){
+                $('#errormsg').text('')
+                if($(this).val() === ""){
+                    $("#confirmpassword").val('')
+                } else if($("#newpassword").val() !==  $("#confirmpassword").val())
+                    $('#errormsg').text('New password and password confirmation must be the same');
+            })
+
+            $("#btn_updateinfo").on("click", function( event ) {
+                var newData = {
+                    currentpassword: $("#currentpassword").val(),
+                    email: $('#email').val()
+                }
+
+                if($('#currentpassword').val().length > 0){
+                    //Previous fields mustve passed
+                    newData.newpassword = $("#newpassword").val()
+                }
+
+                fetch('/api/account/manager/security', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify(newData),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.getElementById('errormsg').style.color = "green"
+                        document.getElementById('errormsg').innerHTML = "Success!"
+                        document.location.reload()
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+
+                $('#passwordprompt').hide('fast')
+            });
+
+            function ValidatePassword(password){
+                if(password.length < 8)
+                    return "New password must be atleast 8 characters long";
+                if(!password.match(/[0-9]/g))
+                    return "Password must contain a number";
+                if(!password.match(/[a-z]/g))
+                    return "Password must contain a letter";
+                if(password.match(/^[0-9a-zA-Z]+$/i))
+                    //The password only contains letters and numbers
+                    return "Password must contain a special character";
+
+                return true
+            }
+
+            <% if(pendingEmailVerification){ %>
+            function ResendEmailVerification(){
+                $('#errormsg').text("")
+
+                fetch('/api/account/verifyemail', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.getElementById('errormsg').style.color = "green"
+                        document.getElementById('errormsg').innerHTML = "Success! Please check your email for the new verification request'"
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+            }
+            <% } %>
+
+            function SecureSignOut(){
+                $('#errormsg').text("")
+
+                fetch('/api/account/sso', {
+					method: "POST",
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.getElementById('errormsg').style.color = "green"
+                        document.getElementById('errormsg').innerHTML = "Success!"
+                        document.location.reload()
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+            }
+
+            function Enable2FA(){
+                fetch('/api/account/manager/security/enable2fa', {
+					method: "POST",
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        $("#tfa-qr > img").attr("src", res.qrcode)
+                        document.getElementById('tfa-qr').style.display = 'flex'
+                        document.getElementById('btnenabled2fa').style.display = 'none'
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+            }
+
+            function Verify2FA(){
+                var token = $("#token2fa").val()
+
+                fetch('/api/account/manager/security/verify2fa', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        token: token
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        $("#tfa-qr").parent().append("<br>2FA is now enabled.<br><br>Screenshot the QR code just in case because losing your phone could mean losing access to your account permanently!")
+                        document.getElementById('errormsg').innerHTML = ''
+                        document.getElementById('tfa-qr').style.display = 'none'
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+            }
+
+            function CancelVerify2FA(){
+                $("#btnenabled2fa").css("display", "block")
+                $("#tfa-qr").css("display", "none")
+            }
+
+            function Disable2FA(){
+                var token = prompt("Enter your Google Authentication token")
+
+                fetch('/api/account/manager/security/disable2fa', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        token: token
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.getElementById('errormsg').style.color = "green"
+                        document.getElementById('errormsg').innerHTML = "Success!"
+                        document.location.reload()
+                    } else {
+                        document.getElementById('errormsg').style.color = "red"
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>{
+                    document.getElementById('errormsg').style.color = "red"
+                    document.getElementById('errormsg').innerHTML = "Failed to contact the server."
+                })
+            }
+
+            function PromptPassword(){
+                $('#passwordprompt').css('display', 'flex')
+            }
+
+            $('#btn_exit').click(()=>{
+                $('#passwordprompt').hide('fast')
+            });
+        </script>
+	</body>
+</html>

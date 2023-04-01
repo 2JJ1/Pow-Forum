@@ -1,0 +1,13 @@
+<div>
+    <p>
+        ( Members: <%= onlines.members.length %>, Guests: <%= onlines.guestcount %>, Total: <%= onlines.members.length + onlines.guestcount %> )
+        <% for (var i=0; i<onlines.members.length; i++) { %>
+        <a 
+        href="/profile?uid=<%- onlines.members[i].uid %>"
+        class="<%- onlines.members[i].highestRole %>"
+        >
+        <%- onlines.members[i].username %>
+        </a>
+        <% } %>
+    </p>
+</div>

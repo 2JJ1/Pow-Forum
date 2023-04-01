@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+        <meta name="description" content="Search for <%- powForum.title %> accounts by username." />
+	
+		<title>Account Search | <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/search.css?v=20" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<br>
+		<main>
+			<form id="searchbar">
+				<input name="username" class="theme1 border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
+			</form>
+			<br>
+			<% if(accounts.length > 0){ %>
+            <div id="cards">
+                <% for (var key in accounts){ %>
+                <% var account = accounts[key]; %>
+                <a class="userCard theme1 border1 round" href="/profile?uid=<%= account._id %>">
+                    <img src="<%= account.profilepicture %>"/>
+                    <div>
+                        <p class="<%= account.highestRole %>"><%= account.username %></p>
+                        <p>Joined <%= account.creationdate %></p>
+						<p>
+							Reputation: 
+							<span class="<%= account.reputation >= 0 ? "positive" : "negative" %>">
+								<%= account.reputation %>
+							</span>
+						</p>
+                    </div>
+                </a>
+                <% } %>
+            </div>
+			<% } else { %>
+			<p id="zeromatches">0 matches</p>
+			<% } %>
+			<br>
+			<% if(loadMore){ %><button id="btnLoadMore" class="theme1 border1 round button">Load More</button><% } %>
+		</main>
+		<% include ../../partials/footer %>
+		<script>
+			document.getElementById("searchbar").onsubmit = function(e){
+				e.preventDefault()
+				let form = new FormData(e.target)
+				let username = form.get("username")
+				if(!/^\w+$/.test(username)) return alert("Usernames may only contain numbers, letters, and underscores.")
+
+				window.location.href = "/profile/search?username=" + username
+			}
+
+			<% if(accounts.length > 0){ %>
+			var latestUID = <%= accounts.length>1 ? accounts[accounts.length-1]._id : 0 %>
+			document.getElementById("btnLoadMore").onclick = function(){
+				fetch(`/api/account/search?username=<%= username %>&fromuid=${latestUID}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+				.then(res => res.json())
+				.then(res => {
+					var {accounts, loadMore} = res
+					if(!accounts) return
+
+					for(let account of accounts){
+						document.getElementById("cards").innerHTML += (
+							`<a class=\"userCard theme1 border1 round\" href=\"/profile?uid=${account._id}\">` +
+								`<img class=\"round\" src=\"${account.profilepicture}\"/>` +
+								"<div>" +
+									`<p class="${account.highestRole}">${account.username}</p>` +
+									`<p>Joined ${account.creationdate}</p>` +
+									`<p>
+										Reputation: 
+										<span class="${account.reputation >= 0 ? "positive" : "negative"}">
+											<%= account.reputation %>
+										</span>
+									</p>` +
+								"</div>" +
+							"</a>"
+						)
+						latestUID = account._id
+					}
+
+					if(!loadMore) document.getElementById("btnLoadMore").remove()
+				})
+			}
+			<% } %>
+		</script>
+	</body>
+</html>

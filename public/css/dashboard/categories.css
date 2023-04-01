@@ -1,0 +1,53 @@
+main{
+    max-width: 1100px;
+    margin: auto;
+}
+
+.editable{
+    display: flex;
+}
+
+.editable:hover .edit{
+    display: block;
+    margin-right: var(--gap);
+}
+
+.edit{
+    align-self: center;
+    display: none;
+    width: 18px;
+    height: 18px;
+    background-image: url('/images/icons/edit.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.editcategorygroup, .editcategory, .requestPassword, .changecategoriesgroup, .addcategory.modal{
+    display: none;
+}
+
+.modal button{
+    display: block;
+    min-width: 150px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.subModals button{
+    display: inline-block;
+}
+
+.categorygroupoptions{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.changecategoriesgroup h2{
+    text-align: center;
+}
+
+.changecategoriesgroup .categorygroupoptions button{
+    display: inline-block;
+}

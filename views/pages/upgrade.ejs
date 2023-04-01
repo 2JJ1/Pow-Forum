@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="<%- powForum.title %>, <%- powForum.title %> account, <%- powForum.title %> upgrade, forum, social, media" />
+        <meta name="description" content="Unlock more with <%- powForum.title %> by upgrading your account here." />
+	
+		<title>Upgrade Your Account - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+        <link href="/css/upgrade.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../partials/global %>
+        <main style="padding: 12px;">
+            <% if(accInfo.isPatron !== true){ %>
+            <div class="section theme1 border1 round padding">
+                <h1>Get Premium - <span class="price">$5 / Month</span></h1>
+                <p>Help <%- powForum.title %> push more content by becoming a premium member!</p>
+                <br>
+                <div class="shopButtons">
+                    <button id="buybutton" class="border1 round"><span class="icon creditcard"></span> Pay with credit or debit</button>
+                    <button class="border1 round" onclick="createCoinbaseCharge()"><span class="icon cryptocoin"></span>Pay with Crypto</button>
+                </div>
+                <% if(accInfo.isPatron === true){ %><a id="manageBilling" href="/manager/billing">Manage Billing</a> <% } %>
+                <p id="stripe_status"></p>
+            </div>
+            <% } else { %>
+            <div class="section theme1 border1 round padding premiumMarkingContainer">
+                <p>You're a premium member!</p>
+            </div>
+            <% } %>
+            <br>
+            <div class="section">
+                <h2>Included Perks</h2>
+                <div id="perks">
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>Lifetime VIP</p>
+                        <p>Even after your Premium expires, you get to keep VIP perks</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>+2 & -2 Rating</p>
+                        <p>Found someone toxic on the forum? Drop their rating by 2! Vice versa.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>Profile Badge</p>
+                        <p>Your profile visitors can see you're Premium.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>No Advertisements</p>
+                        <p>Load the website faster and have more space to view content.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>Change Your Username</p>
+                        <p>Ability to change your username.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>Community Name Color</p>
+                        <p>Denote your support to all Community viewers.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p>.gif Profile Picture</p>
+                        <p>Animate your profile with a .gif profile picture.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p title="Applies freely to members with >10 rep">Increased Limits*</p>
+                        <p>Send longer messages or post longer threads.</p>
+                    </div>
+                    <div class="perk_card theme1 border1 round padding">
+                        <p title="Applies freely to members with >10 rep">Chat Bot</p>
+                        <p>Prefix your global chat with @bot to get an AI response.</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="section theme1 border1 round padding">
+                <h3>Definitions</h3>
+                <br>
+                <p><span class="term">Lifetime</span>: The time that your account exists. Its life is considered at an end if it has been deleted or banned.</p>
+                <br>
+                <p><span class="term">VIP</span>: Members of elevated status in the community. Received as a token of gratitude. VIP members can diff 1 user ratings and get a badge on their profile.</p>
+                <br>
+                <p><span class="term">Reputation/Rep</span>: A number which reflects a user's total rating by the community. Positive reputation will unlock certain features for free. Negative reputation will take away abilities such as giving negative reputation or creating threads.</p>
+            </div>
+            <br>
+            <div class="section theme1 border1 round padding">
+                <h3>Additional Info</h3>
+                <br>
+                <p>Premium is a monthly subscription of $5 USD.</p>
+                <br>
+                <p>Cancel anytime with the peace of mind that your benefits will remain until the end of your period.</p>
+                <br>
+                <p>Donating helps the creators develop more great content. By supporting us, we give back additional abilities across the website and inside our content. We hope to introduce more perks to our supporters. Perks are subject to change.</p>
+            </div>
+        </main>
+        <% include ../partials/footer %>
+		
+		<script>
+            <% if(!accInfo._id){ %>
+            $('#buybutton').click(()=>{
+                document.location.href = "/login"
+            })
+            <% } 
+            else if(!accInfo.isVerifiedEmail) { %>
+            $('#buybutton').click(()=>{
+                document.location.href = "/manager/security"
+            })
+            <% } %>
+
+
+            async function createCoinbaseCharge(){
+                await fetch("/api/upgrade/createCoinbaseCharge", {method: "POST"})
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) window.open(res.hosted_url, "_self")
+                    else alert(res.reason || "Failed to create payment page. Try again later...")
+                })
+            }
+        </script>
+        
+        <% if(accInfo._id && stripecustomerid !== "pending" && accInfo.isPatron !== true && accInfo.isVerifiedEmail){ %>
+        <script src="https://checkout.stripe.com/checkout.js"></script>
+        <script>
+            $('#buybutton').click(()=>{
+                handler.open();
+            })
+
+            var handler = StripeCheckout.configure({
+                key: '<%= stripePublicKey %>',
+                locale: 'auto',
+                zipCode: true,
+                billingAddress: true,
+                amount: 500,
+                token: function(token) {
+                    document.getElementById('stripe_status').style.display = 'block'
+                    document.getElementById('stripe_status').style.color = 'inherit'
+                    $('#stripe_status').text('Please wait while we queue the charge...')
+
+                    fetch('/api/stripe/subscribe', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            stripeToken: token.id
+                        }),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success){
+                            document.getElementById('stripe_status').style.color = 'green'
+                            document.getElementById('stripe_status').innerHTML = res.reason || 'Charge requested. You will receive a confirmation email on success.'
+                            document.getElementById("buybutton").remove()
+                        } else {
+                            document.getElementById('stripe_status').style.color = 'red'
+                            document.getElementById('stripe_status').innerHTML = res.reason || 'Unknown error occured...'
+                        }
+                    })
+                    .catch(()=>{
+                        document.getElementById('stripe_status').style.color = 'red'
+                        document.getElementById('stripe_status').innerHTML = "Failed to contact the server."
+                    })
+                }
+            });
+        </script>
+        <% } %>
+	</body>
+</html>

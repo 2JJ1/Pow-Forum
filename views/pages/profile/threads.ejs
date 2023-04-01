@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+        <meta name="description" content="<%= profileInfo.username %>'s list of threads on the <%- powForum.title %> forum.'" />
+	
+		<title><%= profileInfo.username %>'s Threads List | <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/threads.css?v=20" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<br>
+		<main>
+			<div class="section pmd">
+				<a href="/profile?uid=<%= profileInfo._id %>"><img class="border1" src="<%= profileInfo.profilepicture %>"></a>
+				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Threads List</h1>
+			</div>
+			<br>
+			<div class="theme1 round border1 section threads">
+				<% if (threads.length <= 0){ %>
+				<p style="text-align: center;">This user has no threads.</p>
+				<% } else { %>
+				<% for(let thread of threads){ %>
+				<div class="thread">
+					<a href="/t/<%= thread._id %>"><p><%- thread.title %></p></a>
+					<div class="threadmd">
+						<p>Posted in <a href="/c/<%= thread.category.database %>"><%= thread.category.name %></a> / <%= thread.views %> views / <%= thread.replies %> replies</p></p>
+					</div>
+				</div>
+				<% } %>
+				<% } %>
+			</div>
+			<br>
+			<% if(moreAvailable){ %><button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button><% } %>
+		</main>
+		<% include ../../partials/footer %>
+
+		<% if(moreAvailable){ %>
+		<script>
+			var oldestTid = "<%= threads[threads.length-1]._id %>";
+			document.getElementsByClassName("btnLoadMore")[0].onclick = function(){
+				fetch('/api/account/threads?uid=<%= profileInfo._id %>&tid='+oldestTid, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+				.then(res => res.json())
+				.then(res => {
+					var {threads, moreAvailable} = res
+					if(!threads) return
+					oldestTid = threads[threads.length-1]._id
+
+					for(let thread of threads){
+						document.getElementsByClassName("threads")[0].innerHTML += (
+							'<div class="thread">' +
+								'<a href="/t/' + thread._id +'"><p>' + thread.title + '</p></a>' +
+								'<div class="threadmd">' +
+									`<p>Posted in <a href="/c/${thread.category.name2}">${thread.category.name}</a> / ${thread.views} views</p> / ${thread.replies} replies</p>` +
+								'</div>' +
+							'</div>'
+						)
+					}
+
+					if(!moreAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
+				})
+			}
+		</script>
+		<% } %>
+	</body>
+</html>

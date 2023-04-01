@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="forum, social, media" />
+        <meta name="description" content="<%- description %>" />
+	
+		<title><%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+		<link href="/css/index.css?v=20" rel="stylesheet" type="text/css">
+	</head>
+	<body class="container">
+		<% include ../partials/global %>
+		<main style="padding: 12px;">
+			<div class="onlineList theme1 border1 round padding">
+				<h3>All online users:</h3>
+				<br>
+				<% include ../partials/onlinelist %>
+			</div>
+			<% categoryGroups.forEach(categoryGroup => { %>
+			<div id="<%= categoryGroup.name %>" class="categoryGroup theme1 border1 round">
+				<h2 class="theme2 padding"><%= categoryGroup.name %></h2>
+				<div class="gridWrapper">
+					<p class="thead">Category</p>
+					<p class="thead count textCenter">Topics</p>
+					<p class="thead count textCenter">Replies</p>
+					<p class="thead">Latest Active Topic</p>
+					<% let categoryList = categories.filter(category => category.group === categoryGroup.name) %>
+					<% categoryList.forEach(category => { %>
+					<span class="line border1-bottom"></span>
+					<a class="category" href='/c/<%= category.database %>' title="<%= category.description %>"><%= category.name %></a>
+					
+					
+					
+					<p class="count textCenter"><%= category.threadcount %></p>
+					<p class="count textCenter"><%= category.replies %></p>
+					<div class="threadContainer">
+						<% if(category.latestReply) { %>
+						<a class="thread" href="/t/<%= category.latestReply.tid %>"><%- category.latestReplyThread.title %></a>
+						<p class="threadData">
+							By <a href="/profile?uid=<%= category.latestReplyThread.OP._id %>"><%= category.latestReplyThread.OP.username %></a> 
+							(<script>document.write(TimeStamp.Shorten('<%- category.latestReply.date %>'))</script>, <%- category.latestReplyThread.views %> views)
+						</p>
+						<% } else { %> 
+						<p>- No Posts yet -</p>
+						<% } %>
+					</div>
+					<% }) %>
+				</div>
+			</div>
+			<% }) %>
+			<br>
+			<% if(Object.keys(supportLinks).length > 0){ %>
+			<div class="buttons">
+				<a href="/c/all" class="btn theme1 round border1"><p>All Threads</p></a>
+				<% supportLinks.forEach(supportLink => { %>
+				<a class="btn theme1 round border1" href="<%= supportLink.link %>" <% if(supportLink.newTab){ %>target="_blank"<% } %> title="<%= supportLink.tooltip %>"><%= supportLink.label %></a>
+				<% }) %>
+			</div>
+			<% } %>
+		</main>
+		<% include ../partials/footer %>
+	</body>
+</html>

@@ -1,0 +1,176 @@
+@media only screen and (max-width: 1000px) {
+    body #manager_maincontainer {
+        flex-direction: column;
+    }
+
+    body #manager_categories{
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+
+    @media only screen and (max-width: 560px) {
+        body .pfpOptions > div{
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body .pfpPreview {
+            margin-bottom: var(--gap);
+        }
+    }
+}
+
+main{
+    max-width: 800px;
+    margin: auto;
+}
+
+#manager_nav{
+    display: flex;
+    justify-content: space-around;
+}
+
+#manager_nav li{
+    list-style: none;
+}
+
+.manager_container{
+    padding: 15px;
+}
+
+.pfpOptions > div{
+    display: flex;
+}
+
+.pfpOptions > div > div{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.pfpOptions > div > div > p{
+    text-align: center;
+}
+
+.pfpOptions > div > img{
+    width: 150px;
+    margin-right: var(--gap);
+    border-radius: 50%;
+}
+
+.manager_descriptor{
+    color: gray;
+    font-weight: 400;
+}
+
+input[type=text], input[type=password], input[type=number]{
+    margin-bottom: 8px;
+    font-weight: 300;
+    font-size: 16px;
+    height: 38px;
+    line-height: 100%;
+    padding: 5px 12px;
+    -webkit-appearance: none;
+    width: 100%;
+    border-radius: var(--less-round);
+}
+
+button{
+    padding: 5px 12px;
+    width: 100%;
+    font-size: 18px;
+    border-radius: var(--less-round);
+    display: block;
+    cursor: pointer;
+}
+
+#manager_updatecardcontainer{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+#manager_updatecard{
+    background-color: white;
+    width: 450px;
+    margin: auto;
+    padding: 15px;
+}
+
+#manager_updatecard h2{
+    border-bottom: 1px solid grey;
+    padding-bottom: 8px;
+}
+
+#manager_updatecard button{
+    padding: 10px 22px;
+    font-size: 15px;
+    font-weight: 400;
+}
+
+.finalbuttons{
+    display: flex;
+    justify-content: space-between;
+}
+
+#confirmpassword{
+    display: none;
+}
+
+#btn_exit{
+    color: red; 
+    float: right;
+    padding: 5px;
+}
+
+#btn_exit:hover{
+    cursor: pointer;
+}
+
+#expectations p{
+    margin-bottom: 8px;
+}
+
+/* Bottom message */
+#bottommessage{
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 4px;
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    z-index: 1;
+}
+
+#bottommessage > .messagetext{
+    text-align: center;
+    color: white;
+}
+
+#bottommessage > .close{
+    color: red;
+    position: absolute;
+    right: 8px;
+    cursor: pointer;
+}
+
+#tfa-qr{
+    display: flex;
+    align-items: center;
+}
+
+#tfaverifbtns{
+    display: flex;
+    justify-content: space-between;
+}
+
+#tfaverifbtns button{
+    width: 45%;
+}

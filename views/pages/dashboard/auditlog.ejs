@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+	
+		<title>Audit Logs - Moderator Dashboard</title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/dashboard/auditlog.css?v=20" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<main>
+            <h1>Audit Logs</h1>
+            <p style="color: gray; font-size: italic;">Thread event history for the past 30 days</p>
+            <br>
+            <div class="logs">
+                <% for(var i=0; i<logs.length; i++){ %>
+                <% var log = logs[i] %>
+                <div class="log theme1 border1 round">
+                    <p class="timestamp"><script>document.write(TimeStamp.Beautify('<%= log.timestamp %>'))</script></p>
+                    <% if(log.type === "delete-thread"){ %>
+                    <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted thread #<%= log.tid %> by <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>.</p>
+                    <% } else if(log.type === "delete-reply"){ %>
+                    <p>
+                        <a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted 
+                        <% if (log.byUID == log.targetUID) { %>
+                        their reply
+                        <% } else { %>
+                        a reply by <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a> 
+                        <% } %>
+                        on thread <a href="/t/<%= log.tid %>"><b><%- log.topic %></b></a></p>
+                    <% } else if(log.type === "edit"){ %>
+                    <p>A reply by <a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> on thread <a href="/t/<%= log.tid %>"><b><%- log.topic %></b></a> was edited:</p>
+                    <p>
+                        <% log.content.forEach(part => { %> 
+                        <span style="color: <%= part.added ? "green" : "red" %>"><%= part.value %></span>
+                        <% }) %>
+                    </p>
+                    <% } else if(log.type === "thread-pin"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(!log.value){ %>un<% } %>pinned thread <a href="/t/<%= log.tid %>"><b><%- log.topic %></b></a></p>
+                    <% } else if(log.type === "thread-lock"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(!log.value){ %>un<% } %>locked thread <a href="/t/<%= log.tid %>"><b><%- log.topic %></b></a></p>
+                    <% } else if(log.type === "mod-delete-pfp"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>'s profile picture.</p>
+                    <% } else if(log.type === "Rename category group"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> renamed category group "<%- log.content.oldName %>" to "<%- log.content.newName %>"</p>
+                    <% } else if(log.type === "Add category"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> added new category "<%- log.content.category %>" to category group "<%- log.content.group %>"</p>
+                    <% } else if(log.type === "Rename category"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> renamed category "<%- log.content.oldName %>" to category group "<%- log.content.newName %>"</p>
+                    <% } else if(log.type === "Change category description"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> changed category description of "<%- log.content.category %>" to "<%- log.content.description %>"</p>
+                    <% } else if(log.type === "Change category required roles"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> changed category required roles of "<%- log.content.category %>" to "<%- log.content.requiredRoles %>"</p>
+                    <% } else if(log.type === "Change category group"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> moved category "<%- log.content.category %>" to group "<%- log.content.group %>"</p>
+                    <% } else if(log.type === "Delete category"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted category "<%- log.content.category %>"</p>
+                    <% } else if(log.type === "mod-lock-account"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(log.value){ %>un<% } %>locked <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>'s account. Reason: <%= log.reason || "None" %></p>
+                    <% } else if(log.type === "Delete account"){ %>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(log.value){ %>un<% } %>deleted account <%= log.content %>#<%= log.targetUID %>. Reason: <%= log.reason || "None" %></p>
+                    <% } %>
+                </div>
+                <br>
+                <% } %>
+            </div>
+            <br>
+            <button class="theme1 button border1 round btnPrevPage">Previous Page</button>
+            <button class="theme1 button border1 round btnNextPage">Next Page</button>
+		</main>
+        <% include ../../partials/footer %>
+        <script>
+            const url = new URL(window.location)
+            var page = url.searchParams.get('page') || 1
+
+            if(page <= 1) document.getElementsByClassName("btnPrevPage")[0].remove()
+            
+            document.addEventListener("click", function(event){
+                // If the clicked element doesn't have the right selector, bail
+                if (event.target.matches('.btnNextPage')){
+                    url.searchParams.set("page", parseInt(page)+1)
+                    window.location = url.toString()
+                }
+                else if (event.target.matches('.btnPrevPage')){
+                    url.searchParams.set("page", parseInt(page)-1)
+                    window.location = url.toString()
+                }
+            })
+        </script>
+    </body>
+</html>

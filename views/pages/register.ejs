@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Dive deeper into the community by socializing with us. You'll need an account first." />
+	
+		<title>Create an Account - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+        <link href="/css/register.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <main style="display: flex; min-height: 100vh;">
+            <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="theme1 round border1 padding gapchildren">
+                <h1>Create your <%- powForum.title %> account</h1>
+                <div class="register_inputfield lessgapchildren">
+                    <p>Username</p>
+                    <input name="username" type="text" placeholder="Username" class="theme2 round border1 padding"/>
+                    <div class="register_highlight"></div>
+                </div>
+                <div class="register_inputfield lessgapchildren">
+                    <p>Email</p>
+                    <input name="email" type="email"  placeholder="Email" class="theme2 round border1 padding"/>
+                    <div class="register_highlight"></div>
+                </div>
+                <div id="register_passwords">
+                    <div class="register_inputfield lessgapchildren" style="margin-right: 5px">
+                        <p>Password</p>
+                        <input name="password" type="password" placeholder="Password" class="theme2 round border1 padding"/>
+                        <div class="register_highlight"></div>
+                    </div>
+                    <div class="register_inputfield lessgapchildren" style="margin-left: 5px">
+                        <p>Confirm</p>
+                        <input name="confirmpassword" type="password" placeholder="Confirm" class="theme2 round border1 padding"/>
+                        <div class="register_highlight"></div>
+                    </div>
+                </div>
+                <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                <button class="theme2 round border1 padding">Submit</button>
+                <a href="/login">Back to Login</a>
+                <p id="req_Response" style="text-align: center; color: red;"></p>
+            </form>
+		</main>
+		
+		<script>
+            document.querySelector("#registerform").onsubmit = function(e){
+                e.preventDefault()
+
+                let form = new FormData(document.getElementById('registerform'))
+
+                fetch('/api/account/register', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': "application/json",
+                    },
+					body: JSON.stringify({
+                        'g-recaptcha-response': form.get('g-recaptcha-response'),
+                        email: form.get('email'),
+                        username: form.get('username'),
+                        password: form.get('password'),
+                        confirmpassword: form.get('confirmpassword'),
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.location.href = document.referrer || "/"
+                        document.getElementById('req_Response').innerHTML = "Success!"
+                    } else {
+                        document.getElementById('req_Response').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
+
+				grecaptcha.reset();
+			}
+            
+            function captchaErrorCallback() {
+                // Re-initialize reCaptcha
+                grecaptcha.reset();
+                // Fire reCaptcha
+                grecaptcha.execute();
+            }
+		</script>
+	</body>
+</html>

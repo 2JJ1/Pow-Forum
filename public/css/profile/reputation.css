@@ -1,0 +1,234 @@
+@media only screen and (max-width: 750px) {
+    body #profile_contentcontainer{
+        flex-direction: column;
+    }
+
+    body #categories{
+        margin-left: 0px;
+        margin-top: 20px;
+    }
+
+    body #profile_sidecards{
+        width: 100%;
+    }
+
+    body .profile_badges{
+        text-align: center;
+    }
+}
+
+#profile_mainprofilepicture{
+    width: 160px;
+    height: 160px;
+    border-radius: 4px;
+    position: absolute;
+    margin: 10px;
+    margin-top: -170px;
+}
+
+.profile_mediaicon{
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    border-radius: 3px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 3px;
+}
+
+.profile_mediaicon:hover{
+    cursor: pointer;
+}
+
+#profile_sidecards{
+    width: 235px;
+}
+
+.profile_sidecard{
+    border-bottom: 1px solid gray;
+    margin-bottom: 10px;
+}
+
+#categories{
+    margin-left: 10px;
+    flex: 1;
+}
+
+#categories ul{
+    display: flex
+}
+
+#categories li{
+    list-style: none;
+    flex: 1;
+    text-align: center;
+}
+
+.profile_content{
+    padding: 8px;
+}
+
+.profile_mediumprofilepicture{
+    display: block;
+    width: 70px;
+    height: 70px;
+    border: 1px solid black;
+    margin: 5px;
+    border-radius: 90%;
+
+    text-align: center;
+    background-size: cover;
+}
+
+#profile_createwallpost{
+    width: 100%;
+    padding: 12px 20px;
+    display: inline-block;
+    border: 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    resize: vertical;
+    min-height: 111px;
+    max-height: 250px;
+    font-size: 14px;
+}
+
+#profile_createwallpostbutton{
+    padding: 5px 25px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    float: right;
+    margin: 4px;
+}
+
+.wallpost{
+    position: relative;
+}
+
+.wallpost_postdropmenu{
+    border: 1px solid gray;
+    position: absolute;
+    top: 25px;
+    right: 8px;
+    width: 140px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+}
+
+.wallpost_actions{
+    border-top: 1px solid gray;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    margin:5px;
+}
+
+#profile_threadslist{
+    text-align: center;
+}
+
+#profile_threadslist td:nth-child(1), #profile_threadslist th:nth-child(1){
+    text-align: left;
+}
+
+.profile_threadrow{
+    animation: fadein 2s;
+}
+
+#categories .downloadOption{
+    margin: 0px 8px 8px 0px;
+}
+
+#info{
+    margin-top: auto; 
+    padding: 13px; 
+    padding-left: 180px; 
+    flex: 1;
+}
+
+#stats{
+    padding: 12px;
+}
+
+#medias{
+    background-color: grey; 
+    text-align: right; 
+    padding-left: 180px;
+}
+
+.positive{
+    color: green;
+}
+
+.negative{
+    color: red;
+}
+
+
+
+
+
+
+
+main{
+    max-width: 800px;
+    margin: auto;
+    padding: 12px;
+}
+
+#accheader{
+    display: flex;
+    padding: 12px;
+}
+
+#pfp{
+    width: 180px;
+    height: 180px;
+}
+
+#accinfo{
+    margin-left: 12px;
+}
+
+#username{
+    font-size: 22px;
+    flex: 1;
+}
+
+.positive{
+    color: green;
+}
+
+.negative{
+    color: red;
+}
+
+#reputationcontainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.repcard{
+    width: 250px;
+    height: 180px;
+    margin-bottom: 12px;
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
+
+.date{
+    color: gray;
+    font-size: 12px;
+}
+
+.btnDelete{
+    color: red;
+    float: right;
+    background: none;
+    font-weight: bold;
+}

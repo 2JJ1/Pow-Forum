@@ -1,0 +1,58 @@
+main{
+    padding: 12px;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    min-height: 100vh;
+}
+
+#searchbar input{
+    width: 100%;
+    padding: 8px 20px;
+    outline: none;
+}
+
+#cards{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.userCard{
+    padding: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    width: 100%;
+    max-width: 320px;
+}
+
+.userCard img{
+    height: 120px;
+    width: 120px;
+    margin-right: 12px;
+    border-radius: 50%;
+}
+
+.userCard p{
+    word-break: break-word;
+}
+
+#btnLoadMore{
+    margin: auto;
+}
+
+#zeromatches{
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    color: red;
+    font-style: italic;
+}
+
+.positive{
+    color: green;
+}
+
+.negative{
+    color: red;
+}

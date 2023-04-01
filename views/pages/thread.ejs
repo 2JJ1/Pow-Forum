@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="<%- powForum.title %>, forum thread, forum, social, media" />
+        <meta name="description" content="<%= threadData.replies[0].content.substr(0,120) %>..." />
+	
+		<title><%- threadData.title %> - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+		<link href="/css/thread.css?v=20&ib=4" rel="stylesheet" type="text/css">
+		<link href="/css/prism.css" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>
+	</head>
+	<body class="container">
+        <% if(threadData.canChangeForum){ %>
+        <div id="ForumChanger">
+            <div class="theme1 round border1">
+                <% categoryGroups.forEach(categoryGroup => { %>
+                <h3><%= categoryGroup.name %></h3>
+                <% let categoryList = categories.filter(category => category.group === categoryGroup.name) %>
+                <% categoryList.forEach(category => { %>
+                <button class="theme2 border1" data-forumname="<%= category.database %>"><%= category.name %></button>
+                <% }) %>
+                <% }) %>
+                <br>
+                <br>
+                <button class="theme2 border1" onclick="$('#ForumChanger').hide('fast')">Cancel</button>
+            </div>
+        </div>
+        <% } %>
+		<% include ../partials/global %>
+		<main class="screenPadding" style="max-width: 1100px; margin: auto">
+            <div class="theme2 round border1 padding">
+                <p>
+                    <a href="/">Categories</a> > 
+                    <a href="/#<%= threadData.category.group %>"><%= threadData.category.group %></a> >
+                    <a href="/c/<%= threadData.category.database %>"><%= threadData.category.name %></a> >
+                </p>
+                <h1 style="display: flex; justify-content: space-between;">
+                    <span id="topic"><%- threadData.title %></span>
+                    <% if(threadData.canEditTopic){ %><span id="btnEditTopic">Edit</span><% } %>
+                </h1>
+            </div>
+            <br/>
+            <div style="text-align: right">
+                <% if(threadData.canChangeForum){ %>
+                <button id="btn_changeforum" class="theme1 round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Forum</button>
+                <% } %>
+
+                <% if(threadData.canChangeForum){ %>
+                <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadLock(<%= !threadData.locked %>)"><% if(threadData.locked){ %>Unlock<% }else{ %>Lock<% } %></button>
+                <% } %>
+
+                <% if(clientIsMod){ %>
+                <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
+                <% } %>
+
+                <% if(threadData.canReply){ %>
+                <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply <% } else { %> /login <% } %>" class="theme1 round border1 btn_newrelpy">New Reply</a>
+                <% } %>
+            </div> 
+            <% var lastReplier = null; %>
+            <% threadData.replies.forEach((obj, index) => { %>
+            <% var nextUId = threadData.replies[index+1] && threadData.replies[index+1].uid %>
+            <!--Open new reply group if previous replier is different-->
+            <% if(lastReplier !== obj.uid) { %>
+            <div class="theme1 replygroup round border1">
+                <div class="theme2 thread_replierdata">
+                    <a href="/profile?uid=<%= obj.uid %>"><div style="background-image: url('<%= obj.account.profilepicture %>')" class="thread_pfp"></div></a>
+                    <div class="userdesc" style="flex: 1">
+                        <a href="/profile?uid=<%= obj.uid %>"><p class="username <%= obj.account.highestRole %>">
+                            <% if(obj.account.isOnline){ %>
+                            <span class="online-icon"title="online"></span>
+                            <% } %>
+                            <%= obj.account.username %>
+                        </p></a>
+                        <p class="usertitle"><%- obj.account.alias || "" %></p>
+                        <% if(obj.account.badge){ %><img src="<%- obj.account.badge %>" class="badge" alt="<%= obj.account.highestRole %>"/><% } %>
+                        <% if(threadData.canReply && (ogTRID != obj._id) && (obj.uid !== accInfo._id)){ %>
+                        <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply?mention=<%= obj.uid %> <% } else { %> /login <% } %>" class="theme1 border1 btnmention">Mention</a>
+                        <% } %>
+                    </div>
+                    <div class="userstats">
+                        <p>Posts: <%= obj.account.totalposts || "0" %></p>
+                        <p>Threads: <%= obj.account.totalthreads || "0" %></p>
+                        <p>Joined: <%= obj.account.joinDate || "?" %></p>
+                        <p>Reputation: <span class="<% if(obj.account.reputation>0){ %>good<% } %><% if(obj.account.reputation<0){ %>bad<% } %>"><%= obj.account.reputation %></span></p>
+                    </div>
+                </div>
+            <% } %>
+            <!--Reply Metadata-->
+            <div class="replycard">
+                <div style="position: relative">
+                    <ul class="reply_menu padding verticalCenter">
+                        <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
+                        <% if(accInfo._id === obj.uid){ %>
+                        <li><a href="/editreply/<%= obj._id %>">Edit</a></li>
+                        <% } %>
+                        <% if(obj.deletable === true){ %>
+                        <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
+                        <% } %>
+                    </ul>
+                    <p class="thread_replytime padding">
+                        <% if(ogTRID === obj._id){ %>
+                            <!--OP-->
+                            Posted 
+                        <% } else if(lastReplier === obj.uid){ %>
+                            <!--Previous replier, so stack-->
+                            Added
+                        <% } else { %>
+                            <!--New reply-->
+                            Replied 
+                        <% } %>
+                        <!--When this reply was made-->
+                        <script>document.write(TimeStamp.Beautify('<%= obj.date %>'))</script>
+                    </p>
+                </div>
+                <!--Reply Content-->
+                <div 
+                class="thread_replycontent <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
+                <% if(obj.reputation <= 0){ %>
+                onclick="warnLinks(event)"
+                <% } %>
+                ><%- obj.content %></div>
+            </div>
+
+            <!--Close reply group if the next replier is different-->
+            <% if(nextUId !== obj.uid){ %>
+                <% if(obj.account.signature){ %>
+                <div class="signature theme2 padding"><%- obj.account.signature %></div>
+                <% } %>
+            </div>
+            <% } %>
+            <% lastReplier = obj.uid %>
+            <% }) %>
+            <br/>
+            <div style="text-align: right">
+                <% if((threadData.currentPage - 1) > 0) { %>
+                <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
+                <% } %>
+                <% if(threadData.nextPageAvailable) { %>
+                <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage + 1 %>" class="theme1 round border1 btn_newrelpy">Next</a>
+                <% } %>
+                <% if(threadData.nextPageAvailable) { %>
+                <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
+                <% } %>
+                <% if(threadData.canReply){ %>
+                <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply <% } else { %> /login <% } %>" class="theme1 round border1 btn_newrelpy">New Reply</a>
+                <% } %>
+            </div> 
+            <br>
+            <div class="theme2 border1 round" style="padding: 12px;">
+                <h3>Users viewing this thread:</h3>
+				<br>
+				<% include ../partials/onlinelist %>
+			</div>
+        </main>
+		<% include ../partials/footer %>
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/js/prism.js"></script>
+        <script type="text/javascript" src="/js/oembed.js?v=20"></script>
+		<script>
+            <% if(threadData.scrollToTrid) { %>
+            //Scrolls to reply from notification
+            document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]').scrollIntoView(true)
+            <% } %> 
+
+            //Embed images in thread and signature content
+            Array.prototype.forEach.call([...document.getElementsByClassName("thread_replycontent"), ...document.getElementsByClassName("signature")], function(threadReply){
+                HTMLToOembed(threadReply, { fileDomainWhitelist: true })
+            })
+
+            //Link clicked from negative reputation user warning
+            function warnLinks(e) {
+                e.preventDefault()
+                if(e.target.nodeName  !== "A") return
+                if(selfURLRegex.test(e.target.href)) return
+                if(/^(https?:\/\/)?virustotal.com/.test(e.target.href)) return
+                var confirmed = confirm("WARNING: This user has a low reputation. Their links may be fake and lead lead to malware. Be cautious!");
+                confirmed && window.open(e.target, '_blank');
+            };
+
+            <% if(threadData.canChangeForum){ %>
+            function ToggleThreadLock(toggle){
+                fetch("/api/togglethreadlock", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        tid: "<%= threadData._id %>",
+                        toggle,
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) location.reload()
+                    else {
+                        if(res.reason) alert("Error: " + res.reason)
+                        else alert("An unexpected error occured...")
+                    }
+                })
+                .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+            }
+            <% } %>
+
+            <% if(clientIsMod){ %>
+            function ToggleThreadPin(toggle){
+                fetch("/api/togglethreadpin", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        tid: "<%= threadData._id %>",
+                        toggle,
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) location.reload()
+                    else {
+                        if(res.reason) alert("Error: " + res.reason)
+                        else alert("An unexpected error occured...")
+                    }
+                })
+                .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+            }
+            <% } %>
+
+            document.addEventListener('click', function (event) {
+                if (event.target.classList.contains('btnLikeReply')){
+                    let trid = event.target.getAttribute("data-trid")
+                    fetch("/api/togglelike", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({trid})
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success) {
+                            if(event.target.textContent < res.likes) event.target.classList.add("liked")
+                            else event.target.classList.remove("liked")
+                            event.target.textContent = res.likes
+                        }
+                        else {
+                            if(res.reason) alert("Error: " + res.reason)
+                            else alert("An unexpected error occured...")
+                        }
+                    })
+                    .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+                }
+            })
+
+            $(document).ready(function(){
+                <% if(threadData.canChangeForum){ %>
+                $('#ForumChanger > div > button').click(function(){
+                    if(!$(this).attr('data-forumname')){
+                        //Ignore the cancel button
+                        return
+                    }
+                    $.ajax({
+                        url: '/api/changethreadforum',
+                        type: 'POST',
+                        data: JSON.stringify({
+                            tid: "<%= threadData._id %>",
+                            forum: $(this).attr('data-forumname')
+                        }),
+                        contentType: "application/json",
+                        success: function(result) {
+                            if(result.success){
+                                location.reload();
+                            } else {
+                                if(result.reason)
+                                    alert(result.reason);
+                                else
+                                    alert('Server error');
+                            }
+                        },
+                        error: function(){
+                            alert('Error contacting server...')
+                        }
+                    });
+                })
+                <% } %>
+
+                $('.btn_deletereply').click(function(){
+                    if(!confirm("You are about to delete a reply.")) return
+
+                    var replyCard = $(this).closest(".replycard")
+                    var replyGroup = $(this).closest(".replygroup")
+
+                    $.ajax({
+                        url: '/api/thread/reply',
+                        type: 'DELETE',
+                        data: JSON.stringify({trid: $(this).attr('data-trid')}),
+                        contentType: "application/json",
+                        success: function(result) {
+                            if(result.success){
+                                if(result.deletedThread) document.location.href = "/";
+
+                                //removes the reply card
+                                replyCard.remove()
+                                //Removes the reply group if there is no more replies in the group
+                                if(replyGroup.find(".replycard").length <= 0) replyGroup.remove()
+                            } else {
+                                if(result.reason)
+                                    alert(result.reason);
+                                else
+                                    alert('Server error');
+                            }
+                        },
+                        error: function(){
+                            alert('Error contacting server...')
+                        }
+                    });
+                })
+            })
+
+            <% if(threadData.canEditTopic){ %>
+            document.getElementById("btnEditTopic").onclick = function(e){
+                var topicElement = document.getElementById("topic")
+                var newTopic = prompt("Edit your topic below:", topicElement.textContent)
+
+                fetch("/api/thread/topic", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        tid: <%= threadData._id %>,
+                        topic: newTopic,
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) {
+                        alert("Your topic has been edited")
+                        topicElement.textContent = newTopic
+                        document.title = newTopic
+                    }
+                    else {
+                        if(res.reason) alert("Error: " + res.reason)
+                        else alert("An unexpected error occured...")
+                    }
+                })
+                .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+            }
+            <% } %>
+        </script>
+	</body>
+</html>

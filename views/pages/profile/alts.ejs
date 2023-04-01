@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+        <meta name="description" content="<%= profileInfo.username %>'s suspected alternate accounts on this forum." />
+	
+		<title><%= profileInfo.username %>'s Suspected Alternate Accounts | <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/threads.css?v=20" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<br>
+		<main>
+			<div class="section pmd">
+				<a href="/profile?uid=<%= profileInfo._id %>"><img src="<%= profileInfo.profilepicture %>"></a>
+				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Suspected Alternate Accounts</h1>
+			</div>
+			<br>
+			<div class="theme1 round section threads">
+				<% if (Object.keys(matches).length <= 0){ %>
+				<p style="text-align: center;">This user has no suspected alternate accounts.</p>
+				<% } else { %>
+				<% for(var uid in matches){ %>
+				<div class="thread">
+					<a href="/profile?uid=<%= uid %>"><p><%= matches[uid].username %></p></a>
+					<div class="threadmd">
+						<p>Last matched: <script>document.write(TimeStamp.Beautify('<%= matches[uid].date %>'))</script></p>
+					</div>
+				</div>
+				<% } %>
+				<% } %>
+			</div>
+		</main>
+		<% include ../../partials/footer %>
+	</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+	
+		<title>Log In to Your Account - <%- powForum.title %></title>
+		
+        <% include ../partials/headimps %>
+        <link href="/css/login.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+		<main style="display: flex; min-height: 100vh;">
+                <div id="login_leftpanel" style="flex: 1; background-color: #8e44ad;"></div>
+                <div id="login_rightpanel" style="flex: 1; display: flex; padding: 45px; align-items: center;">
+                    <a href="/" style="position: absolute; top: 20px;">Back To Releases</a>
+                    <div id="loginContainer" class="gapchildren">
+                        <h1>Log in to <%- powForum.title %></h1>
+                        <form id="login_form" method="post" autocomplete="off" class="gapchildren">
+                            <div class="lessgapchildren">
+                                <p>Username</p>
+                                <input type="text" name="username" placeholder="Username" class="theme2 round border1 padding"/>
+                            </div>
+                            <div class="lessgapchildren">
+                                <p>Password</p>
+                                <input type="password" name="password" placeholder="****" class="theme2 round border1 padding"/>
+                            </div>
+                            <div class="lessgapchildren">
+                                <p>2FA Token <span style="color: grey;">- Leave empty if not applicable</span></p>
+                                <input type="text" name="token2fa" placeholder="000000" class="theme2 round border1 padding"/>
+                            </div>
+                            <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                            <button class="g-recaptcha theme2 round border1 padding">Submit</button>
+                        </form>
+                        <p><a href="/register">Register</a> | <a href="/recovery">Forgot username/password</a></p>
+                        <p id="req_Response" style="text-align: center; color: red;"></p>
+                    </div>
+                </div>
+		</main>
+		
+		<script>
+            document.querySelector("#login_form").onsubmit = function(e){
+                e.preventDefault()
+                
+                let form = new FormData(document.getElementById('login_form'))
+
+                fetch('/api/account/login', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': "application/json",
+                    },
+					body: JSON.stringify({
+                        'g-recaptcha-response': form.get('g-recaptcha-response'),
+                        username: form.get('username'),
+                        password: form.get('password'),
+                        token2fa: form.get('token2fa'),
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        document.location.href = "/profile"
+                        document.getElementById('req_Response').innerHTML = "Success!"
+                    } else {
+                        document.getElementById('req_Response').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
+
+				grecaptcha.reset();
+			}
+            
+            function captchaErrorCallback() {
+                // Re-initialize reCaptcha
+                grecaptcha.reset();
+                // Fire reCaptcha
+                grecaptcha.execute();
+            }
+		</script>
+	</body>
+</html>

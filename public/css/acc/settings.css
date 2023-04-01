@@ -1,0 +1,21 @@
+main{
+    max-width: 800px;
+    margin: auto;
+}
+
+#manager_nav{
+    display: flex;
+    justify-content: space-around;
+}
+
+#manager_nav li{
+    list-style: none;
+}
+
+.manager_container{
+    padding: 15px;
+}
+
+button{
+    width: 100%;
+}

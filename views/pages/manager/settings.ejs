@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Modify your public account information here." />
+	
+		<title>Account Settings - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/acc/settings.css?v=20" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <br>
+        <main class="screenPadding">
+            <% include ./nav %>
+            <br>
+			<div class="manager_container gapchildren theme1 round border1"">
+                <h2>General</h2>
+                <div class="verticalCenter">
+                    <span>Private Messages</span>
+                    <label class="switch">
+                        <input class="privateMessages visible" type="checkbox" <% if(generalsettings.privateMessages !== false){ %>checked<% } %>>
+                        <span class="slider round"></span>
+                    </label> 
+                </div><br>
+                <button id="savegeneral" class="theme2 round border1 padding" type="submit">Save</button>
+            </div>
+            <br>
+            <div class="manager_container gapchildren theme1 round border1"">
+                <h2>Notifications</h2>
+                <div class="verticalCenter">
+                    <span>New Messages</span>
+                    <label class="switch">
+                        <input class="newMessages visible" type="checkbox" <% if(notificationSettings.newMessages !== false){ %>checked<% } %>>
+                        <span class="slider round"></span>
+                    </label> 
+                </div><br>
+                <div class="verticalCenter">
+                    <span>Thread Replies</span>
+                    <label class="switch">
+                        <input class="threadReplies visible" type="checkbox"<% if(notificationSettings.threadReplies !== false){ %>checked<% } %>>
+                        <span class="slider round"></span>
+                    </label> 
+                </div><br>
+                <div class="verticalCenter">
+                    <span>Forum Mentions</span>
+                    <label class="switch">
+                        <input class="forumMentions visible" type="checkbox"<% if(notificationSettings.forumMentions !== false){ %>checked<% } %>>
+                        <span class="slider round"></span>
+                    </label> 
+                </div><br>
+                <div class="verticalCenter">
+                    <span>New Profile Rating</span>
+                    <label class="switch">
+                        <input class="newProfileRating visible" type="checkbox"<% if(notificationSettings.newProfileRating !== false){ %>checked<% } %>>
+                        <span class="slider round"></span>
+                    </label> 
+                </div><br>
+                <button id="savenotifs" class="theme2 round border1 padding" type="submit">Save</button>
+            </div>
+            <br>
+            <p id="errormsg" style="color: red; text-align: center"><p>
+        </main>
+        <% include ../../partials/footer %>
+        <script>
+            document.getElementById("savenotifs").onclick = function(){
+                let newMessages = document.querySelector(".newMessages").checked
+                let threadReplies = document.querySelector(".threadReplies").checked
+                let forumMentions = document.querySelector(".forumMentions").checked
+                let newProfileRating = document.querySelector(".newProfileRating").checked
+
+                fetch('/api/account/manager/notificationsettings', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({newMessages, threadReplies, forumMentions, newProfileRating}),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) alert("Success!")
+                    else document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                })
+				.catch(()=>document.getElementById('errormsg').innerHTML = "Failed to contact the server.")
+            }
+
+            document.getElementById("savegeneral").onclick = function(){
+                let privateMessages = document.querySelector(".privateMessages").checked
+
+                fetch('/api/account/manager/generalsettings', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({privateMessages}),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) alert("Success!")
+                    else document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                })
+				.catch(()=>document.getElementById('errormsg').innerHTML = "Failed to contact the server.")
+            }
+        </script>
+	</body>
+</html>

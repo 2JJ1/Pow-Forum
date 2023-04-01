@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Add, edit, or remove categories here." />
+	
+		<title>Categories Dashboard - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/dashboard/integrations.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <main class="gapchildren">
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">Mailgun Configuration (Required)</p>
+                <p class="subtext">To send emails securely and reliably, we use <a href="https://mailgun.com" target="_blank">Mailgun</a>.</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>Mailgun Domain</p>
+                        <input class="mailgunDomain theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.MAILGUN_DOMAIN %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>API Key</p>
+                        <input class="mailgunSecret theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.MAILGUN_APIKEY ? "****" : "" %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>Sending Email Address</p>
+                        <p class="subtext">What address do you want to send email froms</p>
+                        <input class="mailgunSender theme2 border1 round less-padding" type="email" placeholder="noreply@yourdomain.com" value="<%= process.env.MAILGUN_NOREPLY_ADDRESS %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMailgun()">Save</button>
+            </div>
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">Google reCaptcha v2 Configuration</p>
+                <p class="subtext">v2 is used to protect resource sensitive pages like account registration from bot behavior</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>v2 API Key</p>
+                        <input class="grecaptcha2Secret theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.CAPTCHAV2_APIKEY ? "****" : "" %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>v2 Site Key</p>
+                        <input class="grecaptcha2Public theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.CAPTCHAV2_SITEKEY %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateGrecaptcha2()">Save</button>
+            </div>
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">Google reCaptcha v3 Configuration</p>
+                <p class="subtext">Google reCaptcha is used to protect certain actions from bots, such as when creating a new thread or thread reply</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>v3 API Key</p>
+                        <input class="grecaptcha3Secret theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.CAPTCHAV3_APIKEY ? "****" : "" %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>v3 Site Key</p>
+                        <input class="grecaptcha3Public theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.CAPTCHAV3_SITEKEY %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateGrecaptcha3()">Save</button>
+            </div>
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">Stripe Configuration</p>
+                <p class="subtext">Stripe is used to collect debit and credit card monthly payments for the premium membership</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>API Private Key</p>
+                        <input class="stripeSecret theme2 border1 round less-padding" type="text" placeholder="sk_live_xxxxx" value="<%= process.env.STRIPE_PRIVATE_KEY ? "****" : "" %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>API Public Key</p>
+                        <input class="stripePublic theme2 border1 round less-padding" type="text" placeholder="pk_live_xxxxx" value="<%= process.env.STRIPE_PUBLIC_KEY %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>Webhook Private Key</p>
+                        <input class="stripeWebhookSecret theme2 border1 round less-padding" type="text" placeholder="whsec_xxxxx" value="<%= process.env.STRIPE_WEBHOOK_PRIVATE_KEY ? "****" : "" %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateStripe()">Save</button>
+            </div>
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">Coinbase Commerce Configuration</p>
+                <p class="subtext">Coinbase Commerce is used to collect Crypto payments for one month of a premium membership</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>API Key</p>
+                        <input class="coinbaseSecret theme2 border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_API_KEY ? "****" : "" %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>Webhook Secret Key</p>
+                        <input class="coinbaseWebhookSecret theme2 border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_WEBHOOK_SECRET ? "****" : "" %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateCoinbaseCommerce()">Save</button>
+            </div>
+            <div class="integrationSection theme1 border1 round padding">
+                <p class="header">OpenAI Configuration</p>
+                <p class="subtext">OpenAI is used to enable the AI chat bot for premium members</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>API Key</p>
+                        <input class="openaiSecret theme2 border1 round less-padding" type="text" placeholder="sk-xxxx" value="<%= process.env.OPENAI_API_KEY ? "****" : "" %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateOpenai()">Save</button>
+            </div>
+        </main>
+        <script>
+            function UpdateMailgun(){
+                //Compile data
+                let domain = document.querySelector('.mailgunDomain').value
+                let secret = document.querySelector('.mailgunSecret').value
+                let senderEmail = document.querySelector('.mailgunSender').value
+
+                //Sanitize & Validate
+                if(!domain) return alert("Missing domain")
+                if(!secret) return alert("Missing API key")
+                if(!senderEmail) return alert("Missing sender email")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/mailgun', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({domain, secret, senderEmail})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+
+            function UpdateGrecaptcha2(){
+                //Compile data
+                let secret = document.querySelector('.grecaptcha2Secret').value
+                let public = document.querySelector('.grecaptcha2Public').value
+
+                //Sanitize & Validate
+                if(!secret) return alert("Missing secret API key")
+                if(!public) return alert("Missing public site key")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/grecaptcha2', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({secret, public})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+
+            function UpdateGrecaptcha3(){
+                //Compile data
+                let secret = document.querySelector('.grecaptcha3Secret').value
+                let public = document.querySelector('.grecaptcha3Public').value
+
+                //Sanitize & Validate
+                if(!secret) return alert("Missing secret API key")
+                if(!public) return alert("Missing public site key")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/grecaptcha3', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({secret, public})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+
+            function UpdateStripe(){
+                //Compile data
+                let secret = document.querySelector('.stripeSecret').value
+                let public = document.querySelector('.stripePublic').value
+                let webhookSecret = document.querySelector('.stripeWebhookSecret').value
+
+                //Sanitize & Validate
+                if(!secret) return alert("Missing secret API key")
+                if(!public) return alert("Missing public API key")
+                if(!webhookSecret) return alert("Missing webhook secret key")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/stripe', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({secret, public, webhookSecret})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+            
+            function UpdateCoinbaseCommerce(){
+                //Compile data
+                let secret = document.querySelector('.coinbaseSecret').value
+                let webhookSecret = document.querySelector('.coinbaseWebhookSecret').value
+
+                //Sanitize & Validate
+                if(!secret) return alert("Missing API key")
+                if(!webhookSecret) return alert("Missing webhook secret key")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/coinbasecommerce', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({secret, webhookSecret})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+            
+            function UpdateOpenai(){
+                //Compile data
+                let secret = document.querySelector('.openaiSecret').value
+
+                //Sanitize & Validate
+                if(!secret) return alert("Missing API key")
+                
+                //Send update request
+                fetch('/api/dashboard/integrations/openai', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({secret})
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+        </script>
+	</body>
+</html>

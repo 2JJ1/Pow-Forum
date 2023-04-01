@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;1,300&display=swap');
+
+/* CSS Reset */
+
+*{
+    margin: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    width: 100%;
+    flex: 1;
+}
+
+div, h1, h2, h3, h4, p, a, li, tr, td, textarea, button, input, select, span{
+    font-weight: 300;
+    font-family: "Poppins",Poppins,Arial,sans-serif;
+    color: inherit;
+}
+
+h1, h2 {
+    font-size: 1.5em;
+}
+
+h1, h2, h3, h4{
+    font-weight: 400;
+    line-height: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit; /* no underline */
+}
+
+select, input{
+    font-size: 16px;
+    outline: none;
+}
+
+strong{
+    font-weight: bold;
+}
+
+ul, ol{
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+hr{
+    border-top: 1px solid #7F8C8D;
+    margin: var(--gap) 0;
+}
+
+button{
+    cursor: pointer;
+}
+
+/* Scrollbar Mods */
+
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #7F8C8D;
+    background-color: rgba(128,128,128,0.3);
+    border-radius: 4px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #95A5A6;
+    background-color: rgba(128,128,128,0.4);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #BDC3C7; 
+    background-color: rgba(128,128,128,0.5);
+}
+
+/* TinyMCE Mods */
+div[role="application"]{
+    margin-top: var(--gap);
+    border: 0;
+}
+
+.tox-statusbar__branding{
+    display: none !important;
+}
+
+pre code *{
+    font-family: inherit;
+}
+
+/* WRD Bootstrap */
+
+:root{
+    --font-size: 16px;
+    --gap: 12px;
+    --less-gap: 9px;
+    --round: 16px;
+    --less-round: 9px;
+}
+
+.button{
+    display: block;
+    padding: 8px 18px;
+    font-weight: 300;
+    font-size: var(--font-size);
+    border-radius: var(--round);
+    cursor: pointer;
+} 
+
+.lessRound{
+    border-radius: var(--less-round);
+}
+
+.round{
+    border-radius: var(--round);
+}
+
+.shadow1{
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.3);
+}
+
+.screenPadding{
+    padding: 12px;
+}
+
+.padding{
+    padding: var(--gap);
+}
+
+.less-padding{
+    padding: var(--less-gap);
+}
+
+
+.padding-sides{
+    padding: 0 var(--gap);
+}
+
+.bold{
+    font-weight: 400;
+}
+
+.textCenter{
+    text-align: center;
+}
+
+.wordbreakall{
+    word-break: break-all;
+}
+
+.wordbreakword{
+    word-break: break-word;
+}
+
+.verticalCenter{
+    display: inline-flex;
+    align-items: center;
+}
+
+.gapchildren > *{
+    margin-bottom: var(--gap)
+}
+
+.lessgapchildren > *{
+    margin-bottom: var(--less-gap)
+}
+
+.gapchildren > *:nth-last-child(1), .lessgapchildren > *:nth-last-child(1){
+    margin-bottom: 0;
+}
+
+.red{
+    color: red;
+}
+
+.link{
+    color: rgb(52, 152, 219);
+}
+
+.cursorpointer{
+    cursor: pointer;
+}
+
+/* Modal design */
+
+.modal{
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+}
+
+.modal > div{
+    max-width: 550px;
+    width: 100%;
+    margin: auto;
+    margin: var(--gap);
+    padding: var(--gap);
+}
+
+.modal input[type="text"], .modal input[type="password"], .modal select{
+    width: 100%;
+}
+
+.modal button{
+    display: block;
+    margin: auto;
+    min-width: 150px;
+    font-weight: 400;
+    cursor: pointer;
+}

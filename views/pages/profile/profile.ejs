@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+        <meta name="description" content="<%= profileInfo.username %>'s profile on the <%- powForum.title %> community" />
+	
+		<title><%= profileInfo.username %>'s Profile | <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/profile.css?v=20" rel="stylesheet" type="text/css">
+		<link href="/css/prism.css" rel="stylesheet" type="text/css">
+
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+		<script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<% if(accInfo.isAdmin){ %>
+		<div class="deleteAccount modal">
+            <div id="deleteAccountForm" class="theme1 border1 round gapchildren">
+                <div class="g-recaptcha" data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>" data-callback="deleteAccountCallback" data-size="invisible"></div>
+				<h2>Delete <%= profileInfo.username %>'s account?</h2>
+				<div class="lessgapchildren">
+					<p>*Password:</p>
+					<input class="theme2 border1 round less-padding" type="password" placeholder="****"/>
+				</div>
+				<div class="lessgapchildren">
+					<p>Reason:</p>
+					<input class="theme2 border1 round less-padding reason" type="text" placeholder="Why do you want to delete <%= profileInfo.username %>'s account?"/>
+				</div>
+				<div>
+					<label>
+						Keep forum content <span title="If checked, their account will be deleted, but their content will remain and be anonymized.">(?)</span>:
+						<input class="theme2 border1 round less-padding" type="checkbox" checked/>
+					</label>
+				</div>
+				<div class="verticalCenter finalControls">
+					<button id="cancelDeleteAccount" class="theme2 border1 round less-padding">Cancel</button>
+					<button class="theme2 border1 round less-padding" onclick="grecaptcha.execute()">Delete</button>
+				</div>
+            </div>
+        </div>
+		<% } %>
+		<main class="gapchildren" style="padding: 12px; max-width: 1040px; margin: auto;">
+			<% if(!viewingSelf && accInfo.isModerator && isLowerRanked){ %>
+			<div class="theme1 round border1 padding gapchildren" style="overflow: hidden;">
+				<p>Moderator Controls:</p>
+				<div>
+					<button id="btnResetPFP" class="theme2 border1 round less-padding">Reset Profile Picture</button>
+					<button id="btnToggleLockAccount" class="theme2 border1 round less-padding"><% if('locked' in profileInfo){ %>Unlock<% } else { %>Lock<% } %> Account</button>
+					<% if(accInfo.isAdmin){ %>
+					<button class="theme2 border1 round less-padding" onclick="DisplayAccountDeleteModal()">Delete Account</button>
+					<% } %>
+				</div>
+			</div>
+			<% } %>
+			<div class="round border1" style="overflow: hidden;">
+				<div class="theme1" style="display: flex; min-height: 180px">
+					<div id="info">
+						<p class="username">
+							<% if(profileInfo.isOnline){ %>
+							<span class="online-icon"title="online"></span>
+							<% } %>
+							<%= profileInfo.username %>
+						</p>
+						<% if(profileInfo.alias){ %>
+						<p class="alias">(<%- profileInfo.alias %>)</p>
+						<% } %>
+						<p>
+							Reputation: 
+							<span class="<%= profileInfo.reputation >= 0 ? "positive" : "negative" %>">
+								<a href="/profile/reputation?uid=<%= profileInfo._id %>"><%= profileInfo.reputation %></a>
+							</span>
+							<% if(!viewingSelf) { %>
+							<a href="/profile/rate?uid=<%= profileInfo._id %>">[rate]</a>
+							<% } %>
+						</p>
+						<p>Joined: <%= profileInfo.joinDate %></p>
+						<% if(profileInfo.lastonline && !profileInfo.isOnline){ %>
+						<p>Last online: 
+							<script>document.write(TimeStamp.Beautify('<%= profileInfo.lastonline %>'))</script>
+						</p>
+						<% } %>
+					</div>
+				</div>
+				<div id="medias">
+					<% if(profileInfo.medias.youtube){ %> <a href="<%= profileInfo.medias.youtube %>" title="YouTube channel" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/youtube.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.github){ %> <a href="https://github.com/<%= profileInfo.medias.github %>" title="GitHub profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(https://github.com/favicon.ico)"></span></a> <% } %>
+					<% if(profileInfo.medias.website){ %> <a href="<%= profileInfo.medias.website %>" title="Personal website" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/domain.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.discordtag){ %> <a onClick="prompt('Discord Contact:', '<%= profileInfo.medias.discordtag %>')" title="Discord Contact" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.discord){ %> <a href="<%= profileInfo.medias.discord %>" title="Discord Server" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.v3rmillion){ %> <a href="<%= profileInfo.medias.v3rmillion %>" title="V3rmillion Profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/v3rm.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.snapchat){ %> <a onClick="prompt('Snapchat username:', '<%= profileInfo.medias.snapchat %>')" title="Snapchat Username"><span class="profile_mediaicon" style="background-image: url(/images/icons/snapchat.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.twitter){ %> <a onClick="prompt('Twitter handle:', '<%= profileInfo.medias.twitter %>')" title="Twitter handle"><span class="profile_mediaicon" style="background-image: url(/images/icons/twitter.png)"></span></a> <% } %>
+					<% if(profileInfo.medias.facebook){ %> <a href="<%= profileInfo.medias.facebook %>" target="_blank" rel="noopener noreferrer" title="Facebook Page"><span class="profile_mediaicon" style="background-image: url(/images/icons/facebook.png)"></span></a> <% } %>
+				</div>
+				<img id="profile_mainprofilepicture" class="border1" src="<%= profileInfo.profilepicture %>" alt="Profile Picture"/>
+			</div>
+			<div id="profile_contentcontainer" style="display: flex">
+				<div id="profile_sidecards" class="gapchildren">
+					<% if(profileInfo.biography){ %>
+					<div class="theme1 profile_content round border1"}>
+						<p class="profile_sidecard">Bio</p>
+						<p class="biography"><%- profileInfo.biography %></p>
+					</div>
+					<% } %>
+					<% if(profileInfo.badges.length > 0){ %>
+					<div class="theme1 profile_content profile_badges round border1">
+						<p class="profile_sidecard">Badges</p>
+						<% profileInfo.badges.map(badges => { %>
+						<img src="<%= badges %>" alt="badge" style="width: 220px;"/>
+						<% }) %>
+					</div>
+					<% } %>
+					<div class="theme1 profile_content round border1">
+						<p class="profile_sidecard">Etc</p>
+						<% if(!viewingSelf && allowDMs){ %><p class="cursorpointer" onclick="LoadConversation(<%= profileInfo._id %>); OpenChat()">Send Message</p><% } %>
+						<a href="/profile/threads?uid=<%= profileInfo._id %>">Threads List</a><br>
+						<a href="/profile/alts?uid=<%= profileInfo._id %>">Possible Alts</a>
+					</div>
+				</div>
+				<div id="activityfeed" class="gapchildren">
+					<h2>Activity Feed</h2>
+					<div class="activitycards">
+						<% for (var i=0; i<activityFeed.length; i++){ %>
+						<div class="theme1 activitycard round border1">
+							<% if(isLowerRanked){ %><p class="delete" data-trid="<%= activityFeed[i]._id %>">x</p><% } %>
+							<p>
+								<% if(activityFeed[i].isOP){ %>Created a new thread<% } else { %>Replied to thread<% } %>: 
+								<a href="/t/<%= activityFeed[i].tid %>"><span class="threadTitle"><%- activityFeed[i].threadTitle %></span></a>
+							</p>
+							<br>
+							<div class="threadContent"><%- activityFeed[i].content %></div>
+						</div>
+						<% } %>
+						<% if(activityFeed.length<=0){ %><p style="text-align: center;">This user has no activity on the forum...</p><% } %>
+					</div>
+					<% if(moreFeedAvailable){ %><button class="theme1 border1 button btnLoadMore" style="margin: auto;">Load More</button><% } %>
+				</div>
+			</div>
+		</main>
+		<% include ../../partials/footer %>
+
+		<script type="text/javascript" src="/js/prism.js"></script>
+		<script type="text/javascript" src="/js/oembed.js?v=20"></script>
+		<script>
+			//Embed images in thread content
+            Array.prototype.forEach.call(document.getElementsByClassName("threadContent"), function(threadReply){
+                HTMLToOembed(threadReply, { fileDomainWhitelist: true })
+            })
+
+			document.addEventListener("click", function(event) {
+				var target = event.target;
+				if (target.matches(".delete")) {
+					if(!confirm("Confirm delete.")) return
+					fetch("/api/thread/reply", {
+						method: "DELETE",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							trid: target.getAttribute("data-trid"),
+						})
+					})
+					.then(res => res.json())
+					.then(res => {
+						if(res.success) target.parentElement.remove()
+						else {
+							if(res.reason) alert("Error: " + res.reason)
+							else alert("An unexpected error occured...")
+						}
+					})
+					.catch((e)=>{
+						console.log(e)
+						alert("Failed to contact the server or an unexpected response was received...")
+					})
+				}
+			});
+
+			<% if(moreFeedAvailable){ %>
+			var oldestTrid = "<%= activityFeed[activityFeed.length-1]._id %>";
+			document.getElementsByClassName("btnLoadMore")[0].onclick = function(){
+				fetch('/api/account/activity?uid=<%= profileInfo._id %>&trid='+oldestTrid, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+				.then(res => res.json())
+				.then(res => {
+					var {feed, moreFeedAvailable} = res
+					if(!feed) return
+					oldestTrid = feed[feed.length-1]._id
+
+					for(var i=0; i<feed.length; i++){
+						document.getElementsByClassName("activitycards")[0].innerHTML += (
+							'<div class="theme1 activitycard round border1">' +
+								<% if(isLowerRanked){ %>"<p class=\"delete\" data-trid=\"" + feed[i]._id + "\">x</p>" +<% } %>
+								"<p>" +
+									(feed[i].isOP ? "Created a new thread: " : "Replied to thread: ") +
+									'<a href="/t/' + feed[i].tid + '"><span class="threadTitle">' + feed[i].threadTitle + '</span></a>' +
+								"</p>" +
+								"<br>" +
+								"<div>" + feed[i].content + "</div>" +
+							"</div>"
+						)
+					}
+
+					if(!moreFeedAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
+				})
+			}
+			<% } %>
+
+			<% if(accInfo.isModerator){ %>
+			document.getElementById("btnResetPFP").onclick = function(){
+                if(!confirm("Are you sure you want to delete <%- profileInfo.username %>'s profile picture?")) return
+
+                fetch('/api/dashboard/removeprofilepicture', {
+					method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        uid: <%- profileInfo._id %>,
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else alert(res.reason || 'Unknown error occured...')
+                })
+				.catch(()=>alert("Failed to contact the server."))
+            }
+
+			document.getElementById("btnToggleLockAccount").onclick = function(){
+				let reason = prompt("Why do you want to <% if('locked' in profileInfo){ %>un<% } %>lock <%- profileInfo.username %>'s account?")
+                if(reason == null) return
+
+                fetch('/api/dashboard/lockaccount', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        uid: <%- profileInfo._id %>,
+						locked: <% if('locked' in profileInfo){ %>false<% } else { %>true<% } %>,
+						reason,
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else alert(res.reason || 'Unknown error occured...')
+                })
+				.catch(()=>alert("Failed to contact the server."))
+            }
+			<% } %>
+
+			<% if(accInfo.isAdmin){ %>
+			function DisplayAccountDeleteModal(){
+				document.querySelector(".deleteAccount.modal").style.display = "flex"
+			}
+			
+			document.querySelector("#cancelDeleteAccount").onclick = function(){
+				document.querySelector(".deleteAccount.modal").style.display = "none"
+			}
+
+			function deleteAccountCallback(grecaptcharesponse){
+				let form = document.getElementById("deleteAccountForm")
+				let password = form.querySelector('input[type="password"]').value
+				let reason = form.querySelector('.reason').value
+				let keepForumContent = form.querySelector('input[type="checkbox"]').checked
+
+				if(!password) return alert("Password required")
+
+                fetch('/api/dashboard/account', {
+					method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+						uid: <%= profileInfo._id %>,
+                        grecaptcharesponse,
+						password,
+						reason,
+						keepForumContent,
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) location.reload()
+					else alert(res.reason || 'Unknown error occured...')
+                })
+				.catch(()=>alert("Failed to contact the server."))
+
+				grecaptcha.reset();
+			}
+            
+            function deleteAccountErrorCallback() {
+                // Re-initialize reCaptcha
+                grecaptcha.reset();
+                // Fire reCaptcha
+                grecaptcha.execute();
+            }
+			<% } %>
+		</script>
+	</body>
+</html>

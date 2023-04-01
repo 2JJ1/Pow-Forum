@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "WeAreDevs",
+    "short_name": "WRD",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#2f3136",
+    "description": "Join the community of WeAreDevs and assist developers or solve issues with exploits.",
+    "icons": [
+      {
+        "src": "favicon.ico",
+        "sizes": "48x48",
+        "type": "image/png"
+      }
+    ]
+}

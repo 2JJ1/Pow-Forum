@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+	
+		<title>All Replies - Moderator Dashboard</title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/dashboard/allreplies.css?v=20" rel="stylesheet" type="text/css">
+        <link href="/css/prism.css" rel="stylesheet" type="text/css">
+
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+        <script type="text/javascript" src="/js/prism.js"></script>
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<main>
+            <h1>All Replies</h1>
+            <p style="color: gray; font-size: italic;">Unfiltered list of all replies on the forum</p>
+            <br>
+            <div class="threads">
+                <% for(var i=0; i<replies.length; i++){ %>
+                <% let reply = replies[i] %>
+                <div class="reply theme1 border1 round padding">
+                    <div>
+                        <% if(reply.deletable){ %><button class="btnDeleteReply bad" data-trid="<%- reply._id %>">x</button><% } %>
+                        <p><script>document.write(TimeStamp.Beautify('<%= reply.date %>'))</script> | </p>
+                        <p>By <a href="/profile?uid=<%= replies[i].uid %>" class="<%- reply.user.highestRole %>"><%- replies[i].user.username %></a>(<span class="<% if(reply.user.reputation>0){ %>good<% } %><% if(reply.user.reputation<0){ %>bad<% } %>"><%= reply.user.reputation %></span>) | </p>
+                        <p><span class="topicprefix">Topic:</span><a href="/t/<%= replies[i].tid %>" class="topic"><%- replies[i].thread.title %></a></p>
+                    </div>
+                    <br>
+                    <div class="content"><%- replies[i].content %></div>
+                </div>
+                <br>
+                <% } %>
+            </div>
+            <br>
+            <div class="pagination">
+                <button class="theme1 button border1 round btnPrevPage">Previous Page</button>
+                <button class="theme1 button border1 round btnNextPage">Next Page</button>
+            </div>
+		</main>
+        <% include ../../partials/footer %>
+        <script type="text/javascript" src="/js/oembed.js?v=20"></script>
+        <script>
+            //Embed images in thread content
+            Array.prototype.forEach.call(document.getElementsByClassName("content"), function(threadReply){
+                HTMLToOembed(threadReply, { fileDomainWhitelist: true })
+            })
+
+            const url = new URL(window.location)
+            var page = url.searchParams.get('page') || 1
+
+            if(page <= 1) document.getElementsByClassName("btnPrevPage")[0].remove()
+            
+            document.addEventListener("click", function(event){
+                // If the clicked element doesn't have the right selector, bail
+                if (event.target.matches('.btnNextPage')){
+                    url.searchParams.set("page", parseInt(page)+1)
+                    window.location = url.toString()
+                }
+                else if (event.target.matches('.btnPrevPage')){
+                    url.searchParams.set("page", parseInt(page)-1)
+                    window.location = url.toString()
+                }
+                else if (event.target.matches('.btnDeleteReply')){
+                    if(!confirm("You are about to delete a reply.")) return
+
+                    let trid = event.target.getAttribute("data-trid")
+
+                    fetch('/api/thread/reply', {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({trid}),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success) event.target.parentElement.parentElement.remove()
+                        else alert(res.reason || 'Unknown error occured...')
+                    })
+                    .catch(()=> alert("Failed to contact the server."))
+                }
+            })
+        </script>
+    </body>
+</html>

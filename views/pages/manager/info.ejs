@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="public information, settings, forum, social, media" />
+        <meta name="description" content="Modify your public account information here." />
+	
+		<title>Account Info Manager - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/acc/manager.css?v=20&v2=2" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <div id="errormsgcontainer" style="display: none;">
+            <div class="theme1 border1 round">
+                <h2 style="color: red; text-align: center;">Error</h2>
+                <p id="ErrorMessage" style="text-align: center">Unknown error</p>
+                <br>
+                <button onclick="HideError()" class="theme2 border1 round">Okay</button>
+            </div>
+        </div>
+        <% include ../../partials/global %>
+        <br>
+        <main class="screenPadding">
+            <% include ./nav %>
+			<br>
+            <div class="manager_container pfpOptions gapchildren theme1 round border1">
+                <h2>Profile Picture <span style="color: gray; font-size: 12px;">2MB max file size</span></h2>
+                <div>
+                    <img class="pfpPreview border1" src="<%= accInfo.profilepicture %>">
+                    <div>
+                        <form id="avatar" class="lessgapchildren">
+                            <div>
+                                <input id="avatarfile" name="avatar" type="file" accept="image/x-png,image/gif,image/jpeg,image/webp">
+                            </div>
+                            <button class="theme2 round border1" type="submit">Upload & Save</button>
+                        </form>
+                        <p>OR</p>
+                        <button id="useGravatar" class="theme2 round border1">Use Gravatar</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="manager_container gapchildren theme1 round border1">
+                <h2>Account Info</h2>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Username:</p>
+                    <input id="username" class="theme2 border1" type="text" placeholder="<%= accInfo.username %>" value="<%= accInfo.username %>" data-curval="<%= accInfo.username %>">
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Short Introduction:</p>
+                    <input id="intro" class="theme2 border1" type="text" placeholder="Describe yourself..." value="<%= accInfo.biography %>" data-curval="<%= accInfo.biography %>">
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Title:</p>
+                    <input id="alias" class="theme2 border1" type="text" placeholder="MyNickname" value="<%= accInfo.alias %>" data-curval="<%= accInfo.alias %>">
+                </div>
+                <h2>Social Media</h2>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">YouTube Channel Link:</p>
+                    <input id="youtube" class="theme2 border1" type="text" placeholder="https://youtube.com/..." value="<%= accInfo.medias.youtube %>" data-curval="<%= accInfo.medias.youtube %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">GitHub Username:</p>
+                    <input id="github" class="theme2 border1" type="text" placeholder="GitHub-Username" value="<%= accInfo.medias.github %>" data-curval="<%= accInfo.medias.github %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Discord Contact:</p>
+                    <input id="discordtag" class="theme2 border1" type="text" placeholder="DisplayName#0000" value="<%= accInfo.medias.discordtag %>" data-curval="<%= accInfo.medias.discordtag %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Discord Server Invite:</p>
+                    <input id="discord" class="theme2 border1" type="text" placeholder="https://discordapp.com/..." value="<%= accInfo.medias.discord %>" data-curval="<%= accInfo.medias.discord %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">V3rmillion Profile Link:</p>
+                    <input id="v3rmillion" class="theme2 border1" type="text" placeholder="https://v3rmillion.net/..." value="<%= accInfo.medias.v3rmillion %>" data-curval="<%= accInfo.medias.v3rmillion %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Snapchat Username:</p>
+                    <input id="snapchat" class="theme2 border1" type="text" placeholder="Username" value="<%= accInfo.medias.snapchat %>" data-curval="<%= accInfo.medias.snapchat %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Twitter Handle:</p>
+                    <input id="twitter" class="theme2 border1" type="text" placeholder="@MyHandle123" value="<%= accInfo.medias.twitter %>" data-curval="<%= accInfo.medias.twitter %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Facebook Page Link:</p>
+                    <input id="facebook" class="theme2 border1" type="text" placeholder="https://facebook.com/..." value="<%= accInfo.medias.facebook %>" data-curval="<%= accInfo.medias.facebook %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Personal Website:</p>
+                    <input id="website" class="theme2 border1" type="text" placeholder="https://link.com/" value="<%= accInfo.medias.website %>" data-curval="<%= accInfo.medias.website %>"/>
+                </div>
+                <div class="lessgapchildren">
+                    <h2>Etc</h2>
+                    <div class="lessgapchildren">
+                        <p class="manager_descriptor">Forum Signature:</p>
+                        <textarea id="signature" class="theme2 border1 round" placeholder="Random quote here..." data-curval="<%= accInfo.signature %>"><%= accInfo.signature %></textarea>
+                    </div>
+                </div>
+                <button id="saveinfo" class="theme2 round border1" type="submit">Save</button>
+                <br>
+                <p id="errormsg" style="color: red; text-align: center"><p>
+			</div>
+        </main>
+        <% include ../../partials/footer %>
+		
+		<script>
+            $("#avatar").submit(function( event ) {
+                event.preventDefault();
+
+                var file = $("#avatarfile")[0].files[0]
+                var data = new FormData();
+
+                if(file) {
+                    if(file.size > 2 * 1000 * 1000) return ShowError("File too large: Can't exceed 2 Megabytes", "red")
+                    data.append("avatar", file);
+                }
+                else if(!confirm("Are you sure you want to remove your profile picture?")) return
+
+                jQuery.ajax({
+                    url: '/api/account/manager/profilepicture',
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    method: 'POST',
+                    type: 'POST', // For jQuery < 1.9
+                    success: function(data){
+                        if(data.success){
+                            document.querySelector(".pfpPreview").setAttribute("src", data.newProfilePicture)
+                            alert('Success')
+                        } else {
+                            ShowError(data.reason)
+                        }
+                    }
+                });
+            })
+
+            document.getElementById("useGravatar").onclick = function(){
+                fetch('/api/account/manager/usegravatar', {
+                    method: "POST"
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) {
+                        document.querySelector(".pfpPreview").setAttribute("src", res.newProfilePicture)
+                        alert("Success")
+                    }
+                    else alert(res.reason || 'Unknown error occured...')
+                })
+				.catch(()=> alert("Failed to contact the server."))
+            }
+
+			$("#saveinfo").on("click", function( event ) {
+                var changedData = {}
+
+                var inputs = ['username', 'intro', 'alias', 'youtube', 'github', 'website', 'discord', 'discordtag', 'v3rmillion', 'snapchat', 'twitter', 'facebook']
+
+                for(var i=0; i<inputs.length; i++){
+                    if($('#' + inputs[i]).val() !== $('#' + inputs[i]).attr('data-curval'))
+                        changedData[inputs[i]] = $('#' + inputs[i]).val();
+                }
+
+                if(tinymce.activeEditor.getContent() !== $('#signature').attr('data-curval'))
+                    changedData.signature = tinymce.activeEditor.getContent()
+
+                fetch('/api/account/manager/info', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify(changedData),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload() 
+                    else document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                })
+				.catch(()=>document.getElementById('errormsg').innerHTML = "Failed to contact the server.")
+            });
+
+            function ShowError(errorMsg="Unknown error..."){
+                $('#ErrorMessage').text(errorMsg)
+                $('#errormsgcontainer').show('fast')
+            }
+
+            function HideError(){
+                $('#errormsgcontainer').hide('fast')
+            }
+
+            //Initialize TinyMCE
+            tinymce.init({
+                selector: '#signature',
+                menubar: false,
+                plugins: 'link hr lists codesample',
+                toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright | fontsizeselect forecolor | bullist numlist blockquote link hr codesample | undo redo',
+                height: 300,
+                content_style: "p {margin: 0}",
+                relative_urls: false,
+                remove_script_host : true,
+                codesample_languages: [
+                    { text: 'Lua', value: 'lua' },
+                    { text: 'C++', value: 'cpp' },
+                    { text: 'Rust', value: 'rust' },
+                    { text: 'C#', value: 'csharp' },
+                    { text: 'Python', value: 'python' },
+                    { text: 'PHP', value: 'php' },
+                    { text: 'JavaScript', value: 'javascript' },
+                    { text: 'HTML/XML', value: 'markup' },
+                    { text: 'CSS', value: 'css' },
+                ],
+                custom_colors: false,
+                color_map: [
+                    "CD201F", "Red",
+                    "E11D48", "Rose",
+                    "C0392B", "Pomegranate",
+                    "1ABC9C", "Turquoise",
+                    "2ECC71", "Emerland",
+                    "3498DB", "Peterriver",
+                    "2980B9", "Belizehole",
+                    "E67E22", "Carrot",
+                    "F1C40F", "Sunflower",
+                    "6D28D9", "Violet",
+                    "9333EA", "Purple",
+                    "C026D3", "Fuchsia",
+                    "34495E", "Wet Asphalt",
+                    "795548", "Brown",
+                ],
+                skin: "oxide-dark",
+                content_css: "/css/themes/night.css?v=20",
+            });
+        </script>
+        <style>
+            #errormsgcontainer{
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                background-color: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #errormsgcontainer > div{
+                padding: 12px;
+                max-width: 400px;
+                width: 100%;
+            }
+
+            #errormsgcontainer > div > button{
+                width: auto;
+                padding: 8px 80px;
+                margin: auto;
+            }
+        </style>
+	</body>
+</html>

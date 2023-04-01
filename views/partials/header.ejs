@@ -1,0 +1,169 @@
+<header id="navigationbar" class="border1-bottom">
+    <span class="menu-toggle <% if(accInfo._id && accInfo.notifications.length > 0){ %>menu-toggle-notif<% } %>"></span>
+    <ul class="navItems">
+        <a id="foologo" href="/" title="<%- powForum.title %>" title="Speak with the community"><%- powForum.title %></a>
+        <% if(accInfo.isModerator){ %>
+        <li class='navItem'>
+            <a title="Moderator dashboard" href="/dashboard">Dashboard</a>
+        </li>
+        <% } %>
+        <li class='navItem'>
+            <a title="Search for a user" href="/profile/search">Users</a>
+        </li>
+        <li class='navItem'>
+            <a title="Upgrade your experience" href="/upgrade">Upgrade</a>
+        </li>
+        <% powForum.navLinks.forEach(navLink => { %>
+        <li class='navItem <% if(navLink.isAd){ %>adTip<% } %>'>
+            <a title="<%- navLink.altText %>" href="<%- navLink.link %>" target="_blank"><%- navLink.text %></a>
+        </li>
+        <% }) %>
+        <% if (accInfo._id){ %>
+        <li class='navItem navHeader_dropmenu navbell'>
+            <span class="dropmenu-title notifbell" title="Notifications"><% if(accInfo.notifications.length > 0){ %><span class="notifcount"><%= accInfo.notifications.length %></span><% } %></span>
+            <div class="menu theme1 round border1">
+                <% if(accInfo.notifications.length <= 0){ %>
+                <p>No notifications</p>
+                <% } else { %>
+                <p class="deleteallnotifs" onclick="DeleteNotifications()">Delete All</p>
+                <div class="notifications">
+                    <% for(var i=0; i<accInfo.notifications.length; i++){ %>
+                    <% var notif = accInfo.notifications[i] %>
+                    <div class="notification" data-id="<%= notif.id %>">
+                        <% if(notif.senderpfp){ %><img src="<%= notif.senderpfp %>"><% } %>
+                        <div>
+                            <a class="message-notif"
+                            <% if(notif.type === "message") { %>
+                            onclick="LoadConversation(<%= notif.senderid %>); OpenChat()"
+                            data-chatroom=<%= notif.senderid %>
+                            <% } else { %>
+                            href="<%= notif.link %>"
+                            <% } %>
+                            ><%= notif.text %></a>
+                            <p class="notif-time"><script>document.write(TimeStamp.Beautify('<%= notif.timestamp %>'))</script></p>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+        </li>
+        <li class='navItem navHeader_dropmenu'>
+            <p class="dropmenu-title" title="Account options"><%= accInfo.username %></p>
+            <div class="menu theme1 round border1">
+                <a href='/profile'>Profile</a>
+                <a href='/manager/info' title="Manage your account">Account</a>
+                <p class="dropMenu_option" onclick="logout()">Logout
+                </p>
+            </div>
+        </li>
+        <% } else { %>
+        <li class='navItem' style="margin-left: auto;"><a href="/login">Login</a></li>
+        <% } %>
+    </ul>
+	
+	<script>
+        //Used to send logout request to API
+		function logout(){
+            if(!confirm("You are about to logout")) return
+
+            fetch('/api/account/logout', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) window.location.reload()
+                else {
+                    if(res.reason) alert("Error: " + res.reason)
+                    else alert("An unexpected error occured...")
+                }
+            })
+            .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
+        }
+
+        async function DeleteNotifications(options){
+            //Prepare data
+            let documentID
+            let notificationElement
+            if(typeof options === "object") {
+                if(options.chatroom) {
+                    notificationElement = document.querySelector(`a[data-chatroom="${options.chatroom}"]`).parentElement.parentElement
+                    documentID = notificationElement.getAttribute('data-id')
+                }
+            }
+            else {
+                //Plainly received the notification document id
+                documentID = options
+                notificationElement = document.querySelector(`.notification[data-id="${documentID}"]`)
+            }
+            
+            //Requests API to delete notification from server database
+            await fetch('/api/notifications', {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: documentID
+                })
+            })
+            .then(res => res.json())
+
+            // UI management
+            //Only deleted one notification
+            if(documentID) {
+                let notificationsContainer = document.querySelector('.notifications')
+                var numNotifs = notificationsContainer.childElementCount
+                document.querySelector(".notifcount").innerHTML = numNotifs - 1
+                if(numNotifs <= 1){
+                    notificationsContainer.innerHTML = "No notifications"
+                    document.querySelector(".notifcount").remove()
+                    document.querySelector(".deleteallnotifs").remove()
+                    document.querySelector(".menu-toggle-notif").classList.remove("menu-toggle-notif")
+                }
+                notificationElement.remove()
+            }
+            //The server will default to delete everything because there is no specified id
+            else {
+                document.getElementsByClassName("notifications")[0].innerHTML = "<p>No notifications...</p>"
+                document.getElementsByClassName("notifcount")[0].style.display = "none"
+                document.getElementsByClassName("menu-toggle-notif")[0].classList.remove("menu-toggle-notif")
+                document.querySelector('.deleteallnotifs').style.display = 'none'
+            }
+        }
+        
+        // Listen to all clicks on the document
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('message-notif')){
+                var parent = event.target.parentElement.parentElement
+                var id = parent.getAttribute("data-id")
+
+                DeleteNotifications(id)
+            }
+            //Navigation options display toggle (Mobile view)
+            else if(event.target.classList.contains('menu-toggle')){
+                if(document.getElementsByClassName("navItems")[0].style.display !== "flex"){
+                    document.getElementsByClassName("navItems")[0].style.display = "flex"
+                    document.getElementsByClassName("menu-toggle-notif")[0].classList.remove("menu-toggle-notif")
+                }
+                else {
+                    document.getElementsByClassName("navItems")[0].style.display = "none"
+                    if(document.getElementsByClassName("notification").length > 0) 
+                        document.getElementsByClassName("menu-toggle")[0].classList.add("menu-toggle-notif")
+                }
+            }
+            //Drop-menu toggle
+            else if(event.target.classList.contains('dropmenu-title')){
+                if(event.target.parentElement.getElementsByClassName("menu")[0].style.display !== "block"){
+                    event.target.parentElement.getElementsByClassName("menu")[0].style.display = "block"
+                }
+                else event.target.parentElement.getElementsByClassName("menu")[0].style.display = "none"
+
+                event.target.parentElement.onmouseleave = () => event.target.parentElement.getElementsByClassName("menu")[0].style.display = "none"
+            } 
+        })
+    </script>
+</header>

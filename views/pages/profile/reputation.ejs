@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="View <%= profileInfo.username %>'s account reputation on <%- powForum.title %>." />
+	
+		<title><%= profileInfo.username %>'s Reputation</title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/reputation.css?v=20" rel="stylesheet" type="text/css">
+		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<br>
+		<main>
+            <div id="accheader" class="theme1 round border1">
+                <a href="/profile?uid=<%= profileInfo._id %>">
+                    <img id="pfp" class="round" src="<%= profileInfo.profilepicture %>" alt="profile picture"/>
+                </a>
+                <div id="accinfo">
+                    <a href="/profile?uid=<%= profileInfo._id %>"><p id="username"><%= profileInfo.username %>'s Reputation</p></a>
+                    <p id="repsum">Reputation: <span class="<%= profileInfo.reputation>=0?"positive":"negative" %>"><%= profileInfo.reputation %></a></span></p>
+                </div>
+            </div>
+            <br/>
+            <div id="reputationcontainer">
+                <% for(var i=0; i<repcards.length; i++){ %>
+                    <% var repCard=repcards[i] %>
+                <div class="repcard theme1 round border1" data-id="<%= repCard._id %>">
+                    <% if(repCard.canDelete && repCard.diff < 0){ %><button class="btnDelete">X</button><% } %>
+                    <p>
+                        <% if(repCard.diff < 0 && !repCard.canDelete && !isMod && repCard._from!=1){ %>
+                        <p title="To prevent harassment, senders of negative reputation are anonymized.">
+                            <% if(repCard.diff <= -10){ %>
+                            [Moderator]
+                            <% } else { %>
+                            [Anonymous]
+                            <% } %>
+                        </p>
+                        <% } else { %>
+                        <a href="/profile?uid=<%= repCard.from %>"><%= repCard.username %></a>
+                        <a href="/profile/reputation?uid=<%= repCard.from %>"><span class="<%= repCard.reputation >= 0 ? 'positive' : 'negative' %>">(<%= repCard.reputation %>)</span></a>
+                        <% } %>
+                    </p>
+                    <p class="date"><%= repCard.date %></p>
+                    <br/>
+                    <p>
+                        <span class="<%= repCard.diff >= 0 ? 'positive' : 'negative' %>"><%= repCard.diff %></span>
+                        : <%- repCard.comment %>
+                    </p>
+                </div>
+                <% } %>
+            </div>
+		</main>
+        <% include ../../partials/footer %>
+        
+		<script>
+            document.addEventListener("click", function(event){
+                // If the clicked element doesn't have the right selector, bail
+                if (!event.target.matches('.btnDelete')) return;
+
+                var repID = event.target.parentElement.getAttribute("data-id")
+
+                if(!confirm("Are you sure you want to delete that reputation?")) return
+
+                fetch("/api/account/rate?id="+repID, {
+                    method: "DELETE",
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        event.target.parentElement.remove()
+                    }
+                    else{
+                        alert("Failed to delete the reputation")
+                    }
+                })
+            })
+		</script>
+	</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="View your billing information or cancel a subscription here." />
+	
+		<title>Account Billing Manager - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/acc/manager.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <br>
+        <main class="screenPadding">
+            <% include ./nav %>
+			<br>
+            <div class="theme1 round border1 manager_container">
+                <div class="gapchildren">
+                    <h2>Junior Membership</h2>
+                    <% if(accInfo.pendingcancellation) { %>
+                        <p>Membership cancelation requested, but you will still receive your benefits till the end of your term. Uncancel below to continue your subscription</p>
+                        <button class="theme2 border1" onclick="stripe_uncancel()">Uncancel</button>               
+                    <% } else { %>
+                        <button class="theme2 border1" onclick="stripe_cancel()">Cancel</button>
+                    <% } %>
+                </div>
+            </div>
+            <br>
+            <p id="errormsg" style="color: red; text-align: center"><p>
+        </main>
+        <% include ../../partials/footer %>
+		
+		<script>
+            function stripe_cancel(){
+                fetch('/api/stripe/cancel', {
+					method: "POST",
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else {
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('errormsg').innerHTML = "Failed to contact the server.")
+            }
+
+            function stripe_uncancel(){
+                fetch('/api/stripe/uncancel', {
+					method: "POST",
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else {
+                        document.getElementById('errormsg').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('errormsg').innerHTML = "Failed to contact the server.")
+            }
+        </script>
+	</body>
+</html>

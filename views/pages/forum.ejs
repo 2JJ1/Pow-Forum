@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="<%- powForum.title %>, forum, list, category, threads, community" />
+        <meta name="description" content="Threads list for the <%= category.name %> category on <%- powForum.title %>" />
+        
+		<title><%= category.name %> - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+        <link href="/css/forum.css?v=20" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>  
+	</head>
+	<body class="container">
+		<% include ../partials/global %>
+		<main class="screenPadding" style="max-width: 1100px; margin: auto">
+            <div class="theme2 round border1 padding">
+                <p>
+                    <a href="/">Categories</a> > 
+                    <% if(category.name !== "All Categories"){ %>
+                    <a href="/#<%= category.database %>"><%= category.group %></a> >
+                    <% } %>
+                </p>
+                <h1><%= category.name %></h1>
+            </div>
+            <br/>
+            <div class="forumMenu">
+                <select id="order" class="theme1 border1">
+                    <option value="latestactive">Sort latest active</option>
+                    <option value="latestthread">Sort latest topic</option>
+                </select>
+                <input id="searchbar" class="theme1 border1" type="text" placeholder="Search..." autocomplete="off"/>
+                <% if(forumData.canPost){ %> 
+                <a href="/c/<%= category.database %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                <% } %>
+            </div>
+            <br/>
+            <table class="forumcontainer theme1 round border1 padding">
+                <thead>
+                    <tr>
+                        <% if(category.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
+                        <th>Topic</th>
+                        <th class="not-mobile">Replies</th>
+                        <th class="not-mobile">Views</th>
+                        <th class="not-mobile">Last Replier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <% for(index in forumData.threads){ %>
+                    <% let thread = forumData.threads[index] %>
+                    <tr>
+                        <% if(category.name === "All Threads"){ %> 
+                        <td class="not-mobile"><a href="/<%= thread.forum %>"><%- thread.forum %></a></td>
+                        <% } %>
+                        <td>
+                            <a class="thread-title" href="/t/<%= thread._id %>">
+                                <% if(thread.pinned){ %><span class="pin" title="This thread contains important imformation."></span><% } %> 
+                                <%- thread.title %>
+                            </a>
+                            <p style="font-size: 12; color: gray">
+                                <a href="/profile?uid=<%= thread.OPUID %>"><%= thread.OPName %></a>
+                                    - <script>document.write(TimeStamp.Beautify('<%- thread.date %>'))</script>
+                            </a>
+                        </td>
+                        <td class="not-mobile"> <%= thread.replies %> </td>
+                        <td class="not-mobile"> <%= thread.views %> </td>
+                        <td class="not-mobile">
+                            <% if("LRName" in thread){ %>
+                                <a href="/profile?uid=<%= thread.LRUID %>"><%= thread.LRName %></a>
+                            <% } else { %>
+                                <%= "-No Reply-" %>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+            <br/>
+            <div style="display: flex">
+                <div class="theme2 round border1" style="flex: 1; margin-right: 15px;">
+                    <div id="paginator" class="padding" style="text-align: center; display: flex; justify-content: space-around;">
+                        <% if(forumData.currentPage > 2){ %><span onclick="ChangePage(0)"> << </span> <% } %>
+                        <% if(forumData.currentPage > 1){ %><span onclick="ChangePage('<%= forumData.currentPage - 1 %>')"> < </span> <% } %>
+                        <p><%= forumData.currentPage %></p>
+                        <% if(forumData.currentPage < forumData.totalPages){ %><span onclick="ChangePage('<%= forumData.currentPage + 1 %>')"> > </span> <% } %>
+                        <% if(forumData.currentPage + 1 < forumData.totalPages ){ %><span onclick="ChangePage('<%= forumData.totalPages %>')"> >> </span> <% } %>
+                    </div>
+                </div>
+                <% if(forumData.canPost){ %> 
+                <a href="/c/<%= category.database %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                <% } %>
+            </div>
+            <br>
+            <div class="theme2 border1 round padding">
+                <h3>Users browsing <%= category.name %>:</h3>
+				<br>
+				<% include ../partials/onlinelist %>
+			</div>
+        </main>
+		<% include ../partials/footer %>
+		
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script>
+            $('#order').on('change', function(e){
+                var url = window.location.href
+                if(this.value === "latestactive"){
+                    url = update_query_string('search', "", url)
+                }
+
+                url = update_query_string('order', this.value, url)
+
+                window.location.href = url
+            })
+
+            $('#searchbar').keypress(function(event){
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if(keycode == '13'){
+                    window.location.href = update_query_string('search', $('#searchbar').val())
+                }
+            });
+
+            function ChangePage(pageNumber){
+                window.location.href = update_query_string('page', pageNumber)
+            }
+
+            //Client side render
+            $(document).ready(function(){
+                let order = getUrlParameter('order')
+                if(order){
+                    $('#order').val(order)
+
+                    //Complications on the server doesn't allow string search on the latest_reply order
+                    if(order === "latest_reply"){
+                        $('#searchbar').remove()
+                    }
+                }
+
+                let search = getUrlParameter('search')
+                if(search){
+                    $('#searchbar').val(search)
+                }
+            })
+            
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
+                }
+            };
+
+            function update_query_string( key, value, uri ) {
+                // Use window URL if no query string is provided
+                uri = uri || window.location.href;
+
+                // Create a dummy element to parse the URI with
+                var a = document.createElement( 'a' ), 
+
+                    // match the key, optional square brackets, an equals sign or end of string, the optional value
+                    reg_ex = new RegExp( key + '((?:\\[[^\\]]*\\])?)(=|$)(.*)' ),
+
+                    // Setup some additional variables
+                    qs,
+                    qs_len,
+                    key_found = false;
+
+                // Use the JS API to parse the URI 
+                a.href = uri;
+
+                // If the URI doesn't have a query string, add it and return
+                if ( ! a.search ) {
+
+                    a.search = '?' + key + '=' + value;
+
+                    return a.href;
+                }
+
+                // Split the query string by ampersands
+                qs = a.search.replace( /^\?/, '' ).split( /&(?:amp;)?/ );
+                qs_len = qs.length; 
+
+                // Loop through each query string part
+                while ( qs_len > 0 ) {
+
+                    qs_len--;
+
+                    // Remove empty elements to prevent double ampersands
+                    if ( ! qs[qs_len] ) { qs.splice(qs_len, 1); continue; }
+
+                    // Check if the current part matches our key
+                    if ( reg_ex.test( qs[qs_len] ) ) {
+
+                        // Replace the current value
+                        qs[qs_len] = qs[qs_len].replace( reg_ex, key + '$1' ) + '=' + value;
+
+                        key_found = true;
+                    }
+                }   
+
+                // If we haven't replaced any occurrences above, add the new parameter and value
+                if ( ! key_found ) { qs.push( key + '=' + value ); }
+
+                // Set the new query string
+                a.search = '?' + qs.join( '&' );
+
+                return a.href;
+                }
+		</script>
+	</body>
+</html>

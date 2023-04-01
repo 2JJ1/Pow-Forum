@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="<%- powForum.title %>, email verification" />
+        <meta name="description" content="Verify your account email here using the token found in your emails." />
+	
+		<title>Email Verification - <%- powForum.title %></title>
+		
+		<% include ../partials/headimps %>
+        
+        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>        
+	</head>
+	<body class="container" style="display: flex; flex-direction: column;"> 
+        <% include ../partials/global %>
+        <main style="padding: 12px; max-width: 900px; margin: auto;">
+            <p style="text-align: center; font-size: 20px;"><%= message %></p>
+        </main>
+		<% include ../partials/footer %>
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	</body>
+</html>

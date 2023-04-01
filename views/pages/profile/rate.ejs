@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Modify <%= profileInfo.username %>'s account reputation on <%- powForum.title %>." />
+	
+		<title><%= profileInfo.username %>'s Reputation</title>
+		
+		<% include ../../partials/headimps %>
+		<link href="/css/profile/rate.css?v=20" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<main>
+            <br>
+            <div id="ratingswindow" class="theme1 round border1">
+                <a href="/profile?uid=<%= profileInfo._id %>"><img id="pfp" class="border1" src="<%= profileInfo.profilepicture %>"/></a>
+                <br>
+                <p>Your reputation rating for <a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a> <span class="<%= profileInfo.reputation>=0?'positive':'negative' %>">(<%= profileInfo.reputation %>)</span></p>
+                <br/>
+                <!-- How much to diff the user -->
+                <select id="reprating" class="theme2 border1 round">
+                    <% if(accInfo.canDiff2){ %><option value="2" class="positive" <%= rating.diff==2 && "selected" %>>Positive (+2)</option><% } %>
+                    <option value="1" class="positive" <%= rating.diff==1 && "selected" %>>Positive (+1)</option>
+                    <!-- Can only delete a rating if there is a rating -->
+                    <% if(rating.diff){ %><option value="0">Delete</option> <% } %>
+                    <% if(!accInfo.banRepNeg){ %><option value="-1" class="negative" <%= rating.diff==-1 && "selected" %>>Negative (-1)</option><% } %>
+                    <% if(accInfo.canDiff2 && !accInfo.banRepNeg){ %><option value="-2" class="negative" <%= rating.diff==-2 && "selected" %>>Negative (-2)</option><% } %>
+                </select>
+                <br>
+                <br>
+                <p>What do you want to say about them?</p>
+                <% if(accInfo.banRepNeg){ %><p style="color: red; font-size: 10px;">Note: You are banned from negative repping.</p><% } %>
+                <textarea id="ratingcomment" class="theme2 border1" placeholder="Your opinion on them. Abide by the rules. Negative rep must include a good reason. Payback negative rep is not allowed."><%- rating.comment %></textarea>
+                <br>
+                <button class="round" onclick="SendRating()">Submit</button>
+                <p id="ratingerror"></p>
+            </div>
+		</main>
+		<% include ../../partials/footer %>
+		
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script>
+			//Limits textarea's text length to 140 chars
+			$("#ratingcomment").keypress(function(){
+				var comment = $("#ratingcomment").val()
+				if(comment.length > 140){
+					var limitedttext = $("#ratingcomment").val().substr(0,140)
+					$("#ratingcomment").val(limitedttext)
+				}
+            })
+            
+            function SendRating(){
+                $("#ratingerror").text("")
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/account/rate',
+                    data: JSON.stringify({
+                        uid: parseInt("<%= profileInfo._id %>"),
+                        rating: parseInt($("#reprating").val()),
+                        comment: $("#ratingcomment").val()
+                    }),
+                    contentType: "application/json",
+                    success: function(data){
+                        if(data.success){
+                            document.location.href = "/profile?uid=<%= profileInfo._id %>"
+                        } else {
+                            if(data.reason && data.reason.length > 0){
+                                $("#ratingerror").text(data.reason)
+                            } else {
+                                $("#ratingerror").text("Unknown error occured...")
+                            }
+                        }
+                    },
+                    error: function(xhr, error){
+                        $("#ratingerror").text("Failed to contact the server...")
+                    }
+                });
+            }
+		</script>
+</html>

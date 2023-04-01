@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Add, edit, or remove categories here." />
+	
+		<title>Categories Dashboard - <%- powForum.title %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/dashboard/categories.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <div class="editcategorygroup modal">
+            <div class="theme1 border1 round gapchildren">
+                <h2>Edit group category</h2>
+                <div>
+                    <p>Change category group name:</p>
+                    <input class="theme2 border1 round less-padding" type="text" placeholder="Category group name..."/>
+                </div>
+                <div class="subModals">
+                    <button name="addCategory" class="theme2 border1 round less-padding">Add category</button>
+                </div>
+                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+            </div>
+        </div>
+        <div class="addcategory modal">
+            <div class="theme1 border1 round gapchildren">
+                <h2>Add new category to <span class="categorygroup">X</span></h2>
+                <div class="lessgapchildren">
+                    <p>Name:</p>
+                    <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
+                </div>
+                <div class="lessgapchildren">
+                    <p>Description:</p>
+                    <input name="description" class="theme2 border1 round less-padding" type="text" placeholder="What is this category about?"/>
+                </div>
+                <div class="lessgapchildren">
+                    <p>Required Roles:</p>
+                    <p>Optional- What roles are required to post here?</p>
+                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='["moderator","vip"]'/>
+                </div>
+                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+            </div>
+        </div>
+        <div class="editcategory modal">
+            <div class="theme1 border1 round gapchildren">
+                <h2>Edit Category</h2>
+                <div class="lessgapchildren">
+                    <p>Category name:</p>
+                    <input class="newName theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
+                </div>
+                <div class="lessgapchildren">
+                    <p>Description:</p>
+                    <input class="newDescription theme2 border1 round less-padding" type="text" placeholder="Description..."/>
+                </div>
+                <div class="lessgapchildren">
+                    <p>Required Roles:</p>
+                    <p>Optional- What roles are required to post here?</p>
+                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='moderator, vip...'/>
+                </div>
+                <div class="subModals">
+                    <button name="changeGroup" class="theme2 border1 round less-padding">Change Group</button>
+                    <button name="deleteCategory" class="theme2 border1 round less-padding">Delete category</button>
+                </div>
+                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+            </div>
+        </div>
+        <div class="requestPassword modal">
+            <div class="theme1 border1 round gapchildren">
+                <h2>Enter your password</h2>
+                <input class="theme2 border1 round less-padding" type="password" placeholder="*****"/>
+                <button type="submit" class="theme2 border1 round less-padding">Submit</button>
+            </div>
+        </div>
+        <div class="changecategoriesgroup modal">
+            <div class="theme1 border1 round gapchildren">
+                <h2>Choose new group for <span class="categoryName">X</span></h2>
+                <div class="categorygroupoptions gapchildren">
+                    <% for(let group of categoryGroups){ %>
+                    <button class="theme2 border1 round less-padding"><%- group.name %></button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+
+
+        <main class="screenPadding gapchildren">
+            <h1>Manage Categories</h1>
+            <p>Add, edit, or remove categories here</p>
+            <hr>
+            <% categoryGroups.forEach(group => { %>
+            <div class="theme1 border1 padding round gapchildren">
+                <div class="categorygroup editable">
+                    <span class="edit" onclick="EditCategoryGroup(this)"></span>
+                    <h2><%- group.name %></h2>
+                </div>
+                <% categories.filter(category => category.group == group.name).forEach(category => { %>
+                <div class="category editable">
+                    <span class="edit" onclick="EditCategory(this)"></span>
+                    <div>
+                        <h3 class="categoryName"><%- category.name %></h3>
+                        <p class="description"><%- category.description %></p>
+                        <% if(category.requiredRoles.length > 0){ %>
+                        <p>Required roles: <span class="requiredRoles"><%- category.requiredRoles %></span></p>
+                        <% } %>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <% }) %>
+        </main>
+        <% include ../../partials/footer %>
+		<script>
+            // Edit category group modal
+            //Open modal
+            let editingCategoryGroupName
+            function EditCategoryGroup(e){
+                let currentName = e.parentElement.querySelector("h2").textContent
+
+                //Display
+                let modal = document.querySelector('.editcategorygroup')
+                modal.style.display = "flex"
+                //Fill data
+                modal.querySelector('input').value = currentName
+
+                //Handle add category button
+                document.querySelector('.editcategorygroup button[name="addCategory"]').onclick = function(e){
+                    //Display add category modal
+                    modal.style.display = 'none'
+                    let addCategoryModal = document.querySelector('.addcategory.modal')
+                    addCategoryModal.style.display = 'flex'
+                    addCategoryModal.querySelector('.categorygroup').textContent = currentName
+
+                    //Requests change
+                    addCategoryModal.querySelector('button[type="submit"]').onclick = function(){
+                        let name = addCategoryModal.querySelector('input[name="name"]').value
+                        let description = addCategoryModal.querySelector('input[name="description"]').value
+                        let requiredRoles = addCategoryModal.querySelector('input[name="requiredRoles"]').value
+                        
+                        fetch('/api/dashboard/addcategory', {
+                            method: "POST",
+                            headers: {
+                                'content-type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name,
+                                description,
+                                requiredRoles,
+                                group: currentName,
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+                            if(res.success){
+                                document.location.reload()
+                            }
+                            else {
+                                alert(res.reason || "An unknown server error has occured")
+                            }
+                        })
+                    }
+                }
+                
+                //Wait for user to submit new information
+                document.querySelector('.editcategorygroup button[type="submit"]').onclick = function(e){
+                    let newName = e.target.parentElement.querySelector('input').value
+
+                    //Abort if there is no change
+                    if(newName == currentName) return document.querySelector('.editcategorygroup').style.display = 'none'
+
+                    //Requests change
+                    fetch('/api/dashboard/editcategorygroupname', {
+                        method: "POST",
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            currentName,
+                            newName,
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success){
+                            document.location.reload()
+                        }
+                        else {
+                            alert(res.reason || "An unknown server error has occured")
+                        }
+                    })
+                }
+            }
+
+            // Edit category modal
+            //Open modal
+            async function EditCategory(e){
+                let modal = document.querySelector('.editcategory')
+                modal.style.display = "flex"
+
+                //Load modal with current information
+                let currentName = e.parentElement.querySelector('.categoryName').textContent
+                modal.querySelector('.newName').value = currentName
+                let currentDescription = e.parentElement.querySelector('.description').textContent
+                modal.querySelector('.newDescription').value = currentDescription
+                modal.querySelector('input[name="requiredRoles"]').value = e.parentElement.querySelector(".requiredRoles").textContent
+
+                //Wait for user to submit new information
+                document.querySelector('.editcategory button[type="submit"]').onclick = async () => {
+                    // Process new information
+                    let newName = modal.querySelector('.newName').value
+                    let newDescription = modal.querySelector('.newDescription').value
+                    let requiredRoles = modal.querySelector('input[name="requiredRoles"]').value
+
+                    //Requests change
+                    await fetch('/api/dashboard/editcategory', {
+                        method: "POST",
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            currentName,
+                            newName,
+                            newDescription,
+                            requiredRoles,
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success){
+                            document.location.reload()
+                        }
+                        else {
+                            alert(res.reason || "An unknown server error has occured")
+                        }
+                    })
+                }
+
+                //Handle change group button click
+                document.querySelector('.editcategory button[name="changeGroup"]').onclick = async () => {
+                    modal.style.display = 'none'
+
+                    let categoryGroupChangeModal = document.querySelector('.changecategoriesgroup.modal')
+                    categoryGroupChangeModal.style.display = 'flex'
+                    categoryGroupChangeModal.querySelector('.categoryName').textContent = currentName
+
+                    let buttons = [...categoryGroupChangeModal.querySelectorAll('.categorygroupoptions button')]
+                    buttons.forEach(button => {
+                        button.onclick = (e) => {
+                            let categoryGroup = e.target.textContent
+
+                            fetch('/api/dashboard/changecategorygroup', {
+                                method: "POST",
+                                headers: {
+                                    'content-type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    category: currentName,
+                                    categoryGroup,
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(res => {
+                                if(res.success){
+                                    document.location.reload()
+                                }
+                                else {
+                                    alert(res.reason || "An unknown server error has occured")
+                                }
+                            })
+                        }
+                    })
+                }
+
+                //Handle delete category button
+                document.querySelector('.editcategory button[name="deleteCategory"]').onclick = async (e) => {
+                    modal.style.display = 'none'
+                    let passwordModal = document.querySelector('.requestPassword.modal')
+                    passwordModal.style.display = 'flex'
+
+                    passwordModal.querySelector('button[type="submit"]').onclick = () => {
+                        let password = passwordModal.querySelector('input').value
+
+                        fetch('/api/dashboard/deletecategory', {
+                            method: "DELETE",
+                            headers: {
+                                'content-type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                category: currentName,
+                                password,
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+                            if(res.success){
+                                document.location.reload()
+                            }
+                            else {
+                                alert(res.reason || "An unknown server error has occured")
+                            }
+                        })
+                    }
+                }
+            }
+        </script>
+	</body>
+</html>

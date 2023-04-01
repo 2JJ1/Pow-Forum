@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+	
+		<title>Moderator Dashboard</title>
+		
+        <% include ../../partials/headimps %>
+        <link href="/css/dashboard/index.css?v=20" rel="stylesheet" type="text/css">
+	</head>
+	<body class="container">
+		<% include ../../partials/global %>
+		<main>
+            <h1>Dashboard</h1>
+            <% if(accInfo.isAdmin) { %>
+            <br>
+            <div>
+                <h2>- Admin</h2>
+                <br>
+                <a href="/dashboard/integrations" class="theme1 border1 round card">
+                    <div>
+                        <p class="title">3rd Party Integrations</p>
+                        <p>Manage API keys for 3rd party integrations</p>
+                    </div>
+                </a>
+                <a href="/dashboard/categories" class="theme1 border1 round card">
+                    <div>
+                        <p class="title">Categories</p>
+                        <p>Add, edit, or remove categories here.</p>
+                    </div>
+                </a>
+            </div>
+            <% } %>
+            <br>
+            <div>
+                <h2>- Moderator</h2>
+                <br>
+                <a href="/dashboard/auditlog" class="theme1 border1 round card">
+                    <div>
+                        <p class="title">Audit Log</p>
+                        <p>A log of deleted and edited events on the forum.</p>
+                    </div>
+                </a>
+                <a href="/dashboard/allreplies" class="theme1 border1 round card">
+                    <div>
+                        <p class="title">All Replies</p>
+                        <p>Unfiltered list of all replies on the forum</p>
+                    </div>
+                </a>
+            </div>
+		</main>
+        <% include ../../partials/footer %>
+    </body>
+</html>

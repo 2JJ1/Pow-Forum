@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>(Error 400) Bad Request</title>
+		
+		<link rel="shortcut icon" type="image/png" href="/favicon.ico"/>
+        <link href="/css/main.css?v=20" rel="stylesheet" type="text/css">
+		<link href="/css/themes/night.css?v=20" rel="stylesheet" type="text/css">
+		
+		<style>
+			body{
+				height: 100vh;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+			}
+			
+			a {
+				color: gray;
+				text-decoration: none;
+				font-size: 15px;
+			}
+		
+			body > div{
+				display: flex; 
+				justify-content: center; 
+				height: 100vh; 
+				text-align: center
+			}
+			
+			body div div{
+				display: block; 
+				margin: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+            <div>
+                <h1>Error 400 - Bad Request</h1>
+                <% if(typeof reason === "string"){ %><br><p><%- reason %></p><% } %>
+                <br/>
+                <a href="/">Return Home</a>
+            </div>
+        </div>
+	</body>
+</html>

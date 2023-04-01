@@ -1,0 +1,28 @@
+.admin{ 
+    color: black;
+    background: linear-gradient(red 0%, rgb(61, 0, 61) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.moderator{ color: red; }
+
+.patron{ 
+    color: rgb(167, 3, 167); 
+	background: linear-gradient(to right, rgb(167, 3, 167) 0%, #3498db 100%);
+    -webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vip{ 
+    color: green;
+}
+
+.contentCreator{
+    color: #2980B9;
+}
+
+.noticed{
+    color: #528eb6;
+}
