@@ -5,7 +5,7 @@ const mongoose = require("mongoose")
 const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
-const accountAPI = require('../../../my_modules/accountapi')
+const accountAPI = require('../../../../my_modules/accountapi')
 
 // 	/api/dashboard
 

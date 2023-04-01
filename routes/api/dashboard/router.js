@@ -27,11 +27,6 @@ router.use("/lockaccount", require('./lockaccount'))
 
 //Admins
 router.use('/categories', AdminRequirement, require('./categories/router'))
-router.use(AdminRequirement, require('./editcategorygroupname'))
-router.use(AdminRequirement, require('./editcategory'))
-router.use(AdminRequirement, require('./deletecategory'))
-router.use(AdminRequirement, require('./changecategorygroup'))
-router.use(AdminRequirement, require('./addsubcategory'))
 router.use("/account", AdminRequirement, require('./deleteaccount'))
 router.use("/integrations", AdminRequirement, require("./integrations/router"))
 
