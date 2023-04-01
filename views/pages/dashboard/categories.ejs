@@ -18,20 +18,20 @@
         <% include ../../partials/global %>
         <div class="editcategorygroup modal">
             <div class="theme1 border1 round gapchildren">
-                <h2>Edit group category</h2>
+                <h2>Edit Category</h2>
                 <div>
-                    <p>Change category group name:</p>
-                    <input class="theme2 border1 round less-padding" type="text" placeholder="Category group name..."/>
+                    <p>Change category name:</p>
+                    <input class="theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
                 </div>
                 <div class="subModals">
-                    <button name="addCategory" class="theme2 border1 round less-padding">Add category</button>
+                    <button name="addCategory" class="theme2 border1 round less-padding">Add sub-category</button>
                 </div>
                 <button type="submit" class="theme2 border1 round less-padding">Okay</button>
             </div>
         </div>
         <div class="addcategory modal">
             <div class="theme1 border1 round gapchildren">
-                <h2>Add new category to <span class="categorygroup">X</span></h2>
+                <h2>Add new sub-category to <span class="categorygroup">X</span></h2>
                 <div class="lessgapchildren">
                     <p>Name:</p>
                     <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
@@ -115,10 +115,11 @@
                 <% }) %>
             </div>
             <% }) %>
+            <button class="theme1 border1 round less-padding">Add Category</button>
         </main>
         <% include ../../partials/footer %>
 		<script>
-            // Edit category group modal
+            // Edit category modal
             //Open modal
             let editingCategoryGroupName
             function EditCategoryGroup(e){
