@@ -23,7 +23,7 @@ main{
     cursor: pointer;
 }
 
-.editcategorygroup, .editcategory, .requestPassword, .changecategoriesgroup, .addcategory.modal{
+.editcategorygroup, .editcategory, .requestPassword, .changecategoriesgroup, .addcategory.modal, .addsubcategory.modal{
     display: none;
 }
 
@@ -50,4 +50,8 @@ main{
 
 .changecategoriesgroup .categorygroupoptions button{
     display: inline-block;
+}
+
+.addcategory.modal button[type="submit"]{
+    margin-left: 12px;
 }

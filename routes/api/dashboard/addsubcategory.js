@@ -9,7 +9,7 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard
 
-router.post("/addcategory", async (req, res) => {
+router.post("/addsubcategory", async (req, res) => {
     let response = {success: false}
 
 	try{
