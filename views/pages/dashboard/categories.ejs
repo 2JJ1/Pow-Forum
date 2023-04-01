@@ -38,6 +38,7 @@
                 </div>
                 <div class="subModals">
                     <button name="addSubCategory" class="theme2 border1 round less-padding">Add sub-category</button>
+                    <button name="delete" class="theme2 border1 round less-padding">Delete category</button>
                 </div>
                 <button type="submit" class="theme2 border1 round less-padding">Okay</button>
             </div>
@@ -181,6 +182,35 @@
                         })
                     }
                 }
+
+                document.querySelector('.editcategorygroup button[name="delete"]').onclick = function(){
+                    let passwordModal = document.querySelector('.requestPassword.modal')
+                    passwordModal.style.display = 'flex'
+
+                    passwordModal.querySelector('button[type="submit"]').onclick = () => {
+                        let password = passwordModal.querySelector('input').value
+
+                        fetch('/api/dashboard/categories/deletecategory', {
+                            method: "DELETE",
+                            headers: {
+                                'content-type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: currentName,
+                                password,
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(res => {
+                            if(res.success){
+                                document.location.reload()
+                            }
+                            else {
+                                alert(res.reason || "An unknown server error has occured")
+                            }
+                        })
+                    }
+                }
                 
                 //Wait for user to submit new information
                 document.querySelector('.editcategorygroup button[type="submit"]').onclick = function(e){
@@ -301,7 +331,7 @@
                     passwordModal.querySelector('button[type="submit"]').onclick = () => {
                         let password = passwordModal.querySelector('input').value
 
-                        fetch('/api/dashboard/deletecategory', {
+                        fetch('/api/dashboard/deletesubcategory', {
                             method: "DELETE",
                             headers: {
                                 'content-type': 'application/json',

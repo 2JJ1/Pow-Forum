@@ -2,27 +2,25 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose")
 
-const CategoryGroups = mongoose.model("CategoryGroups")
 const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 const accountAPI = require('../../../../my_modules/accountapi')
 
-// 	/api/dashboard/categories
+// 	/api/dashboard
 
-router.delete("/deletecategory", async (req, res) => {
+router.delete("/deletesubcategory", async (req, res) => {
     let response = {success: false}
 
 	try{
-        if(!"name" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
-        let {name, password} = req.body
+        if(!"category" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
+        let {category, password} = req.body
 
         //First validate password
         if(!await accountAPI.CheckPassword(req.session.uid, password)) throw "Incorrect password"
 
         //Delete the category
-        await CategoryGroups.deleteOne({name})
-        await Categories.deleteMany({group: name})
+        await Categories.deleteOne({name: category})
 
         //todo- Also delete related threads
         
@@ -35,7 +33,7 @@ router.delete("/deletecategory", async (req, res) => {
             type: "Delete category",
             byUID: req.session.uid,
             content: {
-                category: name,
+                category,
             },
         })
         .save()
