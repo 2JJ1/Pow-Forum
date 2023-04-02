@@ -20,13 +20,13 @@ router.post("/editcategorygroupname", async (req, res) => {
         if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
         newName = escape(newName)
 
-        let categoryGroup = await Categories.findOneAndUpdate({name: currentName}, {name: newName})
-        if(!categoryGroup) return res.status(400).send("Category group does not exist")
+        let category = await Categories.findOneAndUpdate({name: currentName}, {name: newName})
+        if(!category) return res.status(400).send("Category group does not exist")
 
-        let categories = await Subcategories.find({group: currentName})
-        for (let category of categories){
-            category.group = newName
-            await category.save()
+        let subcategories = await Subcategories.find({category: currentName})
+        for (let subcategory of subcategories){
+            subcategory.category = newName
+            await subcategory.save()
         }
 
 		//Code hasn't exited, so assume success
