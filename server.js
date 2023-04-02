@@ -16,48 +16,19 @@ const fs = require('fs')
 const updateEnv = require('./my_modules/updateenv')
 
 if(!process.env.SUPPORT_EMAIL_ADDRESS) {
-	console.error("Missing support email address. Please run the 'setup' command in the PF-CLI.")
+	console.error("Missing support email address. Please run 'npm run setup'")
 	process.exit(2)
 }
 
 if(!process.env.FORUM_URL) {
-	console.error("Missing domain. Please run the 'setup' command in the PF-CLI.")
+	console.error("Missing domain. Please run 'npm run setup'")
 	process.exit(2)
 }
 
 if(!process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
-	console.error("Incomplete mailgun setup. Please run the 'setup' command in the PF-CLI.")
+	console.error("Incomplete mailgun setup. Please run 'npm run setup'")
 	process.exit(2)
 }
-
-// Express.js configuration
-
-//Helps protect from some well-known web vulnerabilities by setting HTTP headers appropriately.
-app.use(helmet())
-
-//Compress all responses
-app.use(compression())
-
-//Trust first proxy
-app.set('trust proxy', 1)
-
-//set the view engine to ejs
-app.set('view engine', 'ejs')
-
-app.use((req, res, next) => {
-    res.append('X-Forum-Software', 'Pow-Forum');
-    next();
-});
-
-//In case nginx doesn't send for some reason...
-app.use(express.static('public'))
-app.use(express.static('public', { extensions: ['html'] }))
-
-// Socket.io configuration
-
-//Create Socket.io server
-const io = new socketio.Server(http)
-module.exports.io = io
 
 // MongoDB setup
 
@@ -123,92 +94,116 @@ mongoose.connect(mongoURL)
 	CleanMongoDatabase()
 	//Clean database every 24 hours
 	setInterval(CleanMongoDatabase, 1000 * 60 * 60 * 24)
-
-	app.emit('ready')
 })
 
-//Wait for database to connect before starting the HTTP listener
-app.on('ready', async function(){
-	// Login session initialization
+// Express.js configuration
 
-	//Generate session secret if one does not exist
-	if(!process.env.SESSION_SECRET) {
-		let result = '';
-		let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let charactersLength = characters.length;
-		let counter = 0;
-		while (counter < 20) {
-			result += characters.charAt(Math.floor(Math.random() * charactersLength));
-			counter += 1;
-		}
+//Helps protect from some well-known web vulnerabilities by setting HTTP headers appropriately.
+app.use(helmet())
 
-		let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
-		parsedEnv.SESSION_SECRET = result
-		fs.writeFileSync('.env', envfile.stringify(parsedEnv))
+//Compress all responses
+app.use(compression())
 
-		process.env.SESSION_SECRET = result
+//Trust first proxy
+app.set('trust proxy', 1)
+
+//set the view engine to ejs
+app.set('view engine', 'ejs')
+
+app.use((req, res, next) => {
+    res.append('X-Forum-Software', 'Pow-Forum');
+    next();
+});
+
+//In case nginx doesn't send for some reason...
+app.use(express.static('public'))
+app.use(express.static('public', { extensions: ['html'] }))
+
+// Login session initialization
+
+//Generate session secret if one does not exist
+if(!process.env.SESSION_SECRET) {
+	let result = '';
+	let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let charactersLength = characters.length;
+	let counter = 0;
+	while (counter < 20) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		counter += 1;
 	}
 
-	//Express routes will get sessions through session
-	let sessionConf = {
-		secret: process.env.SESSION_SECRET,
-		name: process.env.SESSION_COOKIE_NAME || '_PFSec',
-		store: MongoStore.create({
-			mongoUrl: mongoURL,
-			stringify: false,
-		}),
-		saveUninitialized: false, //Prevents every single request from being recognized as a session
-		rolling: true, //Resets expiration date
-		resave: true, //Resaves cookie on server. Necessary because of the expiration date being reset
-		cookie: { 
-			httpOnly: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
-			secure: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
-			maxAge: 1000*60*60*24*365 // (1 week in milliseconds) 1 second -> 1 minute -> 1 hour -> 1 day -> 1 year
-		}
+	let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
+	parsedEnv.SESSION_SECRET = result
+	fs.writeFileSync('.env', envfile.stringify(parsedEnv))
+
+	process.env.SESSION_SECRET = result
+}
+
+//Express routes will get sessions through session
+let sessionConf = {
+	secret: process.env.SESSION_SECRET,
+	name: process.env.SESSION_COOKIE_NAME || '_PFSec',
+	store: MongoStore.create({
+		mongoUrl: mongoURL,
+		stringify: false,
+	}),
+	saveUninitialized: false, //Prevents every single request from being recognized as a session
+	rolling: true, //Resets expiration date
+	resave: true, //Resaves cookie on server. Necessary because of the expiration date being reset
+	cookie: { 
+		httpOnly: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
+		secure: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
+		maxAge: 1000*60*60*24*365 // (1 week in milliseconds) 1 second -> 1 minute -> 1 hour -> 1 day -> 1 year
 	}
-	if(process.env.COOKIE_DOMAIN) sessionConf.cookie.domain = process.env.COOKIE_DOMAIN
-	let sessionMiddleware = session(sessionConf)
+}
+if(process.env.COOKIE_DOMAIN) sessionConf.cookie.domain = process.env.COOKIE_DOMAIN
+let sessionMiddleware = session(sessionConf)
 
-	//Express server use session 
-	app.use(sessionMiddleware)
+//Express server use session 
+app.use(sessionMiddleware)
 
-	// Setup listeners
-	//Listeners placed here because routes must be the very last middleware in order for other middleware to take effect
+// Define what HTTP routes to listen for
 
-	//Websocket server use session
-	io.engine.use(sessionMiddleware)
+//Handle the API
+app.use('/api/', require('./routes/api/router'))
 
-	// Define what HTTP routes to listen for
-	//Handle the API
-	app.use('/api/', require('./routes/api/router'))
-	//Handle everything else. Aka the view
-	app.use("/", require('./routes/www/router'))
-	//No route matched? Default route -> Send 404 page
-	app.use(function(req, res, next){
-		res.status(404).render("404")
-	})
+//Handle everything else. Aka the view
+app.use("/", require('./routes/www/router'))
 
-	//Express.js exception handling
-	app.use(function(err, req, res, next) {
-		try {
-			if (typeof err === "string") return res.status(400).render("400", {reason: err})
-			else if(err.name === "URIError") return res.status(400).render("400", {reason: "Bad request: Invalid URI"})
-			else{
-				var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-				console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
-				return res.status(400).send("The server has errored... This will be fixed when the admins have noticed");
-			}
-		}
-		catch(e){
-			console.log("Exception handler just errored: ", e)
-		}
-	})
-
-	//Listen to websocket requests
-	io.on('connection', require('./my_modules/websocket'))
-
-	//Starts HTTP server
-	http.listen(process.env.PORT || 8087, () => {
-		console.log(`Pow Forum server started on http://localhost:${process.env.PORT || 8087}`)
-	})
+//No route matched? Default route -> Send 404 page
+app.use(function(req, res, next){
+	res.status(404).render("404")
 })
+
+//Express.js exception handling
+app.use(function(err, req, res, next) {
+	try {
+		if (typeof err === "string") return res.status(400).render("400", {reason: err})
+		else if(err.name === "URIError") return res.status(400).render("400", {reason: "Bad request: Invalid URI"})
+		else{
+			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+			console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
+			return res.status(400).send("The server has errored... This will be fixed when the admins have noticed");
+		}
+	}
+	catch(e){
+		console.log("Exception handler just errored: ", e)
+	}
+})
+
+//Starts HTTP server
+http.listen(process.env.PORT || 8087, () => {
+	console.log(`Pow Forum server started on http://localhost:${process.env.PORT || 8087}`)
+})
+
+// Socket.io configuration
+
+//Create Socket.io server
+const io = new socketio.Server(http)
+module.exports.io = io
+
+//Websocket server use session
+io.engine.use(sessionMiddleware)
+
+//Listen to websocket requests
+io.on('connection', require('./my_modules/websocket'))
