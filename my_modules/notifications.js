@@ -194,7 +194,10 @@ exports.PushNotification = async function(uid, title, content, link){
             options: {
                 body : content,
                 icon: `${process.env.FORUM_URL}/favicon.ico`,
-                link
+                link, //For legacy serviceworker. Delete 1 month after april 2, 2023
+                data: {
+                    link
+                }
             }
         }))
     }

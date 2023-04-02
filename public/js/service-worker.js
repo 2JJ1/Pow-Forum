@@ -1,18 +1,9 @@
-var url = "https://wearedevs.net/";
-
 self.addEventListener('push', function(event) {
 	console.log('Push received:', event.data.text())
   if (event.data) {
    var pushedMessage = JSON.parse(event.data.text()); //EX: {"type":"notification","title":"title!", "options":{ "body" : "body info...": "./img.png" }}
 	if(pushedMessage.type == "notification"){		
-		const title = pushedMessage.title;
-		const options = pushedMessage.options;
-		
-		if("link" in options){
-			url = options.link;
-		}
-		
-		let promiseChain = self.registration.showNotification(title, options);
+		let promiseChain = self.registration.showNotification(pushedMessage.title, pushedMessage.options);
 		
 		event.waitUntil(promiseChain);
 	}
@@ -22,6 +13,7 @@ self.addEventListener('push', function(event) {
 });
 
 self.addEventListener('notificationclick', function(event) {
+    console.log('rekt', event)
     event.notification.close(); // Android needs explicit close.
     event.waitUntil(
         clients.matchAll({type: 'window'}).then( windowClients => {
@@ -34,9 +26,7 @@ self.addEventListener('notificationclick', function(event) {
                 }
             }
             // If not, then open the target URL in a new window/tab.
-            if (clients.openWindow) {
-                return clients.openWindow(url);
-            }
+            if (clients.openWindow) return clients.openWindow(event.notification.data.link);
         })
     );
 });
