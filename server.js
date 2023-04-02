@@ -53,21 +53,6 @@ app.use((req, res, next) => {
 app.use(express.static('public'))
 app.use(express.static('public', { extensions: ['html'] }))
 
-//Express.js exception handling
-app.use(function(err, req, res, next) {
-	try {
-		if(err.name === "URIError") return res.status(400).send("Bad request: Invalid URI");
-		else{
-			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-			console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
-			return res.status(400).send("The server has errored... This will be fixed when the admins have noticed");
-		}
-	}
-	catch(e){
-		console.log("Exception handler just errored: ", e)
-	}
-})
-
 // Socket.io configuration
 
 //Create Socket.io server
@@ -201,6 +186,22 @@ app.on('ready', async function(){
 	//No route matched? Default route -> Send 404 page
 	app.use(function(req, res, next){
 		res.status(404).render("404")
+	})
+
+	//Express.js exception handling
+	app.use(function(err, req, res, next) {
+		try {
+			if (typeof err === "string") return res.status(400).render("400", {reason: err})
+			else if(err.name === "URIError") return res.status(400).render("400", {reason: "Bad request: Invalid URI"})
+			else{
+				var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+				console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
+				return res.status(400).send("The server has errored... This will be fixed when the admins have noticed");
+			}
+		}
+		catch(e){
+			console.log("Exception handler just errored: ", e)
+		}
 	})
 
 	//Listen to websocket requests
