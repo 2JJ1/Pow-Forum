@@ -155,10 +155,6 @@ main{
     max-width: 500px;
 }
 
-#ForumChanger > div > h3{
-    margin: 4px 0px;
-}
-
 #ForumChanger > div > button{
     padding: var(--gap);
     cursor: pointer;

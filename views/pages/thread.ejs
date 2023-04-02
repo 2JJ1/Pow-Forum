@@ -17,16 +17,14 @@
 	<body class="container">
         <% if(threadData.canChangeForum){ %>
         <div id="ForumChanger">
-            <div class="theme1 round border1">
+            <div class="theme1 round border1 lessgapchildren">
                 <% categoryGroups.forEach(categoryGroup => { %>
                 <h3><%= categoryGroup.name %></h3>
                 <% let categoryList = categories.filter(category => category.category === categoryGroup.name) %>
                 <% categoryList.forEach(category => { %>
-                <button class="theme2 border1" data-forumname="<%= category.category %>"><%= category.name %></button>
+                <button class="theme2 border1" data-category="<%= category._id %>"><%= category.name %></button>
                 <% }) %>
                 <% }) %>
-                <br>
-                <br>
                 <button class="theme2 border1" onclick="$('#ForumChanger').hide('fast')">Cancel</button>
             </div>
         </div>
@@ -261,7 +259,7 @@
             $(document).ready(function(){
                 <% if(threadData.canChangeForum){ %>
                 $('#ForumChanger > div > button').click(function(){
-                    if(!$(this).attr('data-forumname')){
+                    if(!$(this).attr('data-category')){
                         //Ignore the cancel button
                         return
                     }
@@ -269,8 +267,8 @@
                         url: '/api/changethreadforum',
                         type: 'POST',
                         data: JSON.stringify({
-                            tid: "<%= threadData._id %>",
-                            forum: $(this).attr('data-forumname')
+                            tid: <%= threadData._id %>,
+                            forum: parseInt($(this).attr('data-category'))
                         }),
                         contentType: "application/json",
                         success: function(result) {
