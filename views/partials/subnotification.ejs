@@ -51,9 +51,8 @@
 				})
 				.catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
 			}
-			else {
-				throw new Error('We weren\'t granted permission.');
-			}
+			//Permission not granted
+			else {}
 		});
     }
     
@@ -63,8 +62,6 @@
         //Register the service worker
         navigator.serviceWorker.register('/js/service-worker.js')
         .then(function(_registration) {
-            console.log('Service worker successfully registered.');
-            
             registration = _registration
             
             if ('PushManager' in window) { 
