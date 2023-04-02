@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 		} else
 			throw {safe: "Missing captcha"}
 
-		let forumTitle = process.env.TITLE
+		let forumTitle = (await ForumSettings.findOne({type: "title"})).value
 		
 		if('username' in req.body && req.body.username.length > 0){
 			//Password reset request

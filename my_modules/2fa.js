@@ -10,7 +10,7 @@ class TFA {
     async enable(uid){
         // Returns an object with secret.ascii, secret.hex, and secret.base32.
         var secret = speakeasy.generateSecret({
-            name: process.env.TITLE
+            name: (await ForumSettings.findOne({type: "title"})).value
         })
 
         // Store this on server to verify against the client
