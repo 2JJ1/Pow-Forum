@@ -6,6 +6,6 @@ module.exports = mongoose.model("ForumSettings", {
         index: true,
     },
     value: {
-        type: String
+        type: mongoose.Schema.Types.Mixed,
     },
 })
