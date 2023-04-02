@@ -6,7 +6,7 @@ const escape = require("escape-html")
 const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
-// 	/api/dashboard
+// 	/api/dashboard/categories
 
 router.post("/editcategory", async (req, res) => {
     let response = {success: false}
