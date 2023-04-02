@@ -488,7 +488,7 @@ commands.listThreadsWithInvalidCategory = {
 	desc: "List threads with non-existent category",
 }
 async function ListThreadsWithInvalidCategory(){
-	let categories = (await Subcategories.find()).map(doc => doc.database)
+	let categories = (await Subcategories.find()).map(doc => doc._id)
 
 	let threads = await Threads.find()
 	for(let i=0; i<threads.length; i++){

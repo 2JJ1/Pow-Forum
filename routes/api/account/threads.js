@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 			let category = await forumapi.GetSubcategory(thread.forum)
             thread.category = {
 				name: category.name,
-				name2: category.database,
+				name2: category._id,
 			}
         }
 
