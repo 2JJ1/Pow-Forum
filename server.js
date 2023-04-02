@@ -44,6 +44,11 @@ app.set('trust proxy', 1)
 //set the view engine to ejs
 app.set('view engine', 'ejs')
 
+app.use((req, res, next) => {
+    res.append('X-Forum-Software', 'Pow-Forum');
+    next();
+});
+
 //In case nginx doesn't send for some reason...
 app.use(express.static('public'))
 app.use(express.static('public', { extensions: ['html'] }))
