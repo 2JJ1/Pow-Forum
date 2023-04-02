@@ -16,17 +16,19 @@ router.delete("/deletesubcategory", async (req, res) => {
 
 	try{
         if(!"category" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
-        let {category, password} = req.body
+        let {id, password} = req.body
+        id = parseInt(id)
 
         //First validate password
         if(!await accountAPI.CheckPassword(req.session.uid, password)) throw "Incorrect password"
 
         //Delete the category
-        await Subcategories.deleteOne({name: category})
+        let subcategory = await Subcategories.findById(id)
+        subcategory.deleteOne()
 
         //Delete related threads
-        await Threads.deleteMany({category})
-        await ThreadReplies.deleteMany({category})
+        await Threads.deleteMany({category: id})
+        await ThreadReplies.deleteMany({category: id})
         //TODO- Delete info related to thread replies(reacts...)
         
 		//Code hasn't exited, so assume success
@@ -38,7 +40,7 @@ router.delete("/deletesubcategory", async (req, res) => {
             type: "Delete category",
             byUID: req.session.uid,
             content: {
-                category,
+                name: subcategory.name,
             },
         })
         .save()

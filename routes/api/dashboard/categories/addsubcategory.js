@@ -27,12 +27,10 @@ router.post("/addsubcategory", async (req, res) => {
         description = escape(description)
 
         //Process required roles
-        try {
-			if(requiredRoles) requiredRoles = JSON.parse(requiredRoles);
-		}
-        catch (e) {
-			throw "Required roles must be a JSON style array"
-		}
+        requiredRoles = requiredRoles.trim()
+        if(requiredRoles) requiredRoles = requiredRoles.split(",")
+        else requiredRoles = []
+        if(!requiredRoles.length == 0) requiredRoles = undefined
 
         //It must be added to an existing group
         let category = await Categories.findOne({name: group})

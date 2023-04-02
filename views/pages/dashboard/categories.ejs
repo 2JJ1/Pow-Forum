@@ -57,16 +57,16 @@
                 <div class="lessgapchildren">
                     <p>Required Roles:</p>
                     <p>Optional- What roles are required to post here?</p>
-                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='["moderator","vip"]'/>
+                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
                 </div>
                 <button type="submit" class="theme2 border1 round less-padding">Okay</button>
             </div>
         </div>
         <div class="editcategory modal">
             <div class="theme1 border1 round gapchildren">
-                <h2>Edit Category</h2>
+                <h2>Edit Subcategory</h2>
                 <div class="lessgapchildren">
-                    <p>Category name:</p>
+                    <p>Subcategory name:</p>
                     <input class="newName theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
                 </div>
                 <div class="lessgapchildren">
@@ -76,11 +76,11 @@
                 <div class="lessgapchildren">
                     <p>Required Roles:</p>
                     <p>Optional- What roles are required to post here?</p>
-                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='moderator, vip...'/>
+                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
                 </div>
                 <div class="subModals">
-                    <button name="changeGroup" class="theme2 border1 round less-padding">Change Group</button>
-                    <button name="deleteCategory" class="theme2 border1 round less-padding">Delete category</button>
+                    <button name="changeGroup" class="theme2 border1 round less-padding">Change Category</button>
+                    <button name="deleteCategory" class="theme2 border1 round less-padding">Delete Subcategory</button>
                 </div>
                 <button type="submit" class="theme2 border1 round less-padding">Okay</button>
             </div>
@@ -116,8 +116,8 @@
                     <h2><%- group.name %></h2>
                 </div>
                 <% subCategories.filter(category => category.category == group.name).forEach(category => { %>
-                <div class="category editable">
-                    <span class="edit" onclick="EditCategory(this)"></span>
+                <div class="category editable" data-id="<%= category._id %>">
+                    <span class="edit" onclick="EditSubCategory(this)"></span>
                     <div>
                         <h3 class="categoryName"><%- category.name %></h3>
                         <p class="description"><%- category.description %></p>
@@ -244,16 +244,18 @@
 
             // Edit category modal
             //Open modal
-            async function EditCategory(e){
+            async function EditSubCategory(e){
                 let modal = document.querySelector('.editcategory')
                 modal.style.display = "flex"
 
                 //Load modal with current information
+                let categoryId = e.parentElement.getAttribute("data-id")
                 let currentName = e.parentElement.querySelector('.categoryName').textContent
                 modal.querySelector('.newName').value = currentName
                 let currentDescription = e.parentElement.querySelector('.description').textContent
                 modal.querySelector('.newDescription').value = currentDescription
-                modal.querySelector('input[name="requiredRoles"]').value = e.parentElement.querySelector(".requiredRoles").textContent
+                let curRequiredRoles = e.parentElement.querySelector(".requiredRoles") ? e.parentElement.querySelector(".requiredRoles").textContent : ""
+                modal.querySelector('input[name="requiredRoles"]').value = curRequiredRoles
 
                 //Wait for user to submit new information
                 document.querySelector('.editcategory button[type="submit"]').onclick = async () => {
@@ -297,16 +299,14 @@
                     let buttons = [...categoryGroupChangeModal.querySelectorAll('.categorygroupoptions button')]
                     buttons.forEach(button => {
                         button.onclick = (e) => {
-                            let categoryGroup = e.target.textContent
-
-                            fetch('/api/dashboard/categories/changecategorygroup', {
+                            fetch('/api/dashboard/categories/changecategory', {
                                 method: "POST",
                                 headers: {
                                     'content-type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    category: currentName,
-                                    categoryGroup,
+                                    target: categoryId,
+                                    newCategory: e.target.textContent,
                                 })
                             })
                             .then(res => res.json())
@@ -337,7 +337,7 @@
                                 'content-type': 'application/json',
                             },
                             body: JSON.stringify({
-                                category: currentName,
+                                id: categoryId,
                                 password,
                             })
                         })

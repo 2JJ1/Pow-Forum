@@ -8,34 +8,33 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard
 
-router.post("/changecategorygroup", async (req, res) => {
+router.post("/changecategory", async (req, res) => {
     let response = {success: false}
 
 	try{
         if(!"category" in req.body || !"categoryGroup" in req.body) return res.status(400).send("Invalid body")
-        let {category, categoryGroup} = req.body
+        let {target, newCategory} = req.body
 
-        //Fetch category
-        category = await Subcategories.findOne({name: category})
-        if(!category) return res.status(400).send("Category does not exist")
+        //Fetch subcategory
+        let subcategory = await Subcategories.findById(target)
+        if(!subcategory) return res.status(400).send("Subcategory does not exist")
 
-        //Fetch category group
-        categoryGroup = await Categories.findOne({name: categoryGroup})
-        if(!categoryGroup) return res.status(400).send("Category group does not exist")
+        //Check new category exists
+        if(!await Categories.findOne({name: newCategory})) return res.status(400).send("Category does not exist")
 
         //Process change
-        category.group = categoryGroup.name
+        subcategory.category = newCategory
 
         //Officiate update
-        await category.save()
+        await subcategory.save()
 
         new ForumAuditLogs({
             time: Date.now(),
             type: "Change category group",
             byUID: req.session.uid,
             content: {
-                category: category.name,
-                group: categoryGroup.name
+                old: subcategory.name,
+                new: newCategory
             },
         })
         .save()
