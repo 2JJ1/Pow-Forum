@@ -8,7 +8,7 @@ const mailgun = require('../../../my_modules/mailgun')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")
-const PendingEmailVerifications = mongoose.model("ForumSettings")
+const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
 const Logs = mongoose.model("Logs")
 
 // parse application/json
@@ -22,12 +22,10 @@ router.post('/', async (req, res) => {
 
 	try {
 		//Only an actual acount should be able to send email verification
-		if(!req.session.uid){
-			throw {safe: "Must be logged in"}
-		}
+		if(!req.session.uid) "Must be logged in"
 
 		//Check if they've already received an email verification in the past 24 hours
-		let pendingEmailVerification = await PendingEmailVerifications.findById(req.session.id)
+		let pendingEmailVerification = await PendingEmailVerifications.findById(req.session.uid)
 		if(!pendingEmailVerification) throw "Your email is already verified"
 		
 		let expires = new Date(pendingEmailVerification.lastsent)
