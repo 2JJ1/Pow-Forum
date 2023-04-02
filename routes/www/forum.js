@@ -46,7 +46,6 @@ router.get('/:forum', async (req, res) => {
 			forumData: {
 				canPost: true,
 			},
-			subcategory: await forumapi.GetSubcategory(forum),
 		}
 
 		//Contains forum data
@@ -58,7 +57,7 @@ router.get('/:forum', async (req, res) => {
 		let startingRow = 15 * (forumData.currentPage - 1)
 
 		//Compensate for all categories view
-		if(forum === "all"){
+		if(req.params.forum === "all"){
 			pagedata.subcategory = {
 				name: "All Subcategories",
 				requiredRoles: null,
@@ -66,9 +65,10 @@ router.get('/:forum', async (req, res) => {
 
 			forumData.canPost = false
 		}
+		else pagedata.subcategory = await forumapi.GetSubcategory(forum)
 		
 		//If the subcategory does not exist, redirect to the forum home
-		if(!pagedata.subcategory && forum !== "all") return res.render("400", {reason: "This subcategory does not exist."})
+		if(!pagedata.subcategory && req.params.forum !== "all") return res.render("400", {reason: "This subcategory does not exist."})
 		
 		//Must have the necessary permission to post here
 		if(!forumapi.permissionsCheck(pagedata.subcategory.requiredRoles, pagedata.accInfo.roles)) forumData.canPost = false
@@ -82,9 +82,10 @@ router.get('/:forum', async (req, res) => {
 		//Fetches the latest threads if that order is selected
 		if(req.query.order === "latestthread"){
 			let filter = {
-				forum: forum === "all" ? /.+/ : forum,
 				title: new RegExp(other.EscapeRegex(searchQuery), 'i'),
 			}
+
+			if(req.params.forum !== "all")  filter.category = forum
 
 			//Thread rows
 			forumData.threads = await Threads.find(filter).sort({_id: -1}).skip(startingRow).limit(15).lean()
@@ -96,13 +97,7 @@ router.get('/:forum', async (req, res) => {
 		//default order: latestactive
 		//Fetches latest replies and puts their threads at the top. Note that this enables bumps/necroposting
 		else { 
-			let latestActiveThreadIDs = await ThreadReplies
-			.aggregate([
-				{
-					$match: {
-						category: forum === "all" ? /.+/ : forum,
-					}
-				},
+			let aggregateQuery = [
 				{
 					$sort: {
 						_id: -1,
@@ -125,7 +120,10 @@ router.get('/:forum', async (req, res) => {
 				{
 					$limit: 15,
 				}
-			])
+			]
+			if(req.params.forum !== "all") aggregateQuery.unshift({ $match: { category: forum } })
+			let latestActiveThreadIDs = await ThreadReplies
+			.aggregate(aggregateQuery)
 			forumData.threads = []
 			for(let threadId of latestActiveThreadIDs){
 				let thread = await Threads.findById(threadId).lean()
@@ -144,10 +142,10 @@ router.get('/:forum', async (req, res) => {
 
 		//Compiles the pinned threads if they're viewing the first page
 		if(forumData.currentPage === 1){
-			var pinnedThreads = await PinnedThreads.find()
-			for(var i=pinnedThreads.length-1; i>-1; i--){
+			let pinnedThreads = await PinnedThreads.find()
+			for(let i=pinnedThreads.length-1; i>-1; i--){
 				let pinnedThread = await Threads.findById(pinnedThreads[i]._id).lean()
-				if(pinnedThread && pinnedThread.forum === forum) pinnedThreads[i] = Object.assign(pinnedThread, {pinned: true})
+				if(pinnedThread && pinnedThread.category === forum) pinnedThreads[i] = Object.assign(pinnedThread, {pinned: true})
 				else pinnedThreads.splice(i, 1)
 			}
 			//Prepend to the threads list. View will know to adjust thanks to the pinned property

@@ -125,7 +125,7 @@ router.post('/', async (req, res) => {
 		const newReply = await new ThreadReplies({
 			uid: req.session.uid,
 			tid,
-			forum: thread.forum,
+			category: thread.category,
 			date: currentDate,
 			content: safeContent,
 		}).save()
