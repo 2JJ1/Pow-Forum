@@ -31,7 +31,7 @@ router.get('/:tid/newreply', async (req, res) => {
 
         threaddata.op = op
 
-        threaddata.category = await forumAPI.GetSubcategory(threaddata.forum)
+        threaddata.category = await forumAPI.GetSubcategory(threaddata.category)
 
         //Does this category require a specific role?
         if(!forumAPI.permissionsCheck(threaddata.category.requiredRoles, req.account.roles)) return res.status(400).render("400", {reason: "You lack permissions to post to this category"})

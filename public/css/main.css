@@ -87,7 +87,6 @@ button{
 
 /* TinyMCE Mods */
 div[role="application"]{
-    margin-top: var(--gap);
     border: 0;
 }
 

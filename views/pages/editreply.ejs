@@ -21,32 +21,24 @@
 		<main class="screenPadding" style="max-width: 1100px; margin: auto">
             <div class="theme1 round border1 padding">
                 <p>
-                    <a href="/">Subcategories</a> > 
-                    <a href="/#<%= replyData.threaddata.category.group %>"><%= replyData.threaddata.category.group %></a> > 
-                    <a href="/c/<%= replyData.threaddata.category.database %>"><%= replyData.threaddata.category.name %></a> > 
+                    <a href="/">Categories</a> > 
+                    <a href="/#<%= replyData.threaddata.category.category %>"><%= replyData.threaddata.category.category %></a> > 
+                    <a href="/c/<%= replyData.threaddata.category._id %>"><%= replyData.threaddata.category.name %></a> > 
                     <a href="/t/<%= replyData.threaddata._id %>"><%- replyData.threaddata.title %></a> > 
                     Reply#<%= replyData._id %>
                 </p>
                 <h1>Reply Editor</h1>
             </div>
             <br/>
-            <form id="replyform" class="theme1 round border1" onSubmit={this.SanitizeAndPost}>
+            <div id="replyform" class="theme1 round border1">
                 <h2 class="padding">Reply Content</h2>
                 <textarea id="editor"><%= replyData.content %></textarea>
-                <div class="padding">
-                    <button
-                    style="float: right; color: inherit;"
-                    class="theme2 button g-recaptcha"
-                    data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>"
-                    data-callback="captchacallback"
-                    data-error-callback="captchaErrorCallback">
-                    Submit
-                    </button>
+                <div class="lessgapchildren padding">
+                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <button class="theme2 button" onclick="EditReply()">Submit</button>
                     <p id="errormessage" style="color: red; text-align: center"></p>
                 </div>
-                <br>
-                <br>
-            </form>
+            </div>
         </main>
 		<% include ../partials/footer %>
         
@@ -94,7 +86,7 @@
                 content_css: "/css/themes/night.css?v=20",
             });
 
-            function captchacallback(){
+            function EditReply(){
                 fetch('/api/r/edit', {
 					method: "POST",
                     headers: {

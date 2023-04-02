@@ -20,9 +20,9 @@
             <div class="theme1 round border1">
                 <% categoryGroups.forEach(categoryGroup => { %>
                 <h3><%= categoryGroup.name %></h3>
-                <% let categoryList = categories.filter(category => category.group === categoryGroup.name) %>
+                <% let categoryList = categories.filter(category => category.category === categoryGroup.name) %>
                 <% categoryList.forEach(category => { %>
-                <button class="theme2 border1" data-forumname="<%= category.database %>"><%= category.name %></button>
+                <button class="theme2 border1" data-forumname="<%= category.category %>"><%= category.name %></button>
                 <% }) %>
                 <% }) %>
                 <br>
@@ -35,9 +35,9 @@
 		<main class="screenPadding" style="max-width: 1100px; margin: auto">
             <div class="theme2 round border1 padding">
                 <p>
-                    <a href="/">Subcategories</a> > 
-                    <a href="/#<%= threadData.category.group %>"><%= threadData.category.group %></a> >
-                    <a href="/c/<%= threadData.category.database %>"><%= threadData.category.name %></a> >
+                    <a href="/">Categories</a> > 
+                    <a href="/#<%= threadData.category.category %>"><%= threadData.category.category %></a> >
+                    <a href="/c/<%= threadData.category._id %>"><%= threadData.category.name %></a> >
                 </p>
                 <h1 style="display: flex; justify-content: space-between;">
                     <span id="topic"><%- threadData.title %></span>

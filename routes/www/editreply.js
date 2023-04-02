@@ -32,7 +32,7 @@ router.get('/:trid', async (req, res) => {
 		pagedata.replyData.threaddata = await Threads.findById(pagedata.replyData.tid).lean()
 		.then(async result => {
 			if(result){
-				result.category = await forumapi.GetSubcategory(result.forum)
+				result.category = await forumapi.GetSubcategory(result.category)
 				return result
 			}
 			throw {safe:"Thread replied to doesn't exist"}

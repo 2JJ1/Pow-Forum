@@ -14,16 +14,8 @@ const PinnedThreads = mongoose.model('PinnedThreads')
 
 router.get('/:forum', async (req, res) => {
 	try {
-		// Maintains old layout to keep Google results
-		if(req.params.forum === 'thread.php' || req.params.forum === 'forum.html'){
-			// /forum/thread.php?tid=999
-			return res.status(301).redirect(301, 't/' + req.query.tid)
-		}
-		else if(req.params.forum === 'forum.php'){
-			// /forum/forum.php?id=suggestions
-			return res.status(301).redirect(301, req.query.id)
-		} 
-		else if(req.query.order === "latest_post") {
+		// Sort query
+		if(req.query.order === "latest_post") {
 			let parsedUrl = queryString.parseUrl(req.protocol + '://' + req.get('host') + req.originalUrl);
 			parsedUrl.query.order = "latestthread"
 			res.status(301).redirect(301, req.originalUrl.split("?").shift() + '?' + queryString.stringify(parsedUrl.query))
@@ -46,7 +38,7 @@ router.get('/:forum', async (req, res) => {
 			return;
 		}
 
-		var forum = req.params.forum
+		var forum = parseInt(req.params.forum)
 
 		let pagedata = {
 			powForum: req.powForum,
@@ -108,7 +100,7 @@ router.get('/:forum', async (req, res) => {
 			.aggregate([
 				{
 					$match: {
-						forum: forum === "all" ? /.+/ : forum,
+						category: forum === "all" ? /.+/ : forum,
 					}
 				},
 				{
@@ -148,6 +140,7 @@ router.get('/:forum', async (req, res) => {
 			forumData.totalPages = await Threads.countDocuments({forum: forum === "all" ? /.+/ : forum})
 			.then(count => Math.ceil(count / 15))
 		}
+
 
 		//Compiles the pinned threads if they're viewing the first page
 		if(forumData.currentPage === 1){

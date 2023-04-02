@@ -41,15 +41,11 @@ router.get('/:tid', async (req, res) => {
     }
 
 	//Get forum and topic
-    let result = await Threads.findOne({_id: tid})
+    let result = await Threads.findOneAndUpdate({_id: tid}, {$inc: { views: 1 } }).lean()
     //Thread exists, so update view count
-    if(result) {
-        result.views++
-        await result.save()
-    }
-    else return res.status(404).render('404', {reason: 'This thread does not exist'})
+    if(!result)  return res.status(404).render('404', {reason: 'This thread does not exist'})
 
-    result.category = await forumapi.GetSubcategory(result.forum)
+    result.category = await forumapi.GetSubcategory(result.category)
 
     // Pagination
     let resultsPerPage = 15

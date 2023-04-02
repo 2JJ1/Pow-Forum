@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 		let account = await accountAPI.fetchAccount(req.session.uid)
 
 		//Does this category require a specific role?
-		let category = await forumAPI.GetSubcategory(thread.forum)
+		let category = await forumAPI.GetSubcategory(thread.category)
 		if(!forumAPI.permissionsCheck(category.requiredRoles, account.roles)) throw "You lack permissions to post here"
 
 		// Reputation must be greater than -20
@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
 		let dom = new JSDOM(safeContent)
 
 		//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots.
-		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"})).value || []
+		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
 			let href = a.getAttribute("href")
 			let hostname

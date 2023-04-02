@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
 		let dom = new JSDOM(safeContent)
 
 		//Handle links
-		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"})).value || []
+		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
 			//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots
 			let href = a.getAttribute("href")

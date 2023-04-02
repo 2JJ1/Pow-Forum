@@ -24,27 +24,21 @@
                 <h1>Thread creator</h1>
             </div>
             <br/>
-            <form class="theme1 round border1" onSubmit={this.SanitizeAndPost}>
+            <div class="lessgapchildren theme1 round border1">
                 <p class="bold padding">Topic</p>
                 <input id="topic" class="theme2 border1" type="text" placeholder="What do you want to talk about?" autocomplete="off"/>
-                <br/>
                 <p class="bold padding">Body</p>
                 <textarea id="editor"></textarea>
-                <br/>
-                <div class="padding">
+                <div class="padding lessgapchildren">
+                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
                     <button
-                    style="float: right; color: inherit;"
-                    class="g-recaptcha theme2 button"
-                    data-sitekey="<%= process.env.INVISIBLECAPTCHA_SITEKEY %>"
-                    data-callback="captchacallback"
-                    data-error-callback="captchaErrorCallback">
+                    class="theme2 button"
+                    onclick="PostThread()">
                     Submit
                     </button>
                     <p id="errormessage" style="color: red; text-align: center"></p>
                 </div>
-                <br>
-                <br>
-            </form>
+            </div>
             <br/>
             <div class="padding theme1 round border1">
                 <ul class="gapchildren">
@@ -101,7 +95,7 @@
                 content_css: "/css/themes/night.css?v=20",
             });
 
-            function captchacallback(){
+            function PostThread(){
                 fetch('/api/thread', {
 					method: "POST",
                     headers: {
@@ -111,7 +105,7 @@
                         'grecaptcharesponse': grecaptcha.getResponse(),
                         topic: $('#topic').val(),
                         content: tinymce.activeEditor.getContent(),
-                        forum: '<%= forumData.category.database %>'
+                        forum: <%= forumData.category._id %>
                     }),
 				})
 				.then(res => res.json())

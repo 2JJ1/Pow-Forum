@@ -20,7 +20,7 @@
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Threads List</h1>
 			</div>
 			<br>
-			<div class="theme1 round border1 section threads">
+			<div class="gapchildren theme1 round border1 section threads">
 				<% if (threads.length <= 0){ %>
 				<p style="text-align: center;">This user has no threads.</p>
 				<% } else { %>
@@ -28,13 +28,12 @@
 				<div class="thread">
 					<a href="/t/<%= thread._id %>"><p><%- thread.title %></p></a>
 					<div class="threadmd">
-						<p>Posted in <a href="/c/<%= thread.category.database %>"><%= thread.category.name %></a> / <%= thread.views %> views / <%= thread.replies %> replies</p></p>
+						<p>Posted in <a href="/c/<%= thread.category._id %>"><%= thread.category.name %></a> / <%= thread.views %> views / <%= thread.replies %> replies</p></p>
 					</div>
 				</div>
 				<% } %>
 				<% } %>
 			</div>
-			<br>
 			<% if(moreAvailable){ %><button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button><% } %>
 		</main>
 		<% include ../../partials/footer %>

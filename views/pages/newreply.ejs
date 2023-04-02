@@ -21,9 +21,9 @@
 		<main class="screenPadding" style="max-width: 1100px; margin: auto">
             <div class="theme1 round border1 padding">
                     <p>
-                        <a href="/">Subcategories</a> > 
-                        <a href="/#<%= threadData.category.group %>"><%= threadData.category.group %></a> > 
-                        <a href="/c/<%= threadData.category.database %>"><%= threadData.category.name %></a> > 
+                        <a href="/">Categories</a> > 
+                        <a href="/#<%= threadData.category.category %>"><%= threadData.category.category %></a> > 
+                        <a href="/c/<%= threadData.category._id %>"><%= threadData.category.name %></a> > 
                         <a href="/t/<%= threadData._id %>"><%- threadData.title %></a>
                     </p>
                     <h1>New Reply</h1>
@@ -37,23 +37,19 @@
                 </div>
             </div>
             <br/>
-            <form id="replyform" class="theme1 round border1" onSubmit={this.SanitizeAndPost}>
+            <div id="replyform" class="theme1 round border1">
                 <h2 class="padding">Reply Content</h2>
                 <textarea id="editor"><%= initialtext %></textarea>
-                <div class="padding">
+                <div class="lessgapchildren padding">
+                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
                     <button
-                    style="float: right; color: inherit;"
-                    class="theme2 button g-recaptcha"
-                    data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>"
-                    data-callback="captchacallback"
-                    data-error-callback="captchaErrorCallback">
+                    class="theme2 button"
+                    onclick="PostReply()">
                     Submit
                     </button>
                     <p id="errormessage" style="color: red; text-align: center"></p>
                 </div>
-                <br>
-                <br>
-            </form>
+            </div>
             <br>
             <div class="padding theme1 round border1">
                 <ul class="gapchildren">
@@ -109,7 +105,7 @@
                 content_css: "/css/themes/night.css?v=20",
             });
 
-            function captchacallback(){
+            function PostReply(){
                 fetch('/api/thread/reply', {
 					method: "POST",
                     headers: {
