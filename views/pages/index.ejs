@@ -27,10 +27,10 @@
 					<p class="thead count textCenter">Topics</p>
 					<p class="thead count textCenter">Replies</p>
 					<p class="thead">Latest Active Topic</p>
-					<% let categoryList = categories.filter(category => category.group === categoryGroup.name) %>
+					<% let categoryList = categories.filter(category => category.category === categoryGroup.name) %>
 					<% categoryList.forEach(category => { %>
 					<span class="line border1-bottom"></span>
-					<a class="category" href='/c/<%= category.database %>' title="<%= category.description %>"><%= category.name %></a>
+					<a class="category" href='/c/<%= category._id %>' title="<%= category.description %>"><%= category.name %></a>
 					
 					
 					

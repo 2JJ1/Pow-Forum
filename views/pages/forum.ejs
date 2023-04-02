@@ -3,10 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
-		<meta name="keywords" content="<%- powForum.title %>, forum, list, category, threads, community" />
-        <meta name="description" content="Threads list for the <%= category.name %> category on <%- powForum.title %>" />
+		<meta name="keywords" content="<%- powForum.title %>, forum, list, subcategory, threads, community" />
+        <meta name="description" content="Threads list for the <%= subcategory.name %> subcategory on <%- powForum.title %>" />
         
-		<title><%= category.name %> - <%- powForum.title %></title>
+		<title><%= subcategory.name %> - <%- powForum.title %></title>
 		
 		<% include ../partials/headimps %>
         <link href="/css/forum.css?v=20" rel="stylesheet" type="text/css">
@@ -19,11 +19,11 @@
             <div class="theme2 round border1 padding">
                 <p>
                     <a href="/">Categories</a> > 
-                    <% if(category.name !== "All Categories"){ %>
-                    <a href="/#<%= category.database %>"><%= category.group %></a> >
+                    <% if(subcategory.name !== "All Subcategories"){ %>
+                    <a href="/#<%= subcategory.category %>"><%= subcategory.category %></a> >
                     <% } %>
                 </p>
-                <h1><%= category.name %></h1>
+                <h1><%= subcategory.name %></h1>
             </div>
             <br/>
             <div class="forumMenu">
@@ -33,14 +33,14 @@
                 </select>
                 <input id="searchbar" class="theme1 border1" type="text" placeholder="Search..." autocomplete="off"/>
                 <% if(forumData.canPost){ %> 
-                <a href="/c/<%= category.database %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                <a href="/c/<%= subcategory._id %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
                 <% } %>
             </div>
             <br/>
             <table class="forumcontainer theme1 round border1 padding">
                 <thead>
                     <tr>
-                        <% if(category.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
+                        <% if(subcategory.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
                         <th>Topic</th>
                         <th class="not-mobile">Replies</th>
                         <th class="not-mobile">Views</th>
@@ -51,7 +51,7 @@
                 <% for(index in forumData.threads){ %>
                     <% let thread = forumData.threads[index] %>
                     <tr>
-                        <% if(category.name === "All Threads"){ %> 
+                        <% if(subcategory.name === "All Threads"){ %> 
                         <td class="not-mobile"><a href="/<%= thread.forum %>"><%- thread.forum %></a></td>
                         <% } %>
                         <td>
@@ -89,12 +89,12 @@
                     </div>
                 </div>
                 <% if(forumData.canPost){ %> 
-                <a href="/c/<%= category.database %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                <a href="/c/<%= subcategory._id %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
                 <% } %>
             </div>
             <br>
             <div class="theme2 border1 round padding">
-                <h3>Users browsing <%= category.name %>:</h3>
+                <h3>Users browsing <%= subcategory.name %>:</h3>
 				<br>
 				<% include ../partials/onlinelist %>
 			</div>

@@ -96,7 +96,7 @@
             <div class="theme1 border1 round gapchildren">
                 <h2>Choose new group for <span class="categoryName">X</span></h2>
                 <div class="categorygroupoptions gapchildren">
-                    <% for(let group of categoryGroups){ %>
+                    <% for(let group of categories){ %>
                     <button class="theme2 border1 round less-padding"><%- group.name %></button>
                     <% } %>
                 </div>
@@ -107,15 +107,15 @@
 
         <main class="screenPadding gapchildren">
             <h1>Manage Categories</h1>
-            <p>Add, edit, or remove categories here</p>
+            <p>Add, edit, or remove (sub)categories here</p>
             <hr>
-            <% categoryGroups.forEach(group => { %>
+            <% categories.forEach(group => { %>
             <div class="theme1 border1 padding round gapchildren">
                 <div class="categorygroup editable">
                     <span class="edit" onclick="EditCategoryGroup(this)"></span>
                     <h2><%- group.name %></h2>
                 </div>
-                <% categories.filter(category => category.group == group.name).forEach(category => { %>
+                <% subCategories.filter(category => category.category == group.name).forEach(category => { %>
                 <div class="category editable">
                     <span class="edit" onclick="EditCategory(this)"></span>
                     <div>
@@ -159,7 +159,7 @@
                         let description = addCategoryModal.querySelector('input[name="description"]').value
                         let requiredRoles = addCategoryModal.querySelector('input[name="requiredRoles"]').value
                         
-                        fetch('/api/dashboard/addsubcategory', {
+                        fetch('/api/dashboard/categories/addsubcategory', {
                             method: "POST",
                             headers: {
                                 'content-type': 'application/json',
@@ -220,7 +220,7 @@
                     if(newName == currentName) return document.querySelector('.editcategorygroup').style.display = 'none'
 
                     //Requests change
-                    fetch('/api/dashboard/editcategorygroupname', {
+                    fetch('/api/dashboard/categories/editcategorygroupname', {
                         method: "POST",
                         headers: {
                             'content-type': 'application/json',
@@ -263,7 +263,7 @@
                     let requiredRoles = modal.querySelector('input[name="requiredRoles"]').value
 
                     //Requests change
-                    await fetch('/api/dashboard/editcategory', {
+                    await fetch('/api/dashboard/categories/editcategory', {
                         method: "POST",
                         headers: {
                             'content-type': 'application/json',
@@ -299,7 +299,7 @@
                         button.onclick = (e) => {
                             let categoryGroup = e.target.textContent
 
-                            fetch('/api/dashboard/changecategorygroup', {
+                            fetch('/api/dashboard/categories/changecategorygroup', {
                                 method: "POST",
                                 headers: {
                                     'content-type': 'application/json',
@@ -331,7 +331,7 @@
                     passwordModal.querySelector('button[type="submit"]').onclick = () => {
                         let password = passwordModal.querySelector('input').value
 
-                        fetch('/api/dashboard/deletesubcategory', {
+                        fetch('/api/dashboard/categories/deletesubcategory', {
                             method: "DELETE",
                             headers: {
                                 'content-type': 'application/json',

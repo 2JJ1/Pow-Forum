@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
-const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard
@@ -24,7 +24,7 @@ router.post("/editcategory", async (req, res) => {
         newDescription = escape(newDescription)
 
         //Fetch category
-        let category = await Categories.findOne({name: currentName})
+        let category = await Subcategories.findOne({name: currentName})
         if(!category) return res.status(400).send("Category does not exist")
 
         // Process update

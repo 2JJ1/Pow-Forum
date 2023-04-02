@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
-const CategoryGroups = mongoose.model("CategoryGroups")
+const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/cateogories
@@ -20,10 +20,10 @@ router.post("/addcategory", async (req, res) => {
         if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"
         name = escape(name)
 
-        if(await CategoryGroups.findOne({name})) throw "This category already exists"
+        if(await Categories.findOne({name})) throw "This category already exists"
  
         //Create new category
-        await new CategoryGroups({
+        await new Categories({
             name,
         })
         .save()

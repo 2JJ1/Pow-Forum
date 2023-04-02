@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
         if(!await rolesapi.isClientOverpowerTarget(req.session.uid, thread.uid)) throw {safe: 'You lack power over the original poster'};
 
 		//Get category
-		let category = await forumapi.GetCategory(forum)
+		let category = await forumapi.GetSubcategory(forum)
 
         //Check if the forum exists
 		if(!category) throw {safe: "Invalid category"};

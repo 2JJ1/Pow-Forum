@@ -2,14 +2,12 @@ const mongoose = require('mongoose')
 const AutoIncrement = require('mongoose-sequence')(mongoose)
 
 let schema = mongoose.Schema({
+    _id: Number,
     order: Number,
     name: String,
-    description: String,
-    requiredRoles: Array,
-    database: String,
-    group: String,
 })
 
-schema.plugin(AutoIncrement, {id: 'Categories', inc_field: 'order'})
+schema.plugin(AutoIncrement, {id: 'CategoriesId'})
+schema.plugin(AutoIncrement, {id: 'CategoriesSort', inc_field: 'order'})
 
 module.exports = mongoose.model("Categories", schema)

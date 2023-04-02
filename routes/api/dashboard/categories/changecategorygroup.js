@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose")
 
+const Subcategories = mongoose.model("Subcategories")
 const Categories = mongoose.model("Categories")
-const CategoryGroups = mongoose.model("CategoryGroups")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard
@@ -16,11 +16,11 @@ router.post("/changecategorygroup", async (req, res) => {
         let {category, categoryGroup} = req.body
 
         //Fetch category
-        category = await Categories.findOne({name: category})
+        category = await Subcategories.findOne({name: category})
         if(!category) return res.status(400).send("Category does not exist")
 
         //Fetch category group
-        categoryGroup = await CategoryGroups.findOne({name: categoryGroup})
+        categoryGroup = await Categories.findOne({name: categoryGroup})
         if(!categoryGroup) return res.status(400).send("Category group does not exist")
 
         //Process change

@@ -3,8 +3,8 @@ const router = express.Router();
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
-const CategoryGroups = mongoose.model("CategoryGroups")
 const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard
@@ -20,10 +20,10 @@ router.post("/editcategorygroupname", async (req, res) => {
         if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
         newName = escape(newName)
 
-        let categoryGroup = await CategoryGroups.findOneAndUpdate({name: currentName}, {name: newName})
+        let categoryGroup = await Categories.findOneAndUpdate({name: currentName}, {name: newName})
         if(!categoryGroup) return res.status(400).send("Category group does not exist")
 
-        let categories = await Categories.find({group: currentName})
+        let categories = await Subcategories.find({group: currentName})
         for (let category of categories){
             category.group = newName
             await category.save()

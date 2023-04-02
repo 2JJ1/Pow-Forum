@@ -46,7 +46,7 @@ router.get('/', async (req, res, next) => {
         
         //Assign human subcategory name
         for(let thread of pagedata.threads){
-            thread.category = await forumAPI.GetCategory(thread.forum)
+            thread.category = await forumAPI.GetSubcategory(thread.forum)
         }
         
         if(!pagedata.accInfo) res.redirect('/login')

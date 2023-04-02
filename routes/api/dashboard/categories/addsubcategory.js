@@ -3,11 +3,11 @@ const router = express.Router();
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
-const CategoryGroups = mongoose.model("CategoryGroups")
 const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
-// 	/api/dashboard
+// 	/api/dashboard/categories
 
 router.post("/addsubcategory", async (req, res) => {
     let response = {success: false}
@@ -20,7 +20,7 @@ router.post("/addsubcategory", async (req, res) => {
         if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"
         name = escape(name)
          // *Future* Make it so category names can be reused
-        if(await Categories.findOne({name})) throw "This category already exists"
+        if(await Subcategories.findOne({name})) throw "This category already exists"
  
         //Sanitize description
         if(description < 3 || description.length > 250) throw "Description length must be between 3-250 characters"
@@ -35,16 +35,15 @@ router.post("/addsubcategory", async (req, res) => {
 		}
 
         //It must be added to an existing group
-        group = await CategoryGroups.findOne({name: group})
-        if(!group) return res.status(400).send("This category group does not exist")
+        let category = await Categories.findOne({name: group})
+        if(!category) return res.status(400).send("This category does not exist")
 
         //Create new category
-        await new Categories({
+        await new Subcategories({
             name,
             description,
             requiredRoles,
-            group: group.name,
-            database: name.toLowerCase()
+            category: category.name,
         })
         .save()
         

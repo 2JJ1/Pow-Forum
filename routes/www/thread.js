@@ -12,8 +12,8 @@ const { ProcessMentions } = require('../../my_modules/pfapi')
 const { CompileNotifications } = require('../../my_modules/notifications')
 
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
-const CategoryGroups = mongoose.model("CategoryGroups")
 const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
 const Notifications = mongoose.model("Notifications")
@@ -36,8 +36,8 @@ router.get('/:tid', async (req, res) => {
 	let pagedata = {
 		powForum: req.powForum,
 		accInfo: req.account,
-        categoryGroups: await CategoryGroups.find().lean(),
-        categories: await Categories.find().lean(),
+        categoryGroups: await Categories.find().lean(),
+        categories: await Subcategories.find().lean(),
     }
 
 	//Get forum and topic
@@ -49,7 +49,7 @@ router.get('/:tid', async (req, res) => {
     }
     else return res.status(404).render('404', {reason: 'This thread does not exist'})
 
-    result.category = await forumapi.GetCategory(result.forum)
+    result.category = await forumapi.GetSubcategory(result.forum)
 
     // Pagination
     let resultsPerPage = 15

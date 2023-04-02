@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const forumapi = require('../../my_modules/forumapi')
 const accountAPI = require('../../my_modules/accountapi')
 
-const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 
 router.get('/:forum/newthread', async (req, res) => {
 	try {
@@ -21,11 +21,11 @@ router.get('/:forum/newthread', async (req, res) => {
         if(!await accountAPI.emailVerified(req.session.uid)) return res.status(400).render("400", {reason: "Please verify your email to create a thread"})
 
         //Check if the category exists
-        if(!await Categories.findOne({database: req.params.forum})) return res.status(400).render("404", {reason: "Category does not exist"})
+        if(!await Subcategories.findById(req.params.forum)) return res.status(400).render("404", {reason: "Category does not exist"})
 
     	pagedata.forumData = {
             name: req.params.forum,
-            category: await forumapi.GetCategory(req.params.forum),
+            category: await forumapi.GetSubcategory(req.params.forum),
         }
 
         //Check if client can post here

@@ -20,8 +20,8 @@ router.get('/', async (req, res) => {
 		let pagedata = {
 			powForum: req.powForum,
 			accInfo: req.account,
-			categoryGroups: await forumapi.GetCategoryGroups(),
-			categories: await forumapi.GetCategories(),
+			categoryGroups: await forumapi.GetCategories(),
+			categories: await forumapi.GetSubcategories(),
 			description: (await ForumSettings.findOne({type: "description"})).value
 		}
 

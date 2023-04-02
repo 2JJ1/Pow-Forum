@@ -3,8 +3,8 @@ const AutoIncrement = require('mongoose-sequence')(mongoose)
 
 const schema = mongoose.Schema({
     _id: Number,
-    forum: {
-        type: String,
+    category: {
+        type: Number,
         index: true,
     },
     title: String,
@@ -17,18 +17,8 @@ const schema = mongoose.Schema({
         default: 0,
     },
     locked: Number,
-    /*threadReplies: [{
-        type: Number,
-        ref: "ThreadReplies",
-    }],*/
 })
 
 schema.plugin(AutoIncrement, {id: 'Threads'})
-
-schema.virtual('threadReplies', {
-    ref: 'ThreadReplies',
-    localField: '_id',
-    foreignField: 'tid',
-})
 
 module.exports = mongoose.model("Threads", schema)

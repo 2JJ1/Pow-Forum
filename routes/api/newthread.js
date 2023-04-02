@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 		topic = topic.trim()	
 
 		//Get category
-		let category = await forumapi.GetCategory(req.body.forum)
+		let category = await forumapi.GetSubcategory(req.body.forum)
 
         //Check if the forum exists
 		if(!category) throw "Invalid category"
@@ -131,7 +131,7 @@ router.post('/', async (req, res) => {
 			
 		//Creates the thread
 		let newThread = await new Threads({
-			forum: req.body.forum,
+			category: req.body.forum,
 			title: safeTopic,
 			uid: req.session.uid,
 		}).save()
@@ -140,7 +140,7 @@ router.post('/', async (req, res) => {
 		await new ThreadReplies({
 			uid: req.session.uid,
 			tid: newThread._id,
-			forum: req.body.forum,
+			category: req.body.forum,
 			date: currentDate,
 			content: safeContent,
 		}).save()

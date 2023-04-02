@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 		let account = await accountAPI.fetchAccount(req.session.uid)
 
 		//Does this category require a specific role?
-		let category = await forumAPI.GetCategory(thread.forum)
+		let category = await forumAPI.GetSubcategory(thread.forum)
 		if(!forumAPI.permissionsCheck(category.requiredRoles, account.roles)) throw "You lack permissions to post here"
 
 		// Reputation must be greater than -20

@@ -1,24 +1,24 @@
 const mongoose = require('mongoose')
 
-const CategoryGroups = mongoose.model("CategoryGroups")
 const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 
 const ForumAPI = {
+	GetSubcategories: async function(){
+		return await Subcategories.find().lean()
+	},
+
+	//Returns the subcategory by category id
+	GetSubcategory: async function(id){
+		return await Subcategories.findById(id).lean()
+	},
+
 	GetCategories: async function(){
 		return await Categories.find().lean()
 	},
-
-	//Returns the category from database name
-	GetCategory: async function(database){
-		return await Categories.findOne({database}).lean()
-	},
-
-	GetCategoryGroups: async function(){
-		return await CategoryGroups.find().lean()
-	},
 	
 	isCategoryExist: async function(database){
-		if(await this.GetCategory(database)) return true
+		if(await this.GetSubcategory(database)) return true
 		return false
 	},
 

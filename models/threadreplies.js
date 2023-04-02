@@ -11,8 +11,8 @@ let schema = mongoose.Schema({
         type: Number,
         index: true,
     },
-    forum: {
-        type: String,
+    category: {
+        type: Number,
         index: true,
     },
     date: Date,

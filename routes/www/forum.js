@@ -54,7 +54,7 @@ router.get('/:forum', async (req, res) => {
 			forumData: {
 				canPost: true,
 			},
-			category: await forumapi.GetCategory(forum),
+			subcategory: await forumapi.GetSubcategory(forum),
 		}
 
 		//Contains forum data
@@ -67,19 +67,19 @@ router.get('/:forum', async (req, res) => {
 
 		//Compensate for all categories view
 		if(forum === "all"){
-			pagedata.category = {
-				name: "All Categories",
+			pagedata.subcategory = {
+				name: "All Subcategories",
 				requiredRoles: null,
 			}
 
 			forumData.canPost = false
 		}
 		
-		//If the category does not exist, redirect to the forum home
-		if(!pagedata.category && forum !== "all") return res.render("400", {reason: "This category does not exist."})
+		//If the subcategory does not exist, redirect to the forum home
+		if(!pagedata.subcategory && forum !== "all") return res.render("400", {reason: "This subcategory does not exist."})
 		
 		//Must have the necessary permission to post here
-		if(!forumapi.permissionsCheck(pagedata.category.requiredRoles, pagedata.accInfo.roles)) forumData.canPost = false
+		if(!forumapi.permissionsCheck(pagedata.subcategory.requiredRoles, pagedata.accInfo.roles)) forumData.canPost = false
 
 		//Sum of reputation
 		var reputation = await accountAPI.SumReputation(req.session.uid)
