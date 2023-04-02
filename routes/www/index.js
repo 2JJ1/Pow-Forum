@@ -34,16 +34,16 @@ router.get('/', async (req, res) => {
 		else{
 			//Compile extra data for each category
 			for(let category of pagedata.categories) {
-				//Counts how many threads there are with x forum name
-				category.threadcount = await Threads.countDocuments({forum: category._id})
+				//Counts how many threads there are with x category name
+				category.threadcount = await Threads.countDocuments({category: category._id})
 
-				//Checks how many replies are in x forum name
-				let replyCount = await ThreadReplies.countDocuments({forum: category._id})
+				//Checks how many replies are in x category name
+				let replyCount = await ThreadReplies.countDocuments({category: category._id})
 				//Each thread has at least 1 post(The original post), so decrement that as OP is not a reply
 				category.replies = replyCount - category.threadcount
 
-				//Gets the latest reply in this forum
-				category.latestReply = await ThreadReplies.findOne({forum: category._id}).sort({_id: -1}).lean()
+				//Gets the latest reply in this category
+				category.latestReply = await ThreadReplies.findOne({category: category._id}).sort({_id: -1}).lean()
 				.then(async reply => {
 					if(!reply) return
 

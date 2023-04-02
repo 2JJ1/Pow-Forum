@@ -111,6 +111,6 @@ The default database name is PFForum
 Copy over the following files to the same location in the new deployment
 
 * User's profile pictures found in
-`public/images/images`
+`public/images/avatars`
 * The .env file
 `.env`
