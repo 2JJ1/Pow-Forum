@@ -22,9 +22,34 @@ router.post('/subscribe', async (req, res) => {
 		if(!req.session.uid) throw "Must be logged in"
 
 		let subscription = req.body
-		subscription = JSON.stringify(subscription)
 
-		req.session.webpushsub = subscription
+		//Sanitize subscription
+		subscription = {
+			endpoint: subscription.endpoint,
+			expirationTime: subscription.expirationTime,
+			keys: {
+				auth: subscription.keys.auth,
+				p256dh: subscription.keys.p256dh,
+			}
+		}
+
+		if(typeof subscription.endpoint !== "string") throw "Invalid subscription"
+		if(typeof subscription.endpoint.length > 300) throw "Invalid subscription"
+
+		//expirationTime is only ever null or a DOMHighResTimeStamp(number)
+		if(
+			subscription.expirationTime !== null && 
+			subscription.expirationTime !== undefined && 
+			typeof subscription.expirationTime !== "number"
+		) throw "Invalid subscription"
+
+		if(typeof subscription.keys.auth !== "string") throw "Invalid subscription"
+		if(typeof subscription.keys.auth.length > 300) throw "Invalid subscription"
+
+		if(typeof subscription.keys.p256dh !== "string") throw "Invalid subscription"
+		if(typeof subscription.keys.p256dh.length > 300) throw "Invalid subscription"
+
+		req.session.webpushsub = JSON.stringify(subscription)
 		
         response.success = true
 	} catch(e){

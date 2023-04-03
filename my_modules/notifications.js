@@ -188,7 +188,7 @@ exports.PushNotification = async function(uid, title, content, link){
     for (let loginSession of loginSessions){
         if(!loginSession.session.webpushsub) continue
 
-        webpush.sendNotification(JSON.parse(loginSession.session.webpushsub), JSON.stringify({
+        await webpush.sendNotification(JSON.parse(loginSession.session.webpushsub), JSON.stringify({
             type: "notification",
             title, 
             options: {
@@ -200,6 +200,16 @@ exports.PushNotification = async function(uid, title, content, link){
                 }
             }
         }))
+        .catch(async err => {
+            //push subscription has unsubscribed or expired. Uncache the subscription
+            if(err.statusCode === 410){
+                await Sessions.findByIdAndUpdate(loginSession._id, {$unset: {"session.webpushsub": 1}})
+            }
+            //Log other errors except: throttle
+            else if(err.statusCode !== 406){
+                console.warn(`Webpush error for id:${copyRow.id}. Error:`, err)
+            }
+        })
     }
 }
 
