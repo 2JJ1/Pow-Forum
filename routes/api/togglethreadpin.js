@@ -1,9 +1,8 @@
-const express = require('express');
+const router = require('express').Router()
 const mongoose = require("mongoose")
 
-const rolesapi = require('../../my_modules/rolesapi');
+const rolesapi = require('../../my_modules/rolesapi')
 
-const router = express.Router();
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 const Threads = mongoose.model("Threads")
 const PinnedThreads = mongoose.model("PinnedThreads")

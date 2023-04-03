@@ -1,17 +1,14 @@
 require('dotenv').config()
 const express = require('express')
-var session = require('express-session')
+const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const webpush = require('web-push')
-//Open HTTP server
 const app = express()
+const http = require('http').Server(app);
 const mongoose = require('mongoose')
 const helmet = require("helmet")
-var compression = require('compression')
-const http = require('http').Server(app);
+const compression = require('compression')
 const socketio = require("socket.io")
-const envfile = require('envfile')
-const fs = require('fs')
 
 const updateEnv = require('./my_modules/updateenv')
 
@@ -132,11 +129,7 @@ if(!process.env.SESSION_SECRET) {
 		counter += 1;
 	}
 
-	let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
-	parsedEnv.SESSION_SECRET = result
-	fs.writeFileSync('.env', envfile.stringify(parsedEnv))
-
-	process.env.SESSION_SECRET = result
+	updateEnv({SESSION_SECRET: result})
 }
 
 //Express routes will get sessions through session

@@ -1,10 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 
-const cors = require('../../my_modules/cors');
-const notifications = require('../../my_modules/notifications');
+const cors = require('../../my_modules/cors')
+const notifications = require('../../my_modules/notifications')
 
 const Notifications = mongoose.model("Notifications")
 

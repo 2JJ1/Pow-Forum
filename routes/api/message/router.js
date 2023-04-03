@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+const bodyParser = require('body-parser')
 
-const cors = require('../../../my_modules/cors');
-const accountAPI = require('../../../my_modules/accountapi');
+const cors = require('../../../my_modules/cors')
+const accountAPI = require('../../../my_modules/accountapi')
 
 // 	/v1/message
 

@@ -1,11 +1,10 @@
-const express = require('express');
-const router = express.Router();
-var formidable = require('formidable');
-const path = require('path');
-const fs = require('fs');
+const router = require('express').Router()
+var formidable = require('formidable')
+const path = require('path')
+const fs = require('fs')
 const rolesAPI = require("../../../../my_modules/rolesapi")
 const jimp = require("jimp")
-const { execFile } = require('child_process');
+const { execFile } = require('child_process')
 const gifsicle = require('gifsicle');
 const webp = require('webp-converter')
 const isAnimated = require('is-animated')

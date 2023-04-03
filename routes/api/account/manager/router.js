@@ -1,6 +1,5 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+const bodyParser = require('body-parser')
 
 // 	/v1/account/manager
 

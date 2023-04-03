@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 
-const recaptcha = require('../../../my_modules/captcha');
+const recaptcha = require('../../../my_modules/captcha')
 const tfa = require('../../../my_modules/2fa')
 const accountAPI = require('../../../my_modules/accountapi')
 const pfAPI = require('../../../my_modules/pfapi')

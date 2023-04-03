@@ -1,7 +1,6 @@
-const express = require('express');
-const router = express.Router();
-var escape = require('escape-html');
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+var escape = require('escape-html')
+const bodyParser = require('body-parser')
 const phraseblacklist = require('phrase-blacklist')
 const mongoose = require("mongoose")
 

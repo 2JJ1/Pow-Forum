@@ -1,12 +1,10 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router()
 const mongoose = require("mongoose")
 const envfile = require('envfile')
 const fs = require('fs')
 
 const {ValidateEmail, extractHostname} = require('../../../../my_modules/other')
 
-const ForumSettings = mongoose.model("ForumSettings")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/integrations

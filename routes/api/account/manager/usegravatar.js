@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+const router = require('express').Router()
 const fetch = require("node-fetch")
 const fs = require("fs")
 const path = require('path')

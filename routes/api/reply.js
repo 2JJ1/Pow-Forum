@@ -1,13 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const phraseblacklist = require('phrase-blacklist');
+const router = require('express').Router()
+const phraseblacklist = require('phrase-blacklist')
 const mongoose = require("mongoose")
 const jsdom = require("jsdom")
 
 const stripCombiningMarks = require('strip-combining-marks');
-const recaptcha = require('../../my_modules/captcha');
-const rolesAPI = require('../../my_modules/rolesapi');
-const accountAPI = require('../../my_modules/accountapi');
+const recaptcha = require('../../my_modules/captcha')
+const rolesAPI = require('../../my_modules/rolesapi')
+const accountAPI = require('../../my_modules/accountapi')
 const notificationsAPI = require('../../my_modules/notifications')
 const forumAPI = require('../../my_modules/forumapi')
 const { GetMentionedUIDs } = require('../../my_modules/pfapi')

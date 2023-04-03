@@ -1,8 +1,7 @@
-const express = require('express');
-const mongoose = require("mongoose");
-const accountAPI = require('../../my_modules/accountapi');
+const router = require('express').Router()
+const mongoose = require("mongoose")
+const accountAPI = require('../../my_modules/accountapi')
 
-const router = express.Router();
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 
 // 	/v1/forum/togglelike

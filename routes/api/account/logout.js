@@ -1,9 +1,4 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
-const mongoose = require("mongoose")
-
-const Accounts = mongoose.model("Accounts")
+const router = require('express').Router()
 
 // 	/api/account/logout
 

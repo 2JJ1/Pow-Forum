@@ -1,14 +1,13 @@
-const express = require('express');
-const router = express.Router();
-var escape = require('escape-html');
+const router = require('express').Router()
+var escape = require('escape-html')
 const phraseblacklist = require('phrase-blacklist')
-const jsdom = require("jsdom");
+const jsdom = require("jsdom")
 const stripCombiningMarks = require('strip-combining-marks')
 const mongoose = require("mongoose")
 
-const forumapi = require('../../my_modules/forumapi');
-const recaptcha = require('../../my_modules/captcha');
-const rolesAPI = require('../../my_modules/rolesapi');
+const forumapi = require('../../my_modules/forumapi')
+const recaptcha = require('../../my_modules/captcha')
+const rolesAPI = require('../../my_modules/rolesapi')
 const notificationsAPI = require('../../my_modules/notifications')
 const accountAPI = require('../../my_modules/accountapi')
 const { ThreadSanitizeHTML } = require('../../my_modules/other')

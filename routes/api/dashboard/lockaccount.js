@@ -1,7 +1,4 @@
-const express = require('express');
-const router = express.Router();
-const path = require("path")
-const fs = require("fs")
+const router = require('express').Router()
 const mongoose = require("mongoose")
 const escape = require('escape-html')
 

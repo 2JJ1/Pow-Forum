@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+const router = require('express').Router()
 const mongoose = require('mongoose')
 
 const rolesapi = require('../../my_modules/rolesapi')

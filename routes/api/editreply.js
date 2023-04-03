@@ -1,13 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const phraseblacklist = require('phrase-blacklist');
+const router = require('express').Router()
+const phraseblacklist = require('phrase-blacklist')
 const mongoose = require("mongoose")
 const jsdiff = require("diff")
-const jsdom = require("jsdom");
+const jsdom = require("jsdom")
 
-const stripCombiningMarks = require('strip-combining-marks');
-const recaptcha = require('../../my_modules/captcha');
-const rolesAPI = require('../../my_modules/rolesapi');
+const stripCombiningMarks = require('strip-combining-marks')
+const recaptcha = require('../../my_modules/captcha')
+const rolesAPI = require('../../my_modules/rolesapi')
 const accountAPI = require('../../my_modules/accountapi')
 const { ThreadSanitizeHTML } = require('../../my_modules/other')
 

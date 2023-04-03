@@ -1,10 +1,7 @@
-const express = require('express');
-const mongoose = require("mongoose")
+const router = require('express').Router()
 const fetch = require("node-fetch")
 
 const rolesAPI = require('../../../my_modules/rolesapi')
-
-const router = express.Router();
 
 // 	/api/upgrade/createCoinbaseCharge
 

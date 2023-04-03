@@ -1,8 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const bodyParser = require('body-parser');
+const router = require('express').Router()
+const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-var Webhook = require('coinbase-commerce-node').Webhook;
+var Webhook = require('coinbase-commerce-node').Webhook
 
 const other = require('../../../my_modules/other')
 const mailgun = require('../../../my_modules/mailgun')

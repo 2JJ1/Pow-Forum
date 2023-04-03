@@ -1,5 +1,4 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router()
 const bodyParser = require('body-parser');
 var stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const mongoose = require('mongoose')

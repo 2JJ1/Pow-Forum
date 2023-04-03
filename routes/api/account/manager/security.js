@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+const router = require('express').Router()
 var escape = require('escape-html')
 const crypto = require('crypto')
 const mongoose = require('mongoose')
