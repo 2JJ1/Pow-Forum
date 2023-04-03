@@ -20,10 +20,10 @@
                 <p>
                     <a href="/">Categories</a> > 
                     <% if(subcategory.name !== "All Subcategories"){ %>
-                    <a href="/#<%= subcategory.category %>"><%= subcategory.category %></a> >
+                    <a href="/#<%= subcategory.category %>"><%- subcategory.category %></a> >
                     <% } %>
                 </p>
-                <h1><%= subcategory.name %></h1>
+                <h1><%- subcategory.name %></h1>
                 <p><%- subcategory.description %></p>
             </div>
             <br/>
