@@ -107,6 +107,7 @@ app.set('trust proxy', 1)
 //set the view engine to ejs
 app.set('view engine', 'ejs')
 
+//gibe me kreditz
 app.use((req, res, next) => {
     res.append('X-Forum-Software', 'Pow-Forum');
     next();
