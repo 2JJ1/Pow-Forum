@@ -29,7 +29,7 @@ router.post("/addsubcategory", async (req, res) => {
         requiredRoles = requiredRoles.trim()
         if(requiredRoles) requiredRoles = requiredRoles.split(",")
         else requiredRoles = []
-        if(!requiredRoles.length == 0) requiredRoles = undefined
+        if(requiredRoles.length == 0) requiredRoles = undefined
 
         //It must be added to an existing group
         let category = await Categories.findOne({name: group})
