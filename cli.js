@@ -39,7 +39,6 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFFo
 		}
 		catch(e){
 			if(typeof e === "string") console.log(e)
-			else throw e
 		}
 		
 		console.log("\n______complete______\n")
@@ -103,17 +102,19 @@ commands.setup = {
 		console.log("What is your website's domain? Ex: https://mywebsite.com")
 		console.log("Use 'localhost' if testing without HTTP proxy")
 		if(parsedEnv.FORUM_URL) console.log(`Found existing setting, ${parsedEnv.FORUM_URL}. Leave input empty to skip.`)
-		let domain = readlineSync.question(`> `, {
-			defaultInput: parsedEnv.FORUM_URL
-		})
 		let parsedURL
-		if(domain === "localhost") parsedURL = new URL('http://localhost')
-		else {
-			try {
-				parsedURL = new URL(domain)
-			}
-			catch(e) {
-				return console.log("Invalid URL")
+		while (!parsedURL){
+			let domain = readlineSync.question(`> `, {
+				defaultInput: parsedEnv.FORUM_URL
+			})
+			if(domain === "localhost") parsedURL = new URL('http://localhost')
+			else {
+				try {
+					parsedURL = new URL(domain)
+				}
+				catch(e) {
+					console.log("Invalid URL")
+				}
 			}
 		}
 		updateEnv({COOKIE_DOMAIN: parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.hostname}`})
@@ -122,10 +123,15 @@ commands.setup = {
 		//Configures support email address
 		console.log("\nWhat is your support email address?")
 		if(parsedEnv.SUPPORT_EMAIL_ADDRESS) console.log(`Found existing setting, "${parsedEnv.SUPPORT_EMAIL_ADDRESS}". Leave input empty to skip.`)
-		let SUPPORT_EMAIL_ADDRESS = readlineSync.question(`> `, {
-			defaultInput: parsedEnv.SUPPORT_EMAIL_ADDRESS
-		})
-		if(!other.ValidateEmail(SUPPORT_EMAIL_ADDRESS)) return console.log("Invalid email address")
+		let SUPPORT_EMAIL_ADDRESS
+		while(!SUPPORT_EMAIL_ADDRESS){
+			SUPPORT_EMAIL_ADDRESS = readlineSync.question(`> `, { defaultInput: parsedEnv.SUPPORT_EMAIL_ADDRESS })
+
+			if(!other.ValidateEmail(SUPPORT_EMAIL_ADDRESS)) {
+				console.log("Invalid email address")
+				SUPPORT_EMAIL_ADDRESS = false
+			}
+		}
 		updateEnv({SUPPORT_EMAIL_ADDRESS})
 		
 		//Configures mailgun API
@@ -133,29 +139,44 @@ commands.setup = {
 		
 		console.log("\nWhat is your mailgun domain?")
 		if(parsedEnv.MAILGUN_DOMAIN) console.log(`Found existing setting, "${parsedEnv.MAILGUN_DOMAIN}". Leave input empty to skip.`)
-		let MAILGUN_DOMAIN = readlineSync.question(`> `, {
-			defaultInput: parsedEnv.MAILGUN_DOMAIN
-		})
-		MAILGUN_DOMAIN = other.extractHostname(MAILGUN_DOMAIN)
-        if(MAILGUN_DOMAIN.length < 5) throw "Invalid domain"
+		let MAILGUN_DOMAIN
+		while(!MAILGUN_DOMAIN){
+			MAILGUN_DOMAIN = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_DOMAIN })
+
+			if(other.extractHostname(MAILGUN_DOMAIN).length < 5) {
+				console.log("Invalid domain")
+				MAILGUN_DOMAIN = false
+			}
+		}
 		updateEnv({MAILGUN_DOMAIN})
 
 		console.log("\nWhat is your mailgun API key?")
 		if(parsedEnv.MAILGUN_APIKEY) console.log(`Found existing setting, "${parsedEnv.MAILGUN_APIKEY}". Leave input empty to skip.`)
-		let MAILGUN_APIKEY = readlineSync.question(`> `, {
-			defaultInput: parsedEnv.MAILGUN_APIKEY
-		})
-        if(!/^[\w-]{10,}$/.test(MAILGUN_APIKEY)) throw "Invalid API key"
-		updateEnv({MAILGUN_APIKEY})
+		let MAILGUN_APIKEY
+		while(!MAILGUN_APIKEY){
+			MAILGUN_APIKEY = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_APIKEY })
 
+			if(!/^[\w-]{10,}$/.test(MAILGUN_APIKEY)) {
+				console.log("Invalid domain")
+				MAILGUN_APIKEY = false
+			}
+		}
+		updateEnv({MAILGUN_APIKEY})
+		
+		
 		console.log("\nWhat is your preferred noreply email address?")
 		if(parsedEnv.MAILGUN_NOREPLY_ADDRESS) console.log(`Found existing setting, "${parsedEnv.MAILGUN_NOREPLY_ADDRESS}". Leave input empty to skip.`)
-		let MAILGUN_NOREPLY_ADDRESS = readlineSync.question(`> `, {
-			defaultInput: parsedEnv.MAILGUN_NOREPLY_ADDRESS
-		})
-		if(!other.ValidateEmail(MAILGUN_NOREPLY_ADDRESS)) return console.log("Invalid email address")
-		updateEnv({MAILGUN_NOREPLY_ADDRESS})
+		let MAILGUN_NOREPLY_ADDRESS
+		while(!MAILGUN_NOREPLY_ADDRESS){
+			MAILGUN_NOREPLY_ADDRESS = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_NOREPLY_ADDRESS })
 
+			if(!other.ValidateEmail(MAILGUN_NOREPLY_ADDRESS)) {
+				console.log("Invalid email address")
+				MAILGUN_NOREPLY_ADDRESS = false
+			}
+		}
+		updateEnv({MAILGUN_NOREPLY_ADDRESS})
+		
 		console.log("\nInitial setup complete. Restart the forum process if it's running. Please log into an admin account and continue configuration in the dashboard.")
 	}
 }
