@@ -18,7 +18,7 @@ async function handleCommand(command){
 		}
 	}
 	catch(e){
-		if(typeof e === "string") console.log(e)
+		if(typeof e === "string") console.error(e)
 		else throw e
 	}
 
@@ -215,11 +215,11 @@ commands.addadmin = {
 		var {acc, uid, username} = await FetchUser(target)
 
 		acc.roles = other.StringToArray(acc.roles)
-		if(acc.roles.indexOf("admin") !== -1) return console.log(`${username} is already an admin`)
+		if(acc.roles.includes('admin')) throw `${username} is already an admin`
 
 		console.log(`Are you sure you want to add ${username} (UID ${uid}) as an admin? They will be granted abusable powers such as the ability to delete accounts and add categories.`)
 		let confirm = readlineSync.question('yes/no: ')
-		if(confirm !== "yes") return console.log("Aborted admin give")
+		if(confirm !== "yes") throw "Aborted admin give"
 
 		//Adds the admin role
 		acc.roles.push('admin')
