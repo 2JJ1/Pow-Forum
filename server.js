@@ -46,7 +46,7 @@ async function CleanMongoDatabase(){
 }
 
 //Connect to database
-let mongoURL = `mongodb://localhost:27017/${process.env.DATABASE_NAME || "PFForum"}`
+let mongoURL = `mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFForum"}`
 mongoose.set('strictQuery', false)
 mongoose.connect(mongoURL)
 .then(async ()=> {

@@ -10,7 +10,7 @@ const updateEnv = require('./my_modules/updateenv')
 
 //Connects to MongoDB database
 mongoose.set('strictQuery', false)
-mongoose.connect(`mongodb://localhost:27017/${process.env.DATABASE_NAME || "PFForum"}`)
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFForum"}`)
 .then(async ()=> {
 	if(argv.c) {
 		commands[argv.c].func()
