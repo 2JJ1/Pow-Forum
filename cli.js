@@ -6,6 +6,7 @@ const envfile = require('envfile')
 const argv = require('minimist')(process.argv.slice(2))
 
 const other = require('./my_modules/other')
+const updateEnv = require('./my_modules/updateenv')
 
 //Connects to MongoDB database
 mongoose.set('strictQuery', false)
@@ -115,8 +116,8 @@ commands.setup = {
 				return console.log("Invalid URL")
 			}
 		}
-		parsedEnv.COOKIE_DOMAIN = parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.hostname}`
-		parsedEnv.FORUM_URL = parsedURL.hostname !== 'localhost' ? parsedURL.origin : `${parsedURL.protocol}//${parsedURL.hostname}:${process.env.PORT || 8087}`
+		updateEnv({COOKIE_DOMAIN: parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.hostname}`})
+		updateEnv({FORUM_URL: parsedURL.hostname !== 'localhost' ? parsedURL.origin : `${parsedURL.protocol}//${parsedURL.hostname}:${process.env.PORT || 8087}`})
 
 		//Configures support email address
 		console.log("\nWhat is your support email address?")
@@ -125,8 +126,8 @@ commands.setup = {
 			defaultInput: parsedEnv.SUPPORT_EMAIL_ADDRESS
 		})
 		if(!other.ValidateEmail(SUPPORT_EMAIL_ADDRESS)) return console.log("Invalid email address")
-		parsedEnv.SUPPORT_EMAIL_ADDRESS = SUPPORT_EMAIL_ADDRESS
-
+		updateEnv({SUPPORT_EMAIL_ADDRESS})
+		
 		//Configures mailgun API
 		console.log("\nWe use mailgun to send securely send emails. Create an account with them at https://www.mailgun.com/ and setup your domain.")
 		
@@ -137,7 +138,7 @@ commands.setup = {
 		})
 		MAILGUN_DOMAIN = other.extractHostname(MAILGUN_DOMAIN)
         if(MAILGUN_DOMAIN.length < 5) throw "Invalid domain"
-		parsedEnv.MAILGUN_DOMAIN = MAILGUN_DOMAIN
+		updateEnv({MAILGUN_DOMAIN})
 
 		console.log("\nWhat is your mailgun API key?")
 		if(parsedEnv.MAILGUN_APIKEY) console.log(`Found existing setting, "${parsedEnv.MAILGUN_APIKEY}". Leave input empty to skip.`)
@@ -145,7 +146,7 @@ commands.setup = {
 			defaultInput: parsedEnv.MAILGUN_APIKEY
 		})
         if(!/^[\w-]{10,}$/.test(MAILGUN_APIKEY)) throw "Invalid API key"
-		parsedEnv.MAILGUN_APIKEY = MAILGUN_APIKEY
+		updateEnv({MAILGUN_APIKEY})
 
 		console.log("\nWhat is your preferred noreply email address?")
 		if(parsedEnv.MAILGUN_NOREPLY_ADDRESS) console.log(`Found existing setting, "${parsedEnv.MAILGUN_NOREPLY_ADDRESS}". Leave input empty to skip.`)
@@ -153,10 +154,7 @@ commands.setup = {
 			defaultInput: parsedEnv.MAILGUN_NOREPLY_ADDRESS
 		})
 		if(!other.ValidateEmail(MAILGUN_NOREPLY_ADDRESS)) return console.log("Invalid email address")
-		parsedEnv.MAILGUN_NOREPLY_ADDRESS = MAILGUN_NOREPLY_ADDRESS
-
-		//Save .env file changes
-		fs.writeFileSync('./.env', envfile.stringify(parsedEnv)) 
+		updateEnv({MAILGUN_NOREPLY_ADDRESS})
 
 		console.log("\nInitial setup complete. Please log into an admin account and continue configuration in the dashboard.")
 	}
