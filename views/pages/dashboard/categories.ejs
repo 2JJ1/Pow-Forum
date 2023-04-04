@@ -265,12 +265,13 @@
                     let requiredRoles = modal.querySelector('input[name="requiredRoles"]').value
 
                     //Requests change
-                    await fetch('/api/dashboard/categories/editcategory', {
+                    await fetch('/api/dashboard/categories/editsubcategory', {
                         method: "POST",
                         headers: {
                             'content-type': 'application/json',
                         },
                         body: JSON.stringify({
+                            id: categoryId,
                             currentName,
                             newName,
                             newDescription,

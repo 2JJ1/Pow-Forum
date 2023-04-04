@@ -2,17 +2,17 @@ const router = require('express').Router()
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
-const Categories = mongoose.model("Categories")
+const Subcategories = mongoose.model("Subcategories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/categories
 
-router.post("/editcategory", async (req, res) => {
+router.post("/editsubcategory", async (req, res) => {
     let response = {success: false}
 
 	try{
-        if(!"currentName" in req.body || !"newName" in req.body || !"newDescription" in req.body || !"requiredRoles" in req.body) return res.status(400).send("Invalid body")
-        let {currentName, newName, newDescription, requiredRoles} = req.body
+        if(!"id" in req.body || !"currentName" in req.body || !"newName" in req.body || !"newDescription" in req.body || !"requiredRoles" in req.body) return res.status(400).send("Invalid body")
+        let {id, currentName, newName, newDescription, requiredRoles} = req.body
 
         //Sanitize name
         if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
@@ -23,7 +23,7 @@ router.post("/editcategory", async (req, res) => {
         newDescription = escape(newDescription)
 
         //Fetch category
-        let category = await Categories.findOne({name: currentName})
+        let category = await Subcategories.findById(id)
         if(!category) throw "Category does not exist"
 
         // Process update
@@ -47,7 +47,7 @@ router.post("/editcategory", async (req, res) => {
 
             new ForumAuditLogs({
                 time: Date.now(),
-                type: "Change category description",
+                type: "Change subcategory description",
                 byUID: req.session.uid,
                 content: {
                     category: newName,
@@ -64,14 +64,14 @@ router.post("/editcategory", async (req, res) => {
         else requiredRoles = []
         if(JSON.stringify(category.requiredRoles) !== JSON.stringify(requiredRoles)){
             category.requiredRoles = requiredRoles
-            if(!requiredRoles.length == 0) category.requiredRoles = undefined
+            if(requiredRoles.length == 0) category.requiredRoles = undefined
 
             new ForumAuditLogs({
                 time: Date.now(),
-                type: "Change category required roles",
+                type: "sategory required roles",
                 byUID: req.session.uid,
                 content: {
-                    category: newName,
+                    id,
                     requiredRoles: JSON.stringify(requiredRoles),
                 },
             })
