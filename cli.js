@@ -8,40 +8,45 @@ const argv = require('minimist')(process.argv.slice(2))
 const other = require('./my_modules/other')
 const updateEnv = require('./my_modules/updateenv')
 
+async function handleCommand(command){
+	try {
+		if(command in commands){
+			await commands[command].func()
+		} else{
+			console.log("Invalid command... Choose from below")
+			DisplayCommandsList();
+		}
+	}
+	catch(e){
+		if(typeof e === "string") console.log(e)
+		else throw e
+	}
+
+	console.log("\n______complete______\n")
+}
+
 //Connects to MongoDB database
 mongoose.set('strictQuery', false)
 mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFForum"}`)
 .then(async ()=> {
+	//Handle command through process options
 	if(argv.c) {
-		commands[argv.c].func()
+		await handleCommand(argv.c)
 		process.exit(0)
 	}
 
-	//Launch code
+	//Handle commands through CLI
 	console.log("Welcome to Pow Forum's admin panel")
 	console.log("Say 'help' for list of commands\n")
 	while (true){
-		try {
-			if(!process.env.SUPPORT_EMAIL_ADDRESS || !process.env.FORUM_URL || !process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
-				console.warn("Setup must be completed before you can use any other command...\n")
-				commands.setup.func()
-			}
-			else {
-				var response = readlineSync.question('Enter command: ');
-				console.log("\n")
-				if(response in commands){
-					await commands[response].func()
-				} else{
-					console.log("Invalid command... Choose from below")
-					DisplayCommandsList();
-				}
-			}
+		if(!process.env.SUPPORT_EMAIL_ADDRESS || !process.env.FORUM_URL || !process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
+			console.warn("Setup must be completed before you can use any other command...\n")
+			commands.setup.func()
 		}
-		catch(e){
-			if(typeof e === "string") console.log(e)
+		else {
+			let command = readlineSync.question('Enter command: \n> ');
+			await handleCommand(command)
 		}
-		
-		console.log("\n______complete______\n")
 	}
 })
 require('./models')
