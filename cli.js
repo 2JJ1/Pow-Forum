@@ -156,7 +156,7 @@ commands.setup = {
 		if(!other.ValidateEmail(MAILGUN_NOREPLY_ADDRESS)) return console.log("Invalid email address")
 		updateEnv({MAILGUN_NOREPLY_ADDRESS})
 
-		console.log("\nInitial setup complete. Please log into an admin account and continue configuration in the dashboard.")
+		console.log("\nInitial setup complete. Restart the forum process if it's running. Please log into an admin account and continue configuration in the dashboard.")
 	}
 }
 
