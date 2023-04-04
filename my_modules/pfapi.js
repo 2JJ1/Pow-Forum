@@ -94,7 +94,8 @@ exports.TrackLogin = async function(uid, ip){
     //If one is found, add it to their suspected alt accounts list
     if(possibleAlts.length > 0){
         //Get their current suspected alt accounts list
-        let matches = (await AltAccounts.findById(uid).lean()).matches || {}
+        let altAccounts = await AltAccounts.findById(uid).lean()
+        let matches = altAccounts ? altAccounts.matches : {}
 
         //Update/insert each new possible alt
         for(let altUId of possibleAlts){
@@ -103,7 +104,8 @@ exports.TrackLogin = async function(uid, ip){
             }
 
             //Also adds the client account as a suspected alt on the suspected alt
-            let matches2 = (await AltAccounts.findById(altUId).lean()) || {}
+            let altAccounts2 = await AltAccounts.findById(altUId).lean()
+            let matches2 = altAccounts2 ? altAccounts2.matches : {}
             matches2[uid] = {
                 date: new Date(),
             }

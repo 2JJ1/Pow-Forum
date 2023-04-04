@@ -62,12 +62,12 @@ router.post('/', async (req, res) => {
 
 		//sets session
 		req.session.uid = accData._id
-
-		//Logs their login
-		await pfAPI.TrackLogin(accData._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 						
 		//Compile response
 		response.success = true
+
+		//Logs their login
+		await pfAPI.TrackLogin(accData._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 	} 
 	catch(e){
 		response.reason = "Server error"

@@ -1,0 +1,30 @@
+.section{
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+    padding: 0 12px;
+}
+
+.pmd{
+    text-align: center;
+}
+
+.pmd img{
+    width: 150px;
+    height: 150px;
+    margin-bottom: 12px;
+    border-radius: 50%;
+}
+
+.threads{
+    padding: 12px;
+}
+
+.thread{
+    display: block;
+    word-break: break-word;
+}
+
+.threadmd{
+    color: gray;
+}

@@ -8,7 +8,7 @@
 		<title><%= profileInfo.username %>'s Suspected Alternate Accounts | <%- powForum.title %></title>
 		
 		<% include ../../partials/headimps %>
-		<link href="/css/profile/threads.css?v=20" rel="stylesheet" type="text/css">
+		<link href="/css/profile/alts.css?v=20" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
 	</head>
 	<body class="container">
@@ -20,7 +20,7 @@
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Suspected Alternate Accounts</h1>
 			</div>
 			<br>
-			<div class="theme1 round section threads">
+			<div class="theme1 round section threads gapchildren">
 				<% if (Object.keys(matches).length <= 0){ %>
 				<p style="text-align: center;">This user has no suspected alternate accounts.</p>
 				<% } else { %>
