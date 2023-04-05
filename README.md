@@ -15,6 +15,9 @@ You must have the following to continue with setup
 - Mailgun configuration ( https://mailgun.com )
     * API key
     * Mailgun domain
+    
+- The Node.js process requires read and write permissions. Such as to create the critical .env file or allow users to upload a profile picture.
+   * This can be problematic for limited environments such as Replit.
 
 ## Installation
 Run these commands in your CLI (cmd.exe, terminal)
