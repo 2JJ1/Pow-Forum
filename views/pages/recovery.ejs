@@ -32,20 +32,15 @@
                     <input id="username" class="theme2 border1 round padding" type="text" placeholder="Username" autoComplete="off"/>
                     <div class="register_highlight"></div>
                 </div>
-                <button
-                class="g-recaptcha theme2 border1 round padding"
-                data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>"
-                data-callback="captchacallback"
-                data-error-callback="captchaErrorCallback">
-                    Submit
-                </button>
+                <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                <button class="theme2 border1 round padding" onclick="RequestRecovery()">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: red;"></p>
             </form>
 		</main>
-		
+        
 		<script>
-            function captchacallback(){
+            function RequestRecovery(){
                 var postData = {
                     grecaptcharesponse: grecaptcha.getResponse(),
                 }
@@ -86,13 +81,6 @@
 
 				grecaptcha.reset();
 			}
-            
-            function captchaErrorCallback() {
-                // Re-initialize reCaptcha
-                grecaptcha.reset();
-                // Fire reCaptcha
-                grecaptcha.execute();
-            }
 		</script>
 	</body>
 </html>

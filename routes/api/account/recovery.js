@@ -23,14 +23,8 @@ router.post('/', async (req, res) => {
 	let response = {success: false}
 	
 	try {
-		if(req.body.grecaptcharesponse){
-			await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
-			.then(captchaResponse => {
-				if(captchaResponse == false)
-					throw {safe: "Captcha check failed"};
-			})
-		} else
-			throw {safe: "Missing captcha"}
+		if(!await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress)))
+			throw "Captcha failed"
 
 		let forumTitle = (await ForumSettings.findOne({type: "title"})).value
 		
@@ -125,8 +119,6 @@ router.post('/passreset', async (req, res) => {
 		if(!('token' in req.body)) throw {safe: 'Missing token'};
 		
 		if(!('password' in req.body)) throw {safe: 'Missing password'};
-		
-		if(!('confirmpassword' in req.body)) throw {safe: 'Missing password confirmation'};
 
 		var uid = 0;
 		
@@ -150,8 +142,6 @@ router.post('/passreset', async (req, res) => {
 		let validatePassword = accountAPI.ValidatePassword(password)
 		if(validatePassword !== true) throw validatePassword
 
-		if(password !== req.body.confirmpassword) throw "Password and password confirmation must be the same"
-		
 		let securePassword = await bcrypt.hash(password, 10)
 		
 		//Update password
