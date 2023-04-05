@@ -12,7 +12,6 @@
         <link href="/css/register.css?v=20" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src='https://www.google.com/recaptcha/api.js'></script>
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
@@ -31,30 +30,27 @@
                         <div class="register_highlight"></div>
                     </div>
                 </div>
-                <button
-                class="g-recaptcha theme2 border1 round padding"
-                data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>"
-                data-callback="captchacallback"
-                data-error-callback="captchaErrorCallback">
-                    Submit
-                </button>
+                <button class="theme2 border1 round padding" onclick="ResetPassword()">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: red;"></p>
             </form>
 		</main>
-		
+
 		<script>
-            function captchacallback(){
+            function ResetPassword(){
+                let password = $("#password").val()
+                let confirmPassword = $("#confirmpassword").val()
+
+                if(password !== confirmPassword) return document.getElementById('req_Response').innerHTML = "Password and confirm password do not match"
+
                 fetch('/api/account/recovery/passreset', {
 					method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
                     },
 					body: JSON.stringify({
-                        grecaptcharesponse: grecaptcha.getResponse(),
                         token: '<%= token %>',
                         password: $("#password").val(),
-                        confirmpassword: $("#confirmpassword").val(),
                     }),
 				})
 				.then(res => res.json())
@@ -67,16 +63,7 @@
                     }
                 })
 				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
-
-				grecaptcha.reset();
 			}
-            
-            function captchaErrorCallback() {
-                // Re-initialize reCaptcha
-                grecaptcha.reset();
-                // Fire reCaptcha
-                grecaptcha.execute();
-            }
 		</script>
 	</body>
 </html>
