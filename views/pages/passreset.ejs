@@ -61,11 +61,15 @@
                         setTimeout(function(){
                             document.location.href = "/login"
                         }, 1500)
-                    } else {
+                    } 
+                    else {
                         document.getElementById('req_Response').innerHTML = res.reason || 'Unknown error occured...'
                     }
                 })
-				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
+				.catch((e)=>{
+                    console.error(e)
+                    document.getElementById('req_Response').innerHTML = "Failed to contact the server."
+                })
 			}
 		</script>
 	</body>

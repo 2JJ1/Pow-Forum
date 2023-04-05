@@ -75,11 +75,15 @@
                     if(res.success){
                         req_Response.style.color = "green"
                         req_Response.innerHTML = 'Email sent.'
-                    } else {
-                        dreq_Response.innerHTML = res.reason || 'Unknown error occured...'
+                    } 
+                    else {
+                        req_Response.innerHTML = res.reason || 'Unknown error occured...'
                     }
                 })
-				.catch(() => req_Response.innerHTML = "Failed to contact the server.")
+				.catch((e)=>{
+                    console.error(e)
+                    document.getElementById('req_Response').innerHTML = "Failed to contact the server."
+                })
 
 				grecaptcha.reset();
 			}
