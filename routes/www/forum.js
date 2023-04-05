@@ -137,7 +137,9 @@ router.get('/:forum', async (req, res, next) => {
 		}
 
 		//Determines how many pages there are for this result
-		forumData.totalPages = await Threads.countDocuments({forum: forum === "all" ? /.+/ : forum})
+		let totalPagesQuery = {}
+		if(req.params.forum !== "all") totalPagesQuery.category = forum 
+		forumData.totalPages = await Threads.countDocuments(totalPagesQuery)
 		.then(count => Math.ceil(count / 15))
 	}
 
