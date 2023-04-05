@@ -34,7 +34,10 @@
 				<% } %>
 				<% } %>
 			</div>
-			<% if(moreAvailable){ %><button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button><% } %>
+			<% if(moreAvailable){ %>
+			<br>
+			<button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button
+			><% } %>
 		</main>
 		<% include ../../partials/footer %>
 
@@ -59,7 +62,7 @@
 							'<div class="thread">' +
 								'<a href="/t/' + thread._id +'"><p>' + thread.title + '</p></a>' +
 								'<div class="threadmd">' +
-									`<p>Posted in <a href="/c/${thread.category.name2}">${thread.category.name}</a> / ${thread.views} views</p> / ${thread.replies} replies</p>` +
+									`<p>Posted in <a href="/c/${thread.category.name2}">${thread.category.name}</a> / ${thread.views} views / ${thread.replies} replies</p>` +
 								'</div>' +
 							'</div>'
 						)

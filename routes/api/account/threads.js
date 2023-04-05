@@ -4,8 +4,9 @@ const mongoose = require('mongoose')
 const forumapi = require('../../../my_modules/forumapi')
 
 const Threads = mongoose.model('Threads')
+const ThreadReplies = mongoose.model('ThreadReplies')
 
-// /api/account/activity
+// /api/account/thread
 
 router.get("/", async (req, res) => {
     let response = {success: false}
@@ -21,11 +22,12 @@ router.get("/", async (req, res) => {
 
 		//Attach category information
         for(let thread of threads){
-			let category = await forumapi.GetSubcategory(thread.forum)
+			let category = await forumapi.GetSubcategory(thread.category)
             thread.category = {
 				name: category.name,
 				name2: category._id,
 			}
+			thread.replies = await ThreadReplies.count({tid: thread._id}) - 1
         }
 
         response.moreAvailable = threads.length > 15
@@ -38,7 +40,7 @@ router.get("/", async (req, res) => {
 		if(typeof error === "string") response.reason = error
 		else{
 			console.warn(error)
-			res.reason = "Server error"
+			response.reason = "Server error"
 		}
 	}
 	
