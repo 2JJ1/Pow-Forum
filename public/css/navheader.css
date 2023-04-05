@@ -1,5 +1,5 @@
 /* Switches into mobile view */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 670px) {
     body #navigationbar #foologo{
         font-size: 17px;
         font-weight: 300;
@@ -69,12 +69,14 @@ header li {
     padding-right: 10px;
     font-size: 21px;
     font-weight: 400;
+    white-space: nowrap;
 }
 
 #navigationbar .navItems{
     display: flex;
     align-items: center;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .navItem{
