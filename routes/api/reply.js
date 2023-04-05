@@ -180,6 +180,7 @@ router.post('/', async (req, res) => {
 		}
 			
 		//Code hasn't exited, so assume success
+		response.replyId = newReply._id
 		response.success = true
 	} catch(e){
 		response.reason = "Server error"

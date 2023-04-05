@@ -13,6 +13,8 @@
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>
+        <script src='https://www.google.com/recaptcha/api.js' defer></script>
+        <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
 	</head>
 	<body class="container">
         <% if(threadData.canChangeForum){ %>
@@ -55,9 +57,8 @@
                 <% if(clientIsMod){ %>
                 <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
                 <% } %>
-
                 <% if(threadData.canReply){ %>
-                <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply <% } else { %> /login <% } %>" class="theme1 round border1 btn_newrelpy">New Reply</a>
+                <a href="#replyform" class="theme1 round border1 btn_newrelpy">New Reply</a>
                 <% } %>
             </div> 
             <% var lastReplier = null; %>
@@ -78,7 +79,7 @@
                         <p class="usertitle"><%- obj.account.alias || "" %></p>
                         <% if(obj.account.badge){ %><img src="<%- obj.account.badge %>" class="badge" alt="<%= obj.account.highestRole %>"/><% } %>
                         <% if(threadData.canReply && (ogTRID != obj._id) && (obj.uid !== accInfo._id)){ %>
-                        <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply?mention=<%= obj.uid %> <% } else { %> /login <% } %>" class="theme1 border1 btnmention">Mention</a>
+                        <p class="theme1 border1 btnmention button" onclick="mention('<%= obj.account.username %>')">Mention</p>
                         <% } %>
                     </div>
                     <div class="userstats">
@@ -135,6 +136,16 @@
             <% lastReplier = obj.uid %>
             <% }) %>
             <br/>
+            <div id="replyform" class="theme1 round border1">
+                <h2 class="padding">Add your reply</h2>
+                <textarea id="editor"></textarea>
+                <div class="lessgapchildren padding">
+                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <button class="theme2 button" onclick="PostReply()">Post Reply</button>
+                    <p id="errormessage" style="color: red; text-align: center"></p>
+                </div>
+            </div>
+            <br>
             <div style="text-align: right">
                 <% if((threadData.currentPage - 1) > 0) { %>
                 <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
@@ -145,10 +156,7 @@
                 <% if(threadData.nextPageAvailable) { %>
                 <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
                 <% } %>
-                <% if(threadData.canReply){ %>
-                <a href="<% if(accInfo._id){ %>/t/<%= threadData._id %>/newreply <% } else { %> /login <% } %>" class="theme1 round border1 btn_newrelpy">New Reply</a>
-                <% } %>
-            </div> 
+            </div>
             <br>
             <div class="theme2 border1 round" style="padding: 12px;">
                 <h3>Users viewing this thread:</h3>
@@ -351,6 +359,114 @@
                 .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
             }
             <% } %>
+
+
+
+
+
+
+
+            /** Reply Editor **/
+
+            var saveDraft = true
+
+            tinymce.init({
+                selector: '#editor',
+                menubar: false,
+                plugins: 'link hr lists codesample',
+                toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright | fontsizeselect forecolor | bullist numlist blockquote link hr codesample | undo redo',
+                height: 300,
+                content_style: "p {margin: 0}",
+                relative_urls: false,
+                remove_script_host : true,
+                codesample_languages: [
+                    { text: 'Lua', value: 'lua' },
+                    { text: 'C++', value: 'cpp' },
+                    { text: 'Rust', value: 'rust' },
+                    { text: 'C#', value: 'csharp' },
+                    { text: 'Python', value: 'python' },
+                    { text: 'PHP', value: 'php' },
+                    { text: 'JavaScript', value: 'javascript' },
+                    { text: 'HTML/XML', value: 'markup' },
+                    { text: 'CSS', value: 'css' },
+                ],
+                custom_colors: false,
+                color_map: [
+                    "CD201F", "Red",
+                    "E11D48", "Rose",
+                    "C0392B", "Pomegranate",
+                    "1ABC9C", "Turquoise",
+                    "2ECC71", "Emerland",
+                    "3498DB", "Peterriver",
+                    "2980B9", "Belizehole",
+                    "E67E22", "Carrot",
+                    "F1C40F", "Sunflower",
+                    "6D28D9", "Violet",
+                    "9333EA", "Purple",
+                    "C026D3", "Fuchsia",
+                    "34495E", "Wet Asphalt",
+                    "795548", "Brown",
+                ],
+                skin: "oxide-dark",
+                content_css: "/css/themes/night.css?v=20,/css/tinymce.css",
+                placeholder: "What valuable response do you have?"
+            });
+
+            function mention(username){
+                tinymce.activeEditor.execCommand('mceInsertContent', false, `@${username}, `);
+            }
+
+            function PostReply(){
+                fetch('/api/thread/reply', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        'g-recaptcha-response': grecaptcha.getResponse(),
+                        content: tinymce.activeEditor.getContent(),
+                        tid: '<%= threadData._id %>'
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        saveDraft = false
+                        localStorage.removeItem('reply-draft');
+                        document.location.href = `/t/<%= threadData._id %>/?r=${res.replyId}`
+                    } else {
+                        document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
+                    }
+                })
+				.catch(()=>document.getElementById('errormessage').innerHTML = "Failed to contact the server.")
+
+				grecaptcha.reset();
+			}
+            
+            function captchaErrorCallback() {
+                // Re-initialize reCaptcha
+                grecaptcha.reset();
+                // Fire reCaptcha
+                grecaptcha.execute();
+            }
+
+            /* Drafts */
+            //Load draft
+            var draft = JSON.parse(localStorage.getItem("reply-draft"))
+            if(draft && (draft.tid === <%= threadData._id %>)) document.getElementById("editor").value = draft.content
+            else localStorage.removeItem('reply-draft')
+
+            //Save draft on abrupt exit
+            window.onbeforeunload = function () {
+                if(!saveDraft) return
+                let content = tinymce.activeEditor.getContent()
+
+                //Don't cache possibly incomplete replies
+                if(content.length < 10) return localStorage.removeItem('reply-draft')
+
+                if(content) localStorage.setItem('reply-draft', JSON.stringify({tid: <%= threadData._id %>, content}))
+                else localStorage.removeItem('reply-draft')
+            };
         </script>
 	</body>
 </html>

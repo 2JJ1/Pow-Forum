@@ -1,0 +1,3 @@
+.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+	color: lightgray;
+}
