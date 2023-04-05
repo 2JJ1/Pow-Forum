@@ -85,9 +85,6 @@ router.use('/editreply', require('./editreply')); // /:trid
 //Thread view
 router.use('/t', require('./thread')); // /:tid
 
-//Thread replier
-router.use('/t', require('./newreply')); // /:tid/newreply
-
 //List of threads for forum
 router.use('/c', require('./forum')); // /:forum
 
