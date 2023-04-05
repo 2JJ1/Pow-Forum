@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
     })
 	
 	//Displays error if any
-	if(typeof tokenErr === 'string') return res.status(400).send(tokenErr)
+	if(typeof tokenErr === 'string') return res.status(400).render("400", {reason: tokenErr})
 	//Displays the password reset page
     else res.render('pages/passreset', pagedata)
 });

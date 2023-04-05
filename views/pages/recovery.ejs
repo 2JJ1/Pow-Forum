@@ -16,7 +16,7 @@
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
-            <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="theme1 round border1 padding gapchildren">
+            <div id="registerform" class="theme1 round border1 padding gapchildren">
                 <div class="descriptor">
                     <h1><%- powForum.title %> Account Recovery</h1>
                     <p>Fill in only one field</p>
@@ -36,7 +36,7 @@
                 <button class="theme2 border1 round padding" onclick="RequestRecovery()">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: red;"></p>
-            </form>
+            </div>
 		</main>
         
 		<script>
@@ -45,11 +45,12 @@
                     grecaptcharesponse: grecaptcha.getResponse(),
                 }
 
+                let req_Response = document.getElementById('req_Response')
                 var username = $("#username").val()
                 var email = $("#email").val()
 
                 if(username.length > 0 && email.length > 0){
-                    $("#req_Response").text("Only 1 fields can be filled")
+                    req_Response.innerHTML = "Only 1 fields can be filled"
                     return
                 } else {
                     if(username.length > 0){
@@ -57,7 +58,7 @@
                     } else if(email.length > 0){
                         postData.email = email
                     } else {
-                        $("#req_Response").text("One of the fields must be filled")
+                        req_Response.innerHTML = "One of the fields must be filled"
                         return
                     }
                 }
@@ -72,12 +73,13 @@
 				.then(res => res.json())
                 .then(res => {
                     if(res.success){
-                        document.getElementById('req_Response').innerHTML = 'Email sent.'
+                        req_Response.style.color = "green"
+                        req_Response.innerHTML = 'Email sent.'
                     } else {
-                        document.getElementById('req_Response').innerHTML = res.reason || 'Unknown error occured...'
+                        dreq_Response.innerHTML = res.reason || 'Unknown error occured...'
                     }
                 })
-				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
+				.catch(() => req_Response.innerHTML = "Failed to contact the server.")
 
 				grecaptcha.reset();
 			}
