@@ -116,13 +116,14 @@ commands.setup = {
 			else {
 				try {
 					parsedURL = new URL(domain)
+					parsedURL.topLevelDomain = parsedURL.hostname.split(".").splice(-2).join(".")
 				}
 				catch(e) {
 					console.log("Invalid URL")
 				}
 			}
 		}
-		updateEnv({COOKIE_DOMAIN: parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.hostname}`})
+		updateEnv({COOKIE_DOMAIN: parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.topLevelDomain}`})
 		updateEnv({FORUM_URL: parsedURL.hostname !== 'localhost' ? parsedURL.origin : `${parsedURL.protocol}//${parsedURL.hostname}:${process.env.PORT || 8087}`})
 
 		//Configures support email address
