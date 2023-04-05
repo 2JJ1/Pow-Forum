@@ -238,3 +238,26 @@ video{
     margin-left: 12px;
     cursor: pointer;
 }
+
+#replyform{
+    position: relative;
+}
+
+#replyform .requireLogin{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    background-color: rgba(0,0,0,0.7);
+    font-weight: 400;
+    font-size: 21px;
+}
+
+#replyform .requireLogin p{
+    flex: 1;
+    text-align: center;
+    color: #C0392B;
+}

@@ -9,7 +9,7 @@
 		<title><%- threadData.title %> - <%- powForum.title %></title>
 		
 		<% include ../partials/headimps %>
-		<link href="/css/thread.css?v=20&ib=4" rel="stylesheet" type="text/css">
+		<link href="/css/thread.css?v=20&ib=5" rel="stylesheet" type="text/css">
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>
@@ -135,8 +135,14 @@
             <% } %>
             <% lastReplier = obj.uid %>
             <% }) %>
+            <% if(threadData.canReply){ %>
             <br/>
             <div id="replyform" class="theme1 round border1">
+                <% if(!accInfo._id){ %>
+                <a href="/login" class="requireLogin round">
+                    <p>Login to unlock the reply editor</p>
+                </a>
+                <% } %>
                 <h2 class="padding">Add your reply</h2>
                 <textarea id="editor"></textarea>
                 <div class="lessgapchildren padding">
@@ -145,6 +151,7 @@
                     <p id="errormessage" style="color: red; text-align: center"></p>
                 </div>
             </div>
+            <% } %>
             <br>
             <div style="text-align: right">
                 <% if((threadData.currentPage - 1) > 0) { %>
