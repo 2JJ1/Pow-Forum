@@ -60,7 +60,7 @@
                     <% } else if(log.type === "Delete category"){ %>
                         <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted category "<%- log.content.category %>"</p>
                     <% } else if(log.type === "mod-lock-account"){ %>
-                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(log.value){ %>un<% } %>locked <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>'s account. Reason: <%= log.reason || "None" %></p>
+                        <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(!log.value){ %>un<% } %>locked <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>'s account. Reason: <%= log.reason || "None" %></p>
                     <% } else if(log.type === "Delete account"){ %>
                         <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> <% if(log.value){ %>un<% } %>deleted account <%= log.content %>#<%= log.targetUID %>. Reason: <%= log.reason || "None" %></p>
                     <% } %>
