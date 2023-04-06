@@ -79,9 +79,6 @@ router.use(async function(req, res, next){
 //Displays forum list
 router.use('/', require('./index'))
 
-//Thread reply editor
-router.use('/editreply', require('./editreply')); // /:trid
-
 //Thread view
 router.use('/t', require('./thread')); // /:tid
 
