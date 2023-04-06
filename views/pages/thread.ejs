@@ -91,12 +91,12 @@
                 </div>
             <% } %>
             <!--Reply Metadata-->
-            <div class="replycard">
+            <div class="replycard" data-trid="<%= obj._id %>">
                 <div style="position: relative">
                     <ul class="reply_menu padding verticalCenter">
                         <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
                         <% if(accInfo._id === obj.uid){ %>
-                        <li><a href="/editreply/<%= obj._id %>">Edit</a></li>
+                        <li onclick="EditReply(this)">Edit</li>
                         <% } %>
                         <% if(obj.deletable === true){ %>
                         <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
@@ -118,12 +118,17 @@
                     </p>
                 </div>
                 <!--Reply Content-->
+                <div class="replyEditor"></div>
                 <div 
                 class="thread_replycontent <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
                 <% if(obj.reputation <= 0){ %>
                 onclick="warnLinks(event)"
                 <% } %>
                 ><%- obj.content %></div>
+                <div class="replyEditorControls padding">
+                    <button name="cancel" class="theme2 round border1 padding">Cancel</button>
+                    <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                </div>
             </div>
 
             <!--Close reply group if the next replier is different-->
@@ -368,17 +373,9 @@
             <% } %>
 
 
+            /** Reply Creator **/
 
-
-
-
-
-            /** Reply Editor **/
-
-            var saveDraft = true
-
-            tinymce.init({
-                selector: '#editor',
+            let tinymceOptions = {
                 menubar: false,
                 plugins: 'link hr lists codesample',
                 toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright | fontsizeselect forecolor | bullist numlist blockquote link hr codesample | undo redo',
@@ -417,10 +414,16 @@
                 skin: "oxide-dark",
                 content_css: "/css/themes/night.css?v=20,/css/tinymce.css",
                 placeholder: "What valuable response do you have?"
-            });
+            }
+
+            let replyCreatorEditor
+            tinymce.init({...tinymceOptions, selector: '#editor'})
+            .then(r => {
+                replyCreatorEditor = r[0]
+            })
 
             function mention(username){
-                tinymce.activeEditor.execCommand('mceInsertContent', false, `@${username}, `);
+                replyCreatorEditor.execCommand('mceInsertContent', false, `@${username}, `);
             }
 
             function PostReply(){
@@ -431,7 +434,7 @@
                     },
 					body: JSON.stringify({
                         'g-recaptcha-response': grecaptcha.getResponse(),
-                        content: tinymce.activeEditor.getContent(),
+                        content: replyCreatorEditor.getContent(),
                         tid: '<%= threadData._id %>'
                     }),
 				})
@@ -450,14 +453,9 @@
 				grecaptcha.reset();
 			}
             
-            function captchaErrorCallback() {
-                // Re-initialize reCaptcha
-                grecaptcha.reset();
-                // Fire reCaptcha
-                grecaptcha.execute();
-            }
-
             /* Drafts */
+            var saveDraft = true
+
             //Load draft
             var draft = JSON.parse(localStorage.getItem("reply-draft"))
             if(draft && (draft.tid === <%= threadData._id %>)) document.getElementById("editor").value = draft.content
@@ -466,7 +464,7 @@
             //Save draft on abrupt exit
             window.onbeforeunload = function () {
                 if(!saveDraft) return
-                let content = tinymce.activeEditor.getContent()
+                let content = replyCreatorEditor.getContent()
 
                 //Don't cache possibly incomplete replies
                 if(content.length < 10) return localStorage.removeItem('reply-draft')
@@ -474,6 +472,70 @@
                 if(content) localStorage.setItem('reply-draft', JSON.stringify({tid: <%= threadData._id %>, content}))
                 else localStorage.removeItem('reply-draft')
             };
+
+
+            /** Reply Editor **/
+
+
+            async function EditReply(this_btnEdit){
+                let replyCard = this_btnEdit.parentElement.parentElement.parentElement
+                let thread_replycontent = replyCard.querySelector(".thread_replycontent")
+                let originalReplyHTML = thread_replycontent.innerHTML
+                let replyEditorControls = replyCard.querySelector('.replyEditorControls')
+                let replyId = replyCard.getAttribute('data-trid')
+
+                // Display editor
+                let tinymceSelector = `.replycard[data-trid="${replyId}"] .thread_replycontent`
+                let editor = await tinymce.init({
+                    ...tinymceOptions, 
+                    selector: tinymceSelector,
+                })
+                .then(r => r[0])
+
+                //Show editor controls
+                replyEditorControls.style.display = "block"
+
+                //Keeps this code cached
+                this_btnEdit.onclick = () => {
+                    editor.show()
+                    replyEditorControls.style.display = "block"
+                    thread_replycontent.style.display = "none"
+                }
+
+                //Handle cancel button
+                replyEditorControls.querySelector('button[name="cancel"]').onclick = () => {
+                    editor.hide()
+                    replyEditorControls.style.display = "none"
+                    thread_replycontent.style.display = "block"
+                    thread_replycontent.innerHTML = originalReplyHTML
+                }
+
+                //Handle save button
+                replyEditorControls.querySelector('button[name="save"]').onclick = () => {
+                    let content = editor.getContent()
+
+                    fetch('/api/r/edit', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            content,
+                            trid: replyId,
+                        }),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success){
+                            document.location.reload()
+                        } 
+                        else {
+                            alert(res.reason || 'Unknown error occured...')
+                        }
+                    })
+                    .catch(()=>alert("Failed to contact the server."))
+                }
+            }
         </script>
 	</body>
 </html>

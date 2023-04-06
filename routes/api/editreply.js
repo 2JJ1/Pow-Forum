@@ -23,10 +23,6 @@ router.post('/edit', async (req, res) => {
 	let response = {success: false}
 	
 	try{
-		//Prevent bots/spam with Google captcha
-		if(!await recaptcha.captchaV2(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
-			throw "Captcha failed"
-		
 		// Check if all necessary post fields exist
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw {safe:"Must be logged in"} 
