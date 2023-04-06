@@ -98,6 +98,10 @@ pre code *{
     font-family: inherit;
 }
 
+.tox .tox-editor-header {
+    z-index: 0 !important;
+}
+
 /* WRD Bootstrap */
 
 :root{
