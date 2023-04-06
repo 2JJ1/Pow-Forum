@@ -1,7 +1,7 @@
 <header id="navigationbar" class="border1-bottom">
     <span class="menu-toggle <% if(accInfo._id && accInfo.notifications.length > 0){ %>menu-toggle-notif<% } %>"></span>
     <ul class="navItems">
-        <a id="foologo" href="/" title="<%- powForum.title %>" title="Speak with the community"><%- powForum.title %></a>
+        <a id="foologo" href="/" title="<%- powForum.name %>" title="Speak with the community"><%- powForum.name %></a>
         <% if(accInfo.isModerator){ %>
         <li class='navItem'>
             <a title="Moderator dashboard" href="/dashboard">Dashboard</a>

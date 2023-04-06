@@ -6,7 +6,7 @@
 		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
         <meta name="description" content="Dive deeper into the community by socializing with us. You'll need an account first." />
 	
-		<title>Create an Account - <%- powForum.title %></title>
+		<title>Create an Account - <%- powForum.name %></title>
 		
 		<% include ../partials/headimps %>
         <link href="/css/register.css?v=20" rel="stylesheet" type="text/css">
@@ -17,7 +17,7 @@
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
             <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="theme1 round border1 padding gapchildren">
-                <h1>Create your <%- powForum.title %> account</h1>
+                <h1>Create your <%- powForum.name %> account</h1>
                 <div class="register_inputfield lessgapchildren">
                     <p>Username</p>
                     <input name="username" type="text" placeholder="Username" class="theme2 round border1 padding"/>

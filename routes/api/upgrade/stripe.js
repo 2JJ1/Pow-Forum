@@ -212,7 +212,7 @@ router.post('/webhook', async (req, res) => {
 	let sig = req.headers["stripe-signature"];
 	let event
 
-	let forumTitle = (await ForumSettings.findOne({type: "title"})).value
+	let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 
 	try {
 		event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);

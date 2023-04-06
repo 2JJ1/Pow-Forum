@@ -17,8 +17,7 @@ router.use(async function(req, res, next){
     let powForum = {}
 
     //Expected to contain title, 
-    let settings = await ForumSettings.find().lean()
-    powForum.title = settings.find(setting => setting.type === "title").value
+    powForum.name = (await ForumSettings.findOne({type: "name"})).value
 
     powForum.navLinks = await NavigationBarLinks.find().lean()
 

@@ -56,10 +56,10 @@ mongoose.connect(mongoURL)
 	{
 		let settings = await ForumSettings.find().lean()
 
-		//Sets default title
-		if(!settings.find(setting => setting.type === "title")) {
+		//Sets default forum name
+		if(!settings.find(setting => setting.type === "name")) {
 			await new ForumSettings({
-				type: "title",
+				type: "name",
 				value: "Pow Forums"
 			}).save()
 		}

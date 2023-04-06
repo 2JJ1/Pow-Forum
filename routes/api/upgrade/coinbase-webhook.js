@@ -15,7 +15,7 @@ const Accounts = mongoose.model("Accounts")
 //Webhook. Stripe calls to this point. A call to this is never from the forum
 router.use('/', bodyParser.raw({type: '*/*'}))
 router.post('/', async (req, res) => {
-    let forumTitle = (await ForumSettings.findOne({type: "title"})).value
+    let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 
 	try {
 	    let signature = req.headers["x-cc-webhook-signature"];

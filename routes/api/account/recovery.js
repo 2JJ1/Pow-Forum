@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
 		if(!await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress)))
 			throw "Captcha failed"
 
-		let forumTitle = (await ForumSettings.findOne({type: "title"})).value
+		let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 		
 		//Password reset request
 		//Only valid for 15 minutes
@@ -168,7 +168,7 @@ router.post('/passreset', async (req, res) => {
 		response.success = true
 
 		// Send password has reset notice
-		let forumTitle = (await ForumSettings.findOne({type: "title"})).value
+		let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 		if(mailgun.isEmailCompatible(account.email))
 			await mailgun.SendMail({
 			from: `"noreply" ${process.env.MAILGUN_NOREPLY_ADDRESS}`, // sender address
