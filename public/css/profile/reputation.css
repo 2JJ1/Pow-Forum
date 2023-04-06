@@ -158,11 +158,11 @@
 }
 
 .positive{
-    color: green;
+    color: var(--green);
 }
 
 .negative{
-    color: red;
+    color: var(--red);
 }
 
 
@@ -197,11 +197,11 @@ main{
 }
 
 .positive{
-    color: green;
+    color: var(--green);
 }
 
 .negative{
-    color: red;
+    color: var(--red);
 }
 
 #reputationcontainer{
@@ -227,7 +227,7 @@ main{
 }
 
 .btnDelete{
-    color: red;
+    color: var(--red);
     float: right;
     background: none;
     font-weight: bold;

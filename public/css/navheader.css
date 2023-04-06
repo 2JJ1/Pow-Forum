@@ -140,7 +140,7 @@ header li {
 
 .notifcount{
     display: block;
-    background-color: red;
+    background-color: var(--red);
     height: 12px;
     width: 12px;
     font-size: 10px;
@@ -153,7 +153,7 @@ header li {
 .menu-toggle-notif::after{
     content: "";
     display: block;
-    background-color: red;
+    background-color: var(--red);
     height: 9px;
     width: 9px;
     border-radius: 12px;
@@ -191,13 +191,13 @@ header li {
 }
 
 .notif-exit{
-    color: red;
+    color: var(--red);
     cursor: pointer;
     display: block;
 }
 
 .deleteallnotifs{
-    color: red;
+    color: var(--red);
     cursor: pointer;
     font-size: 12px;
 }

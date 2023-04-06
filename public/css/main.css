@@ -110,6 +110,8 @@ pre code *{
     --less-gap: 9px;
     --round: 16px;
     --less-round: 9px;
+    --red: #C0392B;
+    --green: #27AE60;
 }
 
 .button{
@@ -184,7 +186,7 @@ pre code *{
 }
 
 .red{
-    color: red;
+    color: var(--red);
 }
 
 .link{

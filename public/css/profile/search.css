@@ -45,14 +45,14 @@ main{
     text-align: center;
     font-size: 18px;
     font-weight: 400;
-    color: red;
+    color: var(--red);
     font-style: italic;
 }
 
 .positive{
-    color: green;
+    color: var(--green);
 }
 
 .negative{
-    color: red;
+    color: var(--red);
 }

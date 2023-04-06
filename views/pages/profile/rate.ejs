@@ -33,7 +33,7 @@
                 <br>
                 <br>
                 <p>What do you want to say about them?</p>
-                <% if(accInfo.banRepNeg){ %><p style="color: red; font-size: 10px;">Note: You are banned from negative repping.</p><% } %>
+                <% if(accInfo.banRepNeg){ %><p style="color: var(--red); font-size: 10px;">Note: You are banned from negative repping.</p><% } %>
                 <textarea id="ratingcomment" class="theme2 border1" placeholder="Your opinion on them. Abide by the rules. Negative rep must include a good reason. Payback negative rep is not allowed."><%- rating.comment %></textarea>
                 <br>
                 <button class="round" onclick="SendRating()">Submit</button>

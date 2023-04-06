@@ -162,7 +162,7 @@
 
 .chat-row-delete{
     display: none;
-    color: red;
+    color: var(--red);
     float: right;
     cursor: pointer;
     padding: 0 var(--less-gap);
@@ -176,7 +176,7 @@
 }
 
 .chat-error{
-    color: red;
+    color: var(--red);
     display: none;
     margin-top: var(--gap);
     font-size: 14px;

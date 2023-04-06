@@ -45,7 +45,7 @@
                 <button class="theme2 border1" type="submit" onclick="PromptPassword()">Save</button>
                 <% if(pendingEmailVerification){ %>
                 <div class="lessgapchildren">
-                    <p class="manager_descriptor" style="color: red; margin-bottom: 8px;">Your account does not have a verified email, so you may be restricted from posting content. Please check your email for the verification page. If you can't find it, click the resend button.</p>
+                    <p class="manager_descriptor" style="color: var(--red); margin-bottom: 8px;">Your account does not have a verified email, so you may be restricted from posting content. Please check your email for the verification page. If you can't find it, click the resend button.</p>
                     <button class="theme2 border1" onclick="ResendEmailVerification()">Resend Email Verification</button>
                 </div>
                 <% } %>
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <br>
-            <p id="errormsg" style="color: red; text-align: center"><p>
+            <p id="errormsg" style="color: var(--red); text-align: center"><p>
         </main>
         <% include ../../partials/footer %>
 		

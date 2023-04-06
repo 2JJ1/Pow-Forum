@@ -56,17 +56,17 @@ main{
 }
 
 #ratingerror{
-    color: red;
+    color: var(--red);
     margin-top: 8px;
     text-align: center;
 }
 
 .positive{
-    color: green;
+    color: var(--green);
 }
 
 .negative{
-    color: red;
+    color: var(--red);
 }
 
 button{

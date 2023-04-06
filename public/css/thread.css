@@ -191,11 +191,11 @@ main{
 }
 
 .good{
-    color: green;
+    color: var(--green);
 }
 
 .bad{
-    color: red;
+    color: var(--red);
 }
 
 .badge{

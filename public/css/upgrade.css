@@ -138,7 +138,7 @@ h1, h2, h3, .term, button{
 }
 
 #stripe_status{
-    color: red;
+    color: var(--red);
     text-align: center;
     display: none;
     margin-top: 12px;

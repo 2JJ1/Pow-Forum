@@ -124,7 +124,7 @@ button{
 }
 
 #btn_exit{
-    color: red; 
+    color: var(--red); 
     float: right;
     padding: 5px;
 }
@@ -155,7 +155,7 @@ button{
 }
 
 #bottommessage > .close{
-    color: red;
+    color: var(--red);
     position: absolute;
     right: 8px;
     cursor: pointer;

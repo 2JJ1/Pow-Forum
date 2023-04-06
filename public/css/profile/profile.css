@@ -166,11 +166,11 @@
 }
 
 .positive{
-    color: green;
+    color: var(--green);
 }
 
 .negative{
-    color: red;
+    color: var(--red);
 }
 
 #activityfeed{
@@ -208,7 +208,7 @@
 }
 
 .delete{
-    color: red;
+    color: var(--red);
     float: right;
     cursor: pointer;
 }
