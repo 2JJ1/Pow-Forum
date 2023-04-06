@@ -23,7 +23,7 @@ function AdminRequirement(req, res, next){
 router.use('/', require('./index'));
 
 //Admins
-router.use(AdminRequirement, require('./settings'))
+router.use("/settings", AdminRequirement, require('./settings'))
 router.use("/integrations", AdminRequirement, require('./integrations'))
 router.use("/categories", AdminRequirement, require('./categories'))
 

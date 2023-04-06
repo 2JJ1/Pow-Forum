@@ -5,7 +5,7 @@ const ForumSettings = mongoose.model("ForumSettings")
 
 // /dashboard
 
-router.get("/settings", async (req, res) => {
+router.get("/", async (req, res) => {
     let pagedata = {
 		powForum: req.powForum,
         accInfo: req.account,
