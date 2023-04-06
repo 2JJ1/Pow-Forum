@@ -7,12 +7,15 @@ const accountAPI = require('../../my_modules/accountapi')
 
 const Subcategories = mongoose.model("Subcategories")
 
-router.get('/:forum/newthread', async (req, res) => {
+router.get('/:forum/newthread', async (req, res, next) => {
 	try {
         let pagedata = {
 		    powForum: req.powForum,
             accInfo: req.account,
         }
+
+        let subcategory = parseInt(req.params.forum)
+		if(!Number.isInteger(subcategory)) return next("Invalid subcategory")
 
         //Only logged in users can create threads
         if(!req.session.uid) return res.status(400).render("400", {reason: "Please login to create a thread"})
@@ -25,7 +28,7 @@ router.get('/:forum/newthread', async (req, res) => {
 
     	pagedata.forumData = {
             name: req.params.forum,
-            category: await forumapi.GetSubcategory(req.params.forum),
+            category: await forumapi.GetSubcategory(subcategory),
         }
 
         //Check if client can post here

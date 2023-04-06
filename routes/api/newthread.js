@@ -33,6 +33,9 @@ router.post('/', async (req, res) => {
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw "You must be logged in to post"
 
+		let subcategory = req.body.forum
+		if(typeof subcategory !== "number") throw "Invalid subcategory"
+
 		let topic = req.body.topic
 		if(!topic) throw "Missing topic"
 		if(typeof topic !== "string") throw "Invalid topic"
@@ -57,7 +60,7 @@ router.post('/', async (req, res) => {
 		topic = topic.trim()	
 
 		//Get category
-		let category = await forumapi.GetSubcategory(req.body.forum)
+		let category = await forumapi.GetSubcategory(subcategory)
 
         //Check if the forum exists
 		if(!category) throw "Invalid category"
