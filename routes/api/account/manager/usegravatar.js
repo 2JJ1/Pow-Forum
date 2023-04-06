@@ -1,13 +1,11 @@
 const router = require('express').Router()
 const fetch = require("node-fetch")
-const fs = require("fs")
-const path = require('path')
 const mongoose = require('mongoose')
 const md5 = require('md5')
 
 const Accounts = mongoose.model('Accounts')
 
-const {fetchAccount} = require('../../../../my_modules/accountapi');
+const {fetchAccount, deleteUploadedProfilePicture} = require('../../../../my_modules/accountapi');
 
 // update account info tab
 router.post('/', async (req, res) => {
@@ -34,14 +32,7 @@ router.post('/', async (req, res) => {
 		let newProfilePicture = "https://www.gravatar.com/avatar/" + hashedEmail
 
 		//Delete profile's old uploaded PFP if any
-		let pfp = account.profilepicture
-		//Pattern match for uploaded pfp
-		if(pfp && !pfp.startsWith("https://") && /\d+\_\d+\.(jpeg|jpg|png|gif)/.test(pfp)){
-			//User already has a PFP, so delete it before setting new one
-			let oldPFPPath = path.join(path.resolve('./public/images/avatars'), pfp)
-			if(fs.existsSync(oldPFPPath)) fs.unlinkSync(oldPFPPath)
-			else console.log(`Failed to delete old PFP ${oldPFPPath} for ${req.session.uid}`)
-		}
+		deleteUploadedProfilePicture(account._id)
 
 		//Update profilepicture with Gravatar link
 		await Accounts.updateOne({_id: req.session.uid}, {profilepicture: newProfilePicture})

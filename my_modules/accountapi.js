@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 const bcrypt = require("bcrypt")
+const path = require("path")
+const fs = require("fs")
 
 const buildpfp = require('./buildpfp')
 const other = require('./other')
@@ -107,4 +109,23 @@ exports.fetchAccount = async function(identifier, options){
 	account.medias = other.StringToJSON(account.medias)
 
 	return account
+}
+
+exports.deleteUploadedProfilePicture = function(uid){
+	Accounts.findById(uid)
+	.then(account => {
+		let {profilepicture} = account
+
+		//If user has an uploaded PFP, delete it
+		if(
+			profilepicture && 
+			!profilepicture.startsWith("https://") && 
+			/\d+\_\d+\.(jpeg|jpg|png|gif|webp)/.test(profilepicture)
+		){
+			let avatarspath = path.resolve('./public/images/avatars') // relative to server.js
+			let profilePicturePath = path.join(avatarspath, profilepicture)
+			if(fs.existsSync(profilePicturePath)) fs.unlinkSync(profilePicturePath)
+			else console.error(`Failed to delete PFP ${profilePicturePath}`)
+		}
+	})
 }

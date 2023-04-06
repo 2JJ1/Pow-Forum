@@ -72,14 +72,8 @@ router.post('/', async (req, res) => {
 			//Finished downloading 'files'
 			form.on('end', async function() {
 				if(fileName){
-					var pfp = account.profilepicture
-		
 					//If user has an uploaded PFP, delete it
-					if(pfp && /\d+\_\d+\.(jpeg|jpg|png|gif|webp)/.test(pfp)){
-						let oldPFPPath = path.join(avatarspath, pfp)
-						if(fs.existsSync(oldPFPPath)) fs.unlinkSync(oldPFPPath)
-						else console.log(`Failed to delete old PFP ${oldPFPPath} for ${req.session.uid}`)
-					}
+					accountAPI.deleteUploadedProfilePicture(account._id)
 		
 					//Path to the newly uploaded file
 					var filePath = path.join(avatarspath, fileName)
@@ -127,14 +121,7 @@ router.post('/', async (req, res) => {
 				}
 				//No file was attached. Assume profile picture delete request
 				else {
-					var pfp = account.profilepicture
-		
-					//If user has an uploaded PFP, delete it
-					if(pfp && /\d+\_\d+\.(jpeg|jpg|png|gif|webp)/.test(pfp)){
-						let oldPFPPath = path.join(avatarspath, pfp)
-						if(fs.existsSync(oldPFPPath)) fs.unlinkSync(oldPFPPath)
-						else console.log(`Failed to delete old PFP ${oldPFPPath} for ${req.session.uid}`)
-					}
+					accountAPI.deleteUploadedProfilePicture(account._id)
 		
 					//Update account row's pfp value
 					await Accounts.updateOne({_id: req.session.uid}, {profilepicture: null})

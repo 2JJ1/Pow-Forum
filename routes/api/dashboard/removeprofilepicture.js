@@ -1,9 +1,8 @@
 const router = require('express').Router()
-const path = require("path")
-const fs = require("fs")
 const mongoose = require("mongoose")
 
 const rolesapi = require("../../../my_modules/rolesapi")
+const {deleteUploadedProfilePicture} = require("../../../my_modules/accountapi")
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 const Accounts = mongoose.model("Accounts")
@@ -23,12 +22,7 @@ router.delete("/removeprofilepicture", async (req, res) => {
 		if(!account) throw "Account doesn't exist"
 
         //Delete their uploaded profile picture if they have one
-        if(account.profilepicture && !account.profilepicture.startsWith("https://")) {
-            let avatarspath = path.resolve('../CDN/images/avatars') // relative to server.js
-            let oldPFPPath = path.join(avatarspath, account.profilepicture)
-            if(fs.existsSync(oldPFPPath)) fs.unlinkSync(oldPFPPath)
-            else console.log(`Failed to delete old PFP ${oldPFPPath} for ${req.session.uid}`)
-        }
+        deleteUploadedProfilePicture(account._id)
 
         //Removes profile picture from db
         account.profilepicture = undefined
