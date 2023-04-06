@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Add, edit, or remove categories here." />
+	
+		<title>Integrations Dashboard - <%- powForum.name %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/dashboard/integrations.css?v=20" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <main class="gapchildren">
+            <div id="metadata" class="integrationSection theme1 border1 round padding">
+                <p class="header">Metadata</p>
+                <p class="subtext">To send emails securely and reliably, we use <a href="https://mailgun.com" target="_blank">Mailgun</a>.</p>
+                <br>
+                <div class="gapchildren">
+                    <div class="lessgapchildren">
+                        <p>Forum Name</p>
+                        <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="What is the name of your forum?" value="<%= name %>"/>
+                    </div>
+                    <div class="lessgapchildren">
+                        <p>Description</p>
+                        <input name="description" class="theme2 border1 round less-padding" type="text" placeholder="How would you describe this forum?" value="<%= description %>"/>
+                    </div>
+                </div>
+                <br>
+                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMetadata()">Save</button>
+            </div>
+            
+        </main>
+        <script>
+            function UpdateMetadata(){
+                //Compile data
+                let name = document.querySelector('#metadata input[name="name"]').value
+                let description = document.querySelector('#metadata input[name="description"]').value
+
+                //Send update request
+                fetch('/api/dashboard/settings/metadata', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name, 
+                        description,
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+        </script>
+	</body>
+</html>
