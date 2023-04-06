@@ -19,7 +19,6 @@
 		<% if(accInfo.isAdmin){ %>
 		<div class="deleteAccount modal">
             <div id="deleteAccountForm" class="theme1 border1 round gapchildren">
-                <div class="g-recaptcha" data-sitekey="<%= process.env.CAPTCHAV3_SITEKEY %>" data-callback="deleteAccountCallback" data-size="invisible"></div>
 				<h2>Delete <%= profileInfo.username %>'s account?</h2>
 				<div class="lessgapchildren">
 					<p>*Password:</p>
@@ -35,9 +34,10 @@
 						<input class="theme2 border1 round less-padding" type="checkbox" checked/>
 					</label>
 				</div>
+				<div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
 				<div class="verticalCenter finalControls">
 					<button id="cancelDeleteAccount" class="theme2 border1 round less-padding">Cancel</button>
-					<button class="theme2 border1 round less-padding" onclick="grecaptcha.execute()">Delete</button>
+					<button class="theme2 border1 round less-padding" onclick="deleteAccount()">Delete</button>
 				</div>
             </div>
         </div>
@@ -266,7 +266,7 @@
 				document.querySelector(".deleteAccount.modal").style.display = "none"
 			}
 
-			function deleteAccountCallback(grecaptcharesponse){
+			function deleteAccount(){
 				let form = document.getElementById("deleteAccountForm")
 				let password = form.querySelector('input[type="password"]').value
 				let reason = form.querySelector('.reason').value
@@ -281,7 +281,7 @@
                     },
 					body: JSON.stringify({
 						uid: <%= profileInfo._id %>,
-                        grecaptcharesponse,
+                        grecaptcharesponse: grecaptcha.getResponse(),
 						password,
 						reason,
 						keepForumContent,
