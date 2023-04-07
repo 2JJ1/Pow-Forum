@@ -1,4 +1,5 @@
-var sanitizeHtml = require('sanitize-html');
+var sanitizeHtml = require('sanitize-html')
+const stripCombiningMarks = require('strip-combining-marks')
 
 class Other {
 	//Converts a string to an array
@@ -121,6 +122,8 @@ class Other {
 	}
 
 	ThreadSanitizeHTML(dirty) {
+		dirty = stripCombiningMarks(dirty)
+
 		return sanitizeHtml(dirty, {
 			allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
 			'li', 'b', 'i', 'strong', 'em', 'strike', 'hr', 'br', 'div', 'span', 'pre', 'code'],

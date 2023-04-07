@@ -3,7 +3,6 @@ const phraseblacklist = require('phrase-blacklist')
 const mongoose = require("mongoose")
 const jsdom = require("jsdom")
 
-const stripCombiningMarks = require('strip-combining-marks');
 const recaptcha = require('../../my_modules/captcha')
 const rolesAPI = require('../../my_modules/rolesapi')
 const accountAPI = require('../../my_modules/accountapi')
@@ -68,7 +67,7 @@ router.post('/', async (req, res) => {
 		if(reputation<=-20) throw "Your reputation is too low"
 
 		//Only grab whitelisted HTML
-		let safeContent = stripCombiningMarks(ThreadSanitizeHTML(content))
+		let safeContent = ThreadSanitizeHTML(content)
 
 		//Extract text content (Filter out HTML tags)
 		let dom = new JSDOM(safeContent)

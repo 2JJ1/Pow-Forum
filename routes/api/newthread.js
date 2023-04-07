@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 			
 		let currentDate = new Date();
 		let safeTopic = stripCombiningMarks(escape(topic))
-		let safeContent = stripCombiningMarks(ThreadSanitizeHTML(content))
+		let safeContent = ThreadSanitizeHTML(content)
 
 		//Extract text content (Filter out HTML tags)
 		let dom = new JSDOM(safeContent)

@@ -4,7 +4,6 @@ const mongoose = require("mongoose")
 const jsdiff = require("diff")
 const jsdom = require("jsdom")
 
-const stripCombiningMarks = require('strip-combining-marks')
 const rolesAPI = require('../../my_modules/rolesapi')
 const accountAPI = require('../../my_modules/accountapi')
 const { ThreadSanitizeHTML } = require('../../my_modules/other')
@@ -40,7 +39,7 @@ router.post('/edit', async (req, res) => {
 		var isOriginalPost = originalPost._id === parseInt(trid)
 
 		//Escape content for safe HTMl display
-		let safeContent = stripCombiningMarks(ThreadSanitizeHTML(req.body.content))
+		let safeContent = ThreadSanitizeHTML(req.body.content)
 
 		//Converts the plain HTML text to a workable DOM
 		let dom = new JSDOM(safeContent)
