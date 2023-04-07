@@ -5,7 +5,6 @@ const jsdiff = require("diff")
 const jsdom = require("jsdom")
 
 const stripCombiningMarks = require('strip-combining-marks')
-const recaptcha = require('../../my_modules/captcha')
 const rolesAPI = require('../../my_modules/rolesapi')
 const accountAPI = require('../../my_modules/accountapi')
 const { ThreadSanitizeHTML } = require('../../my_modules/other')

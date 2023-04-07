@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
                 'Payment received. Thank you so much for giving us your support! Seriously, it is very appreciated. Your support comes with benefits during your term. You can find a list of patron benefits at: \n' +
                 process.env.FORUM_URL + '/upgrade \n' +
                 '\n' +
-                'Please note that benefits are subject to change. Especially with the intent of adding more benefits. You will be billed at $5 USD monthly.  \n' +
+                'Please note that benefits are subject to change at any time.\n' +
                 '\n' +
                 '\n' +
                 'Email intended for: \n' +
