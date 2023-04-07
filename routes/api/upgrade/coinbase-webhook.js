@@ -24,7 +24,8 @@ router.post('/', async (req, res) => {
 
         let uid
         if(event.data.metadata) uid = event.data.metadata.customer_id
-        if(!uid) return res.send("TEMP FOR THE BROKEN CALL")
+        //Likely is a test event. Use the bot as a test dummy
+        if(!uid) uid = 1
 
         switch(event.type) {
             case "charge:confirmed": {
@@ -35,7 +36,7 @@ router.post('/', async (req, res) => {
                 if(acc.roles.indexOf("patron") === -1) acc.roles.push('patron')
 
                 //Updates the account in the database to reflect data
-                await Accounts.updateOne({_id: uid}, {premium_expires: new Date() + 1000*60*60*24*30, roles: JSON.stringify(acc.roles)})
+                await Accounts.updateOne({_id: uid}, {premium_expires: new Date().getTime() + 1000*60*60*24*30, roles: JSON.stringify(acc.roles)})
 
                 //Send thank you email
                 let emailBody = 

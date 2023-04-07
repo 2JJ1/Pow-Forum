@@ -11,6 +11,7 @@ const compression = require('compression')
 const socketio = require("socket.io")
 
 const updateEnv = require('./my_modules/updateenv')
+const other = require('./my_modules/other')
 
 if(!process.env.SUPPORT_EMAIL_ADDRESS) {
 	console.error("Missing support email address. Please run 'npm run setup'")
@@ -32,6 +33,7 @@ if(!process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MA
 //Loads up all models
 require('./models')
 const ForumSettings = mongoose.model("ForumSettings")
+const Accounts = mongoose.model("Accounts")
 
 //Database cleanup
 async function CleanMongoDatabase(){
@@ -43,6 +45,23 @@ async function CleanMongoDatabase(){
 
 	//Deletes messages older than 14 days
 	await mongoose.model("Messages").deleteMany({time: {$lt: Date.now() - 1000*60*60*24*14}})
+
+	//Removes premium from expired Crypto payers
+	let expiredPremiumMembers = await Accounts.find({premium_expires: {$lt: new Date()}})
+	for(let expiredPremiumMember of expiredPremiumMembers){
+		let roles = other.StringToArray(expiredPremiumMember.roles)
+
+		//Removes their patron role
+		let index = roles.indexOf("patron")
+		if(index != -1) roles.splice(index, 1);
+
+		//Give them the VIP role as a token of appreciation
+		if(roles.indexOf("vip") === -1) roles.push("vip")
+
+		//Save changes
+		expiredPremiumMember.roles = JSON.stringify(roles)
+		await expiredPremiumMember.save()
+	}
 }
 
 //Connect to database
