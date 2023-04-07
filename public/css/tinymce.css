@@ -1,3 +1,21 @@
 .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
 	color: lightgray;
 }
+
+.mce-content-body, .mce-content-body:before{
+	padding: var(--less-gap) var(--gap) ;
+}
+
+/* For some reason, I have to do this for the before to line up properly... */
+.mce-content-body:before{
+	padding-top: 4px;
+}
+
+a{
+    color: rgb(52, 152, 219);
+    text-decoration: none;
+}
+
+.mce-content-body [data-mce-selected=inline-boundary] {
+    background-color: #4099ff24;
+}
