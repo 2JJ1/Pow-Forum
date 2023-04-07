@@ -25,6 +25,10 @@ div, h1, h2, h3, h4, p, a, li, tr, td, textarea, button, input, select, span{
     color: inherit;
 }
 
+span{
+    font-weight: inherit;
+}
+
 h1, h2 {
     font-size: 1.5em;
 }
