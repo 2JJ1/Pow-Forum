@@ -177,17 +177,16 @@
                                         <button name="cancel" class="theme2 round border1 padding">Cancel</button>
                                         <button name="save" class="theme2 round border1 padding">Save Changes</button>
                                     </div>
+                                    <ul class="reply_menu verticalCenter gapchildrenx">
+                                        <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
+                                        <% if(accInfo._id === comment.uid){ %>
+                                        <li onclick="EditReply(<%= comment._id %>)">Edit</li>
+                                        <% } %>
+                                        <% if(comment.deletable === true){ %>
+                                        <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
+                                        <% } %>
+                                    </ul>
                                 </div>
-                                <ul class="reply_menu verticalCenter gapchildrenx">
-                                    <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
-                                    <% if(accInfo._id === comment.uid){ %>
-                                    <li onclick="EditReply(<%= comment._id %>)">Edit</li>
-                                    <% } %>
-                                    <% if(comment.deletable === true){ %>
-                                    <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
-                                    <% } %>
-                                </ul>
-            
                         <!--Close reply group if the next replier is different-->
                         <% if(nextCommentertUid !== comment.uid){ %>
                             </div>
@@ -415,7 +414,10 @@
                                 //removes the reply card
                                 replyCard.remove()
                                 //Removes the reply group if there is no more replies in the group
-                                if(replyGroup.find(".replycard").length <= 0) replyGroup.remove()
+                                if(replyGroup.find(".replycard").length <= 0) {
+                                    if(replyGroup.parent().parent().hasClass("comments")) replyGroup.parent().parent().remove()
+                                    else replyGroup.remove()
+                                }
                             } else {
                                 if(result.reason)
                                     alert(result.reason);
