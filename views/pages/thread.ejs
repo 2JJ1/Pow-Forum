@@ -272,7 +272,8 @@
 		<script>
             <% if(threadData.scrollToTrid) { %>
             //Scrolls to reply from notification
-            document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]').scrollIntoView(true)
+            let replyToView = document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]')
+            if(replyToView) replyToView.scrollIntoView(true)
             <% } %> 
 
             //Embed images in thread and signature content
