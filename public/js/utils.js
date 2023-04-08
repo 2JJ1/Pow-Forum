@@ -25,5 +25,9 @@ window.pFUtils = {
 		
 		//Default to false
 		return false
-    }
+    },
+
+	queryParams: new Proxy(new URLSearchParams(window.location.search), {
+		get: (searchParams, prop) => searchParams.get(prop),
+	})
 }

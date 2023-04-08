@@ -161,7 +161,7 @@ exports.SendNotification = async function(options){
                     options.recipientid, 
                     `New message from ${senderAccount.username}`,
                     ``,
-                    `${process.env.FORUM_URL}/profile?uid=${options.senderid}`
+                    `${process.env.FORUM_URL}/?openChat=${options.senderid}`
                 )
             }
 
