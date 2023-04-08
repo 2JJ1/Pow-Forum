@@ -661,6 +661,31 @@
                 let btnPost = replyCard.querySelector('.commentControls [name="post"]')
                 btnPost.onclick = function(){
                     console.log("Add comment!")
+
+                    fetch('/api/thread/reply', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            //'g-recaptcha-response': grecaptcha.getResponse(),
+                            content: editor.getContent(),
+                            trid,
+                        }),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success){
+                            saveDraft = false
+                            localStorage.removeItem('reply-draft');
+                            document.location.href = `/t/<%= threadData._id %>/?r=${res.replyId}`
+                        } else {
+                            document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
+                        }
+                    })
+                    .catch(()=>document.getElementById('errormessage').innerHTML = "Failed to contact the server.")
+
+                    grecaptcha.reset();
                 }
 
                 let btnCancel = replyCard.querySelector('.commentControls [name="cancel"]')

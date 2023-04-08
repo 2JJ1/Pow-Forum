@@ -33,9 +33,22 @@ router.post('/', async (req, res) => {
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw 'You must be logged in'
 
-		let tid = parseInt(req.body.tid)
-		if(!tid) throw "Thread ID not specified"
-		if(!Number.isInteger(tid)) throw "Invalid thread reply id"
+		//If this is a comment reply, trid is specified
+		let {trid} = req.body
+
+		//What thread this reply is for
+		let tid 
+		if(trid) {
+			trid = parseInt(trid)
+			if(!Number.isInteger(trid)) throw "Invalid thread reply id"
+			let reply = await ThreadReplies.findById(trid).lean()
+			if(!reply) throw "This reply does not exist"
+			if("trid" in reply) throw "You can not reply to comments"
+			tid = reply.tid
+		}
+		else tid = parseInt(req.body.tid)
+		if(!tid) throw "Thread id not specified"
+		if(!Number.isInteger(tid)) throw "Invalid thread id"
 
 		let content = req.body.content
 		if(!content) throw "Missing content"
@@ -117,13 +130,17 @@ router.post('/', async (req, res) => {
 		if(!await rolesAPI.isModerator(account.roles) && lastEverReply && (new Date() < new Date(lastEverReply.date).getTime()+15000)) throw "Please wait longer between replies"
 		
 		//Finally registers the reply in the database
-		const newReply = await new ThreadReplies({
+		let replyData = {
 			uid: req.session.uid,
 			tid,
 			category: thread.category,
 			date: currentDate,
 			content: safeContent,
-		}).save()
+		}
+		//Marks this reply as a comment for said thread reply id
+		if(trid) replyData.trid = trid
+		const newReply = await new ThreadReplies(replyData)
+		.save()
 
 		//Sends notification to the OP stating someone else has replied to their thread
 		if(

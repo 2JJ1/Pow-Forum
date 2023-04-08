@@ -7,7 +7,7 @@ class Captcha {
 	captchaV2(grecaptcharesponse, remoteip) {
 		return new Promise( ( resolve, reject ) => {
 			//Captcha is annoying in development...
-			//if(process.env.NODE_ENV === "development") return resolve(true)
+			if(process.env.NODE_ENV === "development") return resolve(true)
 
 			//Default to successful captcha if an API key was never supplied
 			if(!process.env.CAPTCHAV2_APIKEY) return resolve(true)
@@ -27,7 +27,7 @@ class Captcha {
 	captchaV3(grecaptcharesponse, remoteip) {
 		return new Promise( ( resolve, reject ) => {
 			//Captcha is annoying in development...
-			//if(process.env.NODE_ENV === "development") return resolve(true)
+			if(process.env.NODE_ENV === "development") return resolve(true)
 
 			//Default to successful captcha if an API key was never supplied
 			if(!process.env.CAPTCHAV3_APIKEY) return resolve(true)
