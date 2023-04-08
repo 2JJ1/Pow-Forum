@@ -93,15 +93,6 @@
             <!--Reply Metadata-->
             <div class="replycard" data-trid="<%= obj._id %>">
                 <div style="position: relative">
-                    <ul class="reply_menu padding verticalCenter">
-                        <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
-                        <% if(accInfo._id === obj.uid){ %>
-                        <li onclick="EditReply(this)">Edit</li>
-                        <% } %>
-                        <% if(obj.deletable === true){ %>
-                        <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
-                        <% } %>
-                    </ul>
                     <p class="note padding">
                         <% if(ogTRID === obj._id){ %>
                             <!--OP-->
@@ -159,15 +150,6 @@
                                 <!--Reply Metadata-->
                                 <div class="replycard" data-trid="<%= comment._id %>">
                                     <div style="position: relative">
-                                        <ul class="reply_menu verticalCenter">
-                                            <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
-                                            <% if(accInfo._id === comment.uid){ %>
-                                            <li onclick="EditReply(this)">Edit</li>
-                                            <% } %>
-                                            <% if(comment.deletable === true){ %>
-                                            <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
-                                            <% } %>
-                                        </ul>
                                         <p class="note">
                                             <% if(ogTRID === comment._id){ %>
                                                 <!--OP-->
@@ -196,6 +178,15 @@
                                         <button name="save" class="theme2 round border1 padding">Save Changes</button>
                                     </div>
                                 </div>
+                                <ul class="reply_menu verticalCenter gapchildrenx">
+                                    <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
+                                    <% if(accInfo._id === comment.uid){ %>
+                                    <li onclick="EditReply(this)">Edit</li>
+                                    <% } %>
+                                    <% if(comment.deletable === true){ %>
+                                    <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
+                                    <% } %>
+                                </ul>
             
                         <!--Close reply group if the next replier is different-->
                         <% if(nextCommentertUid !== comment.uid){ %>
@@ -207,6 +198,25 @@
                     </div>
                 </div>
                 <% } %>
+                <div class="hidden comment-creator padding lessgapchildren note">
+                    <div class="comment-creator-editor"></div>
+                    <div class="commentControls verticalCenter gapchildrenx">
+                        <p name="cancel" class="cursorpointer">Cancel</p>
+                        <p name="post" class="cursorpointer">Post</p>
+                    </div>
+                </div>
+                <ul class="reply_menu verticalCenter gapchildrenx">
+                    <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
+                    <% if(threadData.canReply){ %>
+                    <li onclick="AddComment(<%= obj._id %>)">Comment</li>
+                    <% } %>
+                    <% if(accInfo._id === obj.uid){ %>
+                    <li onclick="EditReply(this)">Edit</li>
+                    <% } %>
+                    <% if(obj.deletable === true){ %>
+                    <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
+                    <% } %>
+                </ul>
             </div>
 
             <!--Close reply group if the next replier is different-->
@@ -612,6 +622,35 @@
                         }
                     })
                     .catch(()=>alert("Failed to contact the server."))
+                }
+            }
+
+
+            /** Comment Creator **/
+
+            async function AddComment(trid){
+                let replyCard = document.querySelector(`.replycard[data-trid="${trid}"]`)
+                let commentCreator = replyCard.querySelector('.comment-creator')
+
+                commentCreator.classList.remove('hidden')
+                
+                let selector = `.replycard[data-trid="${trid}"] .comment-creator-editor`
+                let editor = await tinymce.init({
+                    ...tinymceOptions, 
+                    toolbar: 'bold italic underline strikethrough | fontsizeselect forecolor | bullist numlist link codesample | undo redo',
+                    selector,
+                })
+                .then(r => r[0])
+
+                let btnPost = replyCard.querySelector('.commentControls [name="post"]')
+                btnPost.onclick = function(){
+                    console.log("Add comment!")
+                }
+
+                let btnCancel = replyCard.querySelector('.commentControls [name="cancel"]')
+                btnCancel.onclick = function(){
+                    commentCreator.classList.add("hidden")
+                    editor.remove()
                 }
             }
         </script>

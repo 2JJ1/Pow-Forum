@@ -93,8 +93,8 @@
 }
 
 .reply_menu{
-    position: absolute;
-    right: 0;
+    padding: var(--gap);
+    padding-top: 0;
 }
 
 .reply_menu .button{
@@ -104,10 +104,6 @@
 .reply_menu li{
     display: inline-block;
     cursor: pointer;
-}
-
-.reply_menu li{
-    margin-left: var(--less-gap);
 }
 
 .btnLikeReply{

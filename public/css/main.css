@@ -118,6 +118,10 @@ pre code *{
     --green: #27AE60;
 }
 
+.hidden{
+    display: none;
+}
+
 .button{
     display: block;
     padding: 8px 18px;
@@ -187,6 +191,18 @@ pre code *{
 
 .gapchildren > *:nth-last-child(1), .lessgapchildren > *:nth-last-child(1){
     margin-bottom: 0;
+}
+
+.gapchildrenx > *{
+    margin-right: var(--gap)
+}
+
+.lessgapchildrenx > *{
+    margin-right: var(--less-gap)
+}
+
+.gapchildrenx > *:nth-last-child(1), .lessgapchildrenx > *:nth-last-child(1){
+    margin-right: 0;
 }
 
 .red{
