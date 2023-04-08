@@ -33,7 +33,7 @@ router.options('*', cors)
 router.use('/thread', require('./newthread'))
 
 //Add/delete reply on a thread
-router.use('/thread/reply', require('./reply'))
+router.use('/thread/reply', require('./reply/router'))
 
 //Edit topic
 router.use('/thread/topic', require('./edittopic'))

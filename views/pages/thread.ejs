@@ -117,7 +117,7 @@
                 onclick="warnLinks(event)"
                 <% } %>
                 ><%- obj.content %></div>
-                <div class="replyEditorControls padding">
+                <div class="replyEditorControls hidden padding">
                     <button name="cancel" class="theme2 round border1 padding">Cancel</button>
                     <button name="save" class="theme2 round border1 padding">Save Changes</button>
                 </div>
@@ -168,12 +168,12 @@
                                     <!--Reply Content-->
                                     <div class="replyEditor"></div>
                                     <div 
-                                    class="<% if(ogTRID !== comment._id){ %>limitReplyHeight<% } %>"
+                                    class="thread_replycontent <% if(ogTRID !== comment._id){ %>limitReplyHeight<% } %>"
                                     <% if(comment.reputation <= 0){ %>
                                     onclick="warnLinks(event)"
                                     <% } %>
                                     ><%- comment.content %></div>
-                                    <div class="replyEditorControls padding">
+                                    <div class="replyEditorControls hidden padding">
                                         <button name="cancel" class="theme2 round border1 padding">Cancel</button>
                                         <button name="save" class="theme2 round border1 padding">Save Changes</button>
                                     </div>
@@ -181,7 +181,7 @@
                                 <ul class="reply_menu verticalCenter gapchildrenx">
                                     <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
                                     <% if(accInfo._id === comment.uid){ %>
-                                    <li onclick="EditReply(this)">Edit</li>
+                                    <li onclick="EditReply(<%= comment._id %>)">Edit</li>
                                     <% } %>
                                     <% if(comment.deletable === true){ %>
                                     <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
@@ -211,7 +211,7 @@
                     <li onclick="AddComment(<%= obj._id %>)">Comment</li>
                     <% } %>
                     <% if(accInfo._id === obj.uid){ %>
-                    <li onclick="EditReply(this)">Edit</li>
+                    <li onclick="EditReply(<%= obj._id %>)">Edit</li>
                     <% } %>
                     <% if(obj.deletable === true){ %>
                     <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
@@ -565,37 +565,53 @@
             /** Reply Editor **/
 
 
-            async function EditReply(this_btnEdit){
-                let replyCard = this_btnEdit.parentElement.parentElement.parentElement
+            async function EditReply(trid){
+                let replyCard = document.querySelector(`.replycard[data-trid="${trid}"]`)
+                let replyEditor = replyCard.querySelector('.replyEditor')
                 let thread_replycontent = replyCard.querySelector(".thread_replycontent")
                 let originalReplyHTML = thread_replycontent.innerHTML
                 let replyEditorControls = replyCard.querySelector('.replyEditorControls')
                 let replyId = replyCard.getAttribute('data-trid')
 
+                let dbReplyHTML = await fetch(`/api/thread/reply?trid=${replyId}`, {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success){
+                        return res.html
+                    } 
+                    else {
+                        return res.reason || 'Unknown error occured...'
+                    }
+                })
+                .catch(() => "Failed to contact the server.")
+
+                //Hide actual reply
+                thread_replycontent.classList.add("hidden")
+
                 // Display editor
-                let tinymceSelector = `.replycard[data-trid="${replyId}"] .thread_replycontent`
+                let selector = `.replycard[data-trid="${trid}"] .replyEditor`
                 let editor = await tinymce.init({
                     ...tinymceOptions, 
-                    selector: tinymceSelector,
+                    selector,
                 })
                 .then(r => r[0])
 
                 //Show editor controls
-                replyEditorControls.style.display = "block"
+                replyEditorControls.classList.remove("hidden")
 
-                //Keeps this code cached
-                this_btnEdit.onclick = () => {
-                    editor.show()
-                    replyEditorControls.style.display = "block"
-                    thread_replycontent.style.display = "none"
-                }
+                editor.setContent(dbReplyHTML)
 
                 //Handle cancel button
                 replyEditorControls.querySelector('button[name="cancel"]').onclick = () => {
-                    editor.hide()
-                    replyEditorControls.style.display = "none"
-                    thread_replycontent.style.display = "block"
-                    thread_replycontent.innerHTML = originalReplyHTML
+                    editor.remove()
+                    replyEditorControls.classList.add("hidden")
+                    replyEditor.innerHTML = ""
+                    thread_replycontent.classList.remove("hidden")
                 }
 
                 //Handle save button
