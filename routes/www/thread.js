@@ -23,7 +23,7 @@ const DownloadLinks = mongoose.model("DownloadLinks")
 //getMonth returns number, so use this to get the text
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
-];
+]
 
 //Display's thread page on forum
 router.get('/:tid', async (req, res) => {
@@ -113,55 +113,57 @@ router.get('/:tid', async (req, res) => {
     }
     
     // Get replies
-    result.replies = await ThreadReplies.find({tid}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
-    .then(async (result) => {
-        if (result.length > 0){
-            //Append replier data to each reply
-            for(var i=0; i<result.length; i++){
-                var replyRow = result[i]
+    result.replies = await ThreadReplies.find({tid, trid: {$exists: false}}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
 
-                //Replaces mentions with a username and link to their profile
-                replyRow.content = await ProcessMentions(replyRow.content)
-
-                //Grab replier and get their account info
-                let accInfo = await accountAPI.fetchAccount(replyRow.uid, {fallback: true})
-                .then(async accountRow => {
-                    if(accountRow._id == 0) return accountRow
-
-                    //How many posts they've made, aka thread replies
-                    accountRow.totalposts = await ThreadReplies.countDocuments({uid: replyRow.uid})
-
-                    //How many threads they've made
-                    accountRow.totalthreads = await Threads.countDocuments({uid: replyRow.uid})
-
-                    //Shorts join date to eg. Dec 2019
-                    var joinDate = new Date(accountRow.creationdate)
-                    joinDate = `${monthNames[joinDate.getMonth()].substr(0,3)}, ${joinDate.getFullYear()}`
-                    accountRow.joinDate = joinDate
-
-                    //Sum of reputation
-                    accountRow.reputation = await accountAPI.SumReputation(replyRow.uid)
-
-                    accountRow.badge = badges[accountRow.highestRole]
-
-                    return accountRow
-                })
-
-                replyRow.account = accInfo
-
-
-                //Fetch other data
-                replyRow.signature = accInfo.signature
-
-                replyRow.likes = await ThreadReplyReacts.countDocuments({trid: replyRow._id})
-                replyRow.liked = await ThreadReplyReacts.exists({trid: replyRow._id, uid: req.session.uid})
-                
-                replyRow.deletable = req.session.uid === replyRow || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
-            }
+    async function AppendReplyMetadata(replies){
+        //Append replier data to each reply
+        for(let replyRow of replies) {
+            //Replaces mentions with a username and link to their profile
+            replyRow.content = await ProcessMentions(replyRow.content)
+    
+            //Grab replier and get their account info
+            let accInfo = await accountAPI.fetchAccount(replyRow.uid, {fallback: true})
+            .then(async accountRow => {
+                if(accountRow._id == 0) return accountRow
+    
+                //How many posts they've made, aka thread replies
+                accountRow.totalposts = await ThreadReplies.countDocuments({uid: replyRow.uid})
+    
+                //How many threads they've made
+                accountRow.totalthreads = await Threads.countDocuments({uid: replyRow.uid})
+    
+                //Shorts join date to eg. Dec 2019
+                var joinDate = new Date(accountRow.creationdate)
+                joinDate = `${monthNames[joinDate.getMonth()].substr(0,3)}, ${joinDate.getFullYear()}`
+                accountRow.joinDate = joinDate
+    
+                //Sum of reputation
+                accountRow.reputation = await accountAPI.SumReputation(replyRow.uid)
+    
+                accountRow.badge = badges[accountRow.highestRole]
+    
+                return accountRow
+            })
+    
+            replyRow.account = accInfo
+    
+            //Fetch other data
+            replyRow.signature = accInfo.signature
+    
+            replyRow.likes = await ThreadReplyReacts.countDocuments({trid: replyRow._id})
+            replyRow.liked = await ThreadReplyReacts.exists({trid: replyRow._id, uid: req.session.uid})
             
-            return result
+            replyRow.deletable = req.session.uid === replyRow || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
+
+            //Fetch comments
+            replyRow.comments = await ThreadReplies.find({trid: replyRow._id}).sort({_id: 1}).limit(resultsPerPage).lean()
+            replyRow.comments = await AppendReplyMetadata(replyRow.comments)
         }
-    })
+        
+        return replies
+    }
+
+    result.replies = await AppendReplyMetadata(result.replies)
     
     result.nextPageAvailable = totalReplies > (startingRow + result.replies.length)
 

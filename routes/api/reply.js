@@ -225,12 +225,14 @@ router.delete('/', async (req, res) => {
 			await ThreadReplies.find({tid: targetReply.tid})
 			.then(async replies => {
 				for(let reply of replies){
+					//Deletes comments
+					await ThreadReplies.deleteMany({trid: reply._id})
 					await ThreadReplyReacts.deleteMany({trid: reply._id})
+					//Prevent ghost notifications
+					await Notifications.deleteMany({tid: targetReply.tid})
 					await reply.remove()
 				}
 			})
-			//Delete notifications pertaining to this thread to prevent ghost notifications
-			await Notifications.deleteMany({tid: targetReply.tid})
 			await PinnedThreads.deleteOne({_id: targetReply.tid})
 			response.deletedThread = true
 		}
@@ -238,9 +240,11 @@ router.delete('/', async (req, res) => {
 		else{
 			//Only delete the specifically requested thread reply
 			await ThreadReplies.deleteOne({_id: targetReply._id})
-			//Delete data associated with reply
+			// Delete data associated with reply
+			//Deletes comments
+			await ThreadReplies.deleteMany({trid: targetReply._id})
 			await ThreadReplyReacts.deleteMany({trid: targetReply._id})
-			//Delete notifications pertaining to this reply to prevent ghost notifications
+			//Prevent ghost notifications
 			await Notifications.deleteMany({trid: targetReplyID})
 		}
 

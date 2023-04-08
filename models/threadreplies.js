@@ -11,6 +11,11 @@ let schema = mongoose.Schema({
         type: Number,
         index: true,
     },
+    //If trid exists, this reply is a comment to the reply id, [trid]
+    trid: {
+        type: Number,
+        index: true,
+    },
     category: {
         type: Number,
         index: true,
