@@ -112,7 +112,7 @@
                 <!--Reply Content-->
                 <div class="replyEditor"></div>
                 <div 
-                class="thread_replycontent <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
+                class="thread_replycontent padding <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
                 <% if(obj.reputation <= 0){ %>
                 onclick="warnLinks(event)"
                 <% } %>
@@ -206,7 +206,7 @@
                         <p name="post" class="cursorpointer">Post</p>
                     </div>
                 </div>
-                <ul class="reply_menu verticalCenter gapchildrenx">
+                <ul class="reply_menu padding verticalCenter gapchildrenx">
                     <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
                     <% if(threadData.canReply){ %>
                     <li onclick="AddComment(<%= obj._id %>)">Comment</li>

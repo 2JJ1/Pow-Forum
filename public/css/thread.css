@@ -41,7 +41,6 @@
 }
 
 .thread_replycontent{
-    padding: var(--gap);
     line-height: 1.52;
 }
 
@@ -93,7 +92,6 @@
 }
 
 .reply_menu{
-    padding: var(--gap);
     padding-top: 0;
 }
 
