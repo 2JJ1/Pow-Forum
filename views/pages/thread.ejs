@@ -13,7 +13,7 @@
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>
-        <script src='https://www.google.com/recaptcha/api.js' defer></script>
+        <script src='https://www.google.com/recaptcha/api.js?render=explicit' defer></script>
         <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
 	</head>
 	<body class="container">
@@ -200,6 +200,7 @@
                 <% } %>
                 <div class="hidden comment-creator padding lessgapchildren note">
                     <div class="comment-creator-editor"></div>
+                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
                     <div class="commentControls verticalCenter gapchildrenx">
                         <p name="cancel" class="cursorpointer">Cancel</p>
                         <p name="post" class="cursorpointer">Post</p>
@@ -239,7 +240,7 @@
                 <h2 class="padding">Add your reply</h2>
                 <textarea id="editor"></textarea>
                 <div class="lessgapchildren padding">
-                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
                     <button class="theme2 button" onclick="PostReply()">Post Reply</button>
                     <p id="errormessage" style="color: var(--red); text-align: center"></p>
                 </div>
@@ -505,10 +506,21 @@
             }
 
             let replyCreatorEditor
-            tinymce.init({...tinymceOptions, selector: '#editor'})
+            let newReplyCaptchaId
+            tinymce.init({
+                ...tinymceOptions, 
+                selector: '#editor',
+                setup: function(editor) {
+                    editor.on('Paste Change input Undo Redo SetContent', function (event) {
+                        //Renders captcha only when the user begins to type
+                        if(newReplyCaptchaId === undefined) newReplyCaptchaId = grecaptcha.render(document.querySelector('#replyform .grecaptcha'), {theme: "dark"})
+                    });
+                }
+            })
             .then(r => {
                 replyCreatorEditor = r[0]
             })
+
 
             function mention(username){
                 replyCreatorEditor.execCommand('mceInsertContent', false, `@${username}, `);
@@ -521,7 +533,7 @@
                         'Content-Type': 'application/json'
                     },
 					body: JSON.stringify({
-                        'g-recaptcha-response': grecaptcha.getResponse(),
+                        'g-recaptcha-response': grecaptcha.getResponse(newReplyCaptchaId),
                         content: replyCreatorEditor.getContent(),
                         tid: '<%= threadData._id %>'
                     }),
@@ -538,7 +550,7 @@
                 })
 				.catch(()=>document.getElementById('errormessage').innerHTML = "Failed to contact the server.")
 
-				grecaptcha.reset();
+				grecaptcha.reset(newReplyCaptchaId);
 			}
             
             /* Drafts */
@@ -655,20 +667,27 @@
                     ...tinymceOptions, 
                     toolbar: 'bold italic underline strikethrough | fontsizeselect forecolor | bullist numlist link codesample | undo redo',
                     selector,
+                    setup: function(editor) {
+                        editor.on('Paste Change input Undo Redo', function () {
+                            //Renders captcha only when the user begins to type
+                            if(!commentCreator.getAttribute("data-captchaId")) {
+                                let captchaId = grecaptcha.render(commentCreator.querySelector('.grecaptcha'), {theme: "dark"})
+                                commentCreator.setAttribute("data-captchaId", captchaId)
+                            }
+                        });
+                    },
                 })
                 .then(r => r[0])
 
                 let btnPost = replyCard.querySelector('.commentControls [name="post"]')
                 btnPost.onclick = function(){
-                    console.log("Add comment!")
-
                     fetch('/api/thread/reply', {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            //'g-recaptcha-response': grecaptcha.getResponse(),
+                            'g-recaptcha-response': grecaptcha.getResponse(commentCreator.getAttribute("data-captchaId")),
                             content: editor.getContent(),
                             trid,
                         }),
@@ -685,13 +704,14 @@
                     })
                     .catch(()=>document.getElementById('errormessage').innerHTML = "Failed to contact the server.")
 
-                    grecaptcha.reset();
+                    grecaptcha.reset(commentCreator.getAttribute("data-captchaId"));
                 }
 
                 let btnCancel = replyCard.querySelector('.commentControls [name="cancel"]')
                 btnCancel.onclick = function(){
                     commentCreator.classList.add("hidden")
                     editor.remove()
+                    if(captchaId !== undefined) grecaptcha.reset(commentCreator.getAttribute("data-captchaId"))
                 }
             }
         </script>
