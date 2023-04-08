@@ -78,9 +78,6 @@
                         </p></a>
                         <p class="usertitle"><%- obj.account.alias || "" %></p>
                         <% if(obj.account.badge){ %><img src="<%- obj.account.badge %>" class="badge" alt="<%= obj.account.highestRole %>"/><% } %>
-                        <% if(threadData.canReply && (ogTRID != obj._id) && (obj.uid !== accInfo._id)){ %>
-                        <p class="theme1 border1 btnmention button" onclick="mention('<%= obj.account.username %>')">Mention</p>
-                        <% } %>
                     </div>
                     <div class="userstats">
                         <p>Posts: <%= obj.account.totalposts || "0" %></p>
@@ -523,11 +520,6 @@
             .then(r => {
                 replyCreatorEditor = r[0]
             })
-
-
-            function mention(username){
-                replyCreatorEditor.execCommand('mceInsertContent', false, `@${username}, `);
-            }
 
             function PostReply(){
                 fetch('/api/thread/reply', {
