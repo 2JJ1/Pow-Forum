@@ -203,6 +203,11 @@ main{
     margin-left: var(--gap);
 }
 
+.comments > div{
+    max-height: 325px;
+    overflow-y: auto;
+}
+
 .comment{
     display: flex;
     width: 100%;
