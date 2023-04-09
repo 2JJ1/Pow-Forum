@@ -64,9 +64,9 @@ router.use('/upgrade/createCoinbaseCharge', require('./upgrade/createCoinbaseCha
 router.use(function(err, req, res, next) {
 	try {
         //My way of rejecting an API request
-		if (typeof err === "string") return res.status(400).json("400", {success: false, reason: err})
+		if (typeof err === "string") return res.status(400).json({success: false, reason: err})
         // Handle error objects
-		else if(err.name === "URIError") return res.status(400).json("400", {success: false, reason: "Bad request: Invalid URI"})
+		else if(err.name === "URIError") return res.status(400).json({success: false, reason: "Bad request: Invalid URI"})
 		else{
 			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 			console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
