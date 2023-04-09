@@ -38,6 +38,7 @@
 .thread_replierdata{
     display: flex;
     padding: var(--gap);
+    margin-bottom: var(--gap);
 }
 
 .thread_replycontent{
@@ -201,11 +202,18 @@ main{
 
 .comments{
     margin-left: var(--gap);
+    margin-bottom: var(--gap);
+    background-color: rgba(0,0,0,0.1);
 }
 
 .comments > div{
     max-height: 325px;
     overflow-y: auto;
+    padding-right: var(--gap);
+}
+
+.comments .replycard{
+    margin-bottom: var(--gap);
 }
 
 .comment{
@@ -225,12 +233,16 @@ main{
 }
 
 .comment > div{
-    flex-grow: 1;
+    flex: 1;
 }
 
 .replygroup{
     overflow: hidden;
-    margin-top: 1.2em;
+    margin-bottom: 1.2em;
+}
+
+.replygroup:last-of-type{
+    margin-bottom: 0;
 }
 
 .thread_replycontent img, .thread_replycontent iframe{

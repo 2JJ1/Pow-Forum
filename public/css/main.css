@@ -155,6 +155,11 @@ pre code *{
     padding: var(--less-gap);
 }
 
+.paddingx{
+    padding-left: var(--gap);
+    padding-right: var(--gap);
+}
+
 
 .padding-sides{
     padding: 0 var(--gap);
