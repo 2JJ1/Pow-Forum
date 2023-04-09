@@ -9,6 +9,5 @@ module.exports = {
     "convo starter": "/images/badges/Convo Starter.png",
     "active forumer": "/images/badges/Active Forumer.png",
     "noticed": "/images/badges/Noticed.png",
-    "stan": "https://media.discordapp.net/attachments/474976340919975936/715035570656509982/unknown-59.png",
     "bug hunter": "/images/badges/Bug Hunter.png",
 }
