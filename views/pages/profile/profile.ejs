@@ -127,8 +127,19 @@
 						<div class="theme1 activitycard round border1">
 							<% if(isLowerRanked){ %><p class="delete" data-trid="<%= activityFeed[i]._id %>">x</p><% } %>
 							<p>
-								<% if(activityFeed[i].isOP){ %>Created a new thread<% } else { %>Replied to thread<% } %>: 
-								<a href="/t/<%= activityFeed[i].tid %>"><span class="threadTitle"><%- activityFeed[i].threadTitle %></span></a>
+								<% if(activityFeed[i].isOP){ %>
+								Created a new thread
+								<% } else { %>
+								<a href="/t/<%= activityFeed[i].tid %>?r=<%= activityFeed[i]._id %>">
+								<% if("trid" in activityFeed[i]){ %>
+								Commented
+								<% } else { %>
+								Replied
+								<% } %>
+								</a>
+								to thread
+								<% } %> 
+								: <a href="/t/<%= activityFeed[i].tid %>"><span class="threadTitle"><%- activityFeed[i].threadTitle %></span></a>
 							</p>
 							<br>
 							<div class="threadContent"><%- activityFeed[i].content %></div>
