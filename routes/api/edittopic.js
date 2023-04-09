@@ -1,8 +1,7 @@
 const router = require('express').Router()
-var escape = require('escape-html')
-const phraseblacklist = require('phrase-blacklist')
-const stripCombiningMarks = require('strip-combining-marks')
 const mongoose = require('mongoose')
+
+const pfAPI = require('../../my_modules/pfapi')
 
 const ThreadReplies = mongoose.model('ThreadReplies')
 const Threads = mongoose.model('Threads')
@@ -38,22 +37,7 @@ router.patch('/', async (req, res, next) => {
 		let topic = req.body.topic
 		if(!topic) throw "Missing topic"
 		if(typeof topic !== "string") throw "Invalid topic"
-
-		//Check that the topic is family friendly
-		let isClean = phraseblacklist.isClean(topic.toLowerCase())
-		if(typeof isClean === "string") throw `Topic contains blacklisted phrase: ${isClean}`
-		
-		//Removes unnecessary spaces from the ends
-		topic = topic.trim()
-
-		//Character count check
-		if((topic.match(/\w/g)||"").length < 10 || topic.length > 250) throw "Topic must be 10-250 characters long"
-
-		//Escapes the topic to prevent XSS
-		topic = escape(topic)
-
-		//Removes spammy looking text (Zalgo)
-		topic = stripCombiningMarks(topic)
+		topic = pfAPI.validateTopic(topic)
 
 		//Updates database
 		await Threads.updateOne({_id: tid}, {title: topic})

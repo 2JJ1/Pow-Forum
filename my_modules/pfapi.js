@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+var escape = require('escape-html')
+const stripCombiningMarks = require('strip-combining-marks')
+const phraseblacklist = require('phrase-blacklist')
 
 const other = require('./other')
 const accountAPI = require('./accountapi')
@@ -115,4 +118,36 @@ exports.TrackLogin = async function(uid, ip){
         //Updates the suspected alternate accounts in the DB
         await AltAccounts.updateOne({_id: uid}, {matches}, {upsert: true})
     }
+}
+
+exports.validateTopic = function(topic){
+    //Check that the topic is family friendly
+    let isClean = phraseblacklist.isClean(topic.toLowerCase())
+    if(typeof isClean === "string") throw `Topic contains blacklisted phrase: ${isClean}`
+
+    //Removes unnecessary spaces from the ends
+    topic = topic.trim()
+
+    if(
+        //Count letters only for minimum. Prevents empty spaces or random character threads
+        (topic.match(/\w/g)||"").length < 10 || 
+        topic.length > 120
+    ) throw "Topic must be 10-120 characters long"
+
+    //Removes unnecessary spaces from the ends
+    topic = topic.trim()	
+
+    //Sets the topic whitelist to ASCII and emojis only
+    //Prevents extremely long thread topics like from using arabic characters
+    if(!/^(?:[\x20-\x7E|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]])+$/.test(topic)){
+        throw "Only ASCII(English keyboard characters) and emoji characters are allowed in the topic"
+    }
+
+    //Escapes the topic to prevent XSS
+    topic = escape(topic)
+
+    //Removes spammy looking text (Zalgo)
+    topic = stripCombiningMarks(topic)
+
+    return topic
 }

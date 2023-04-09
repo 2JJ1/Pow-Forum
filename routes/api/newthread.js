@@ -6,6 +6,7 @@ const stripCombiningMarks = require('strip-combining-marks')
 const mongoose = require("mongoose")
 
 const forumapi = require('../../my_modules/forumapi')
+const pfAPI = require('../../my_modules/pfapi')
 const recaptcha = require('../../my_modules/captcha')
 const rolesAPI = require('../../my_modules/rolesapi')
 const notificationsAPI = require('../../my_modules/notifications')
@@ -39,6 +40,7 @@ router.post('/', async (req, res, next) => {
 		let topic = req.body.topic
 		if(!topic) throw "Missing topic"
 		if(typeof topic !== "string") throw "Invalid topic"
+		topic = pfAPI.validateTopic(topic)
 
 		let content = req.body.content
 		if(!content) throw "Missing content"
@@ -51,17 +53,6 @@ router.post('/', async (req, res, next) => {
 		var reputation = await accountAPI.SumReputation(req.session.uid)
 		//Reputation must be greater than -10
 		if(reputation<=-10) throw "Your reputation is too low"
-		
-		//Check that the topic is family friendly
-		let isClean = phraseblacklist.isClean(topic.toLowerCase())
-		if(typeof isClean === "string") throw `Topic contains blacklisted phrase: ${isClean}`
-		
-		if(
-			//Count letters only for minimum. Prevents empty spaces or random character threads
-			(topic.match(/\w/g)||"").length < 10 || 
-			topic.length > 120
-		) throw "Topic must be 10-120 characters long"
-		topic = topic.trim()	
 
 		//Get category
 		let category = await forumapi.GetSubcategory(subcategory)
@@ -74,7 +65,6 @@ router.post('/', async (req, res, next) => {
 		if(!await forumapi.permissionsCheck(category.requiredRoles, account.roles)) throw 'No permission to post here'
 			
 		let currentDate = new Date();
-		let safeTopic = stripCombiningMarks(escape(topic))
 		let safeContent = ThreadSanitizeHTML(content)
 
 		//Extract text content (Filter out HTML tags)
@@ -138,7 +128,7 @@ router.post('/', async (req, res, next) => {
 		//Creates the thread
 		let newThread = await new Threads({
 			category: req.body.forum,
-			title: safeTopic,
+			title: topic,
 			uid: req.session.uid,
 		}).save()
 
