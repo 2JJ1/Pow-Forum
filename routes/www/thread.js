@@ -61,14 +61,22 @@ router.get('/:tid', async (req, res) => {
 
     // Is a notification taking them to a certain reply?
     if(req.query.r){
-        //Ensure is number
-        req.query.r = parseInt(req.query.r)
+        let skipToReply = parseInt(req.query.r)
+
+        //Handle for comment replies
+        let reply = await ThreadReplies.findById(skipToReply).lean()
+        if(reply.tid != tid) return res.status(400).render("400", {reason: "The reply you're trying to skip to does not belong to this thread"})
+        if(!reply) return res.status(400).render("400", {reason: "The reply you're trying to skip to does not exist"})
+        if("trid" in reply) {
+            skipToReply = reply.trid
+        }
+        
         //Instructs page to scroll to the reply
-        result.scrollToTrid = req.query.r
+        result.scrollToTrid = skipToReply
         //Auto page change to where reply can be found
         let replies = await ThreadReplies.find({tid}).sort({_id: 1})
         replies = replies.map(row => row._id)
-        let replyIndex = replies.indexOf(req.query.r) + 1
+        let replyIndex = replies.indexOf(skipToReply) + 1
         if(replyIndex > resultsPerPage){
             let skipToPage = Math.floor(replyIndex / resultsPerPage)
             startingRow = resultsPerPage * skipToPage
