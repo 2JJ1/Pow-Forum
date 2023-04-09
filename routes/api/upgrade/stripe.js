@@ -18,13 +18,11 @@ var juniorPlanID = process.env.STRIPE_PREMIUM_PLAN_ID
 //Create subscription for Junior patronage
 router.use('/subscribe', bodyParser.urlencoded({ extended: false }))
 router.use('/subscribe', bodyParser.json({limit: '5mb'}))
-router.post('/subscribe', async (req, res) => {
-	let response = {success:false}
-
-	let uid
-	
+router.post('/subscribe', async (req, res, next) => {
 	try {
-		uid = req.session.uid
+		let response = {success:false}
+
+		let uid = req.session.uid
 		if(!uid) throw "Not logged in"
 		
 		//Get account data
@@ -95,26 +93,19 @@ router.post('/subscribe', async (req, res) => {
 
 		//At this point, the charge was successfully requested. The webhook will handle confirmation of purchase
 		response.success = true
+		res.json(response)
 	} 
-	catch(err) {
-		//Normal exit
-		if(typeof err === "string") response.reason = err
-		//Actual code error
-		else {
-			response.reason = "Server error"
-			console.log("Stripe Error:", err)
-		}
+	catch(e) {
+		next(e)
 	}
-
-	res.json(response)
-});
+})
 
 router.use('/cancel', bodyParser.urlencoded({ extended: false }))
 router.use('/cancel', bodyParser.json({limit: '5mb'}))
-router.post('/cancel', async (req, res) => {
-	let response = {success:false}
-	
+router.post('/cancel', async (req, res, next) => {
 	try {
+		let response = {success:false}
+
 		let uid = null
 		if(req.body.uid) uid = req.body.uid //to support old implementation
 		else uid = req.session.uid //for react app implementation. the new way
@@ -149,26 +140,20 @@ router.post('/cancel', async (req, res) => {
 		accData.pendingcancellation = "stripe"
 		await accData.save()
 		.catch(err=> console.log(`Failed to reflect Stripe cancellation onto ${uid}'s account.`))
-	} 
-	catch(err){
-		//Normal exit
-		if(typeof err === "string") response.reason = err
-		//Actual code error
-		else {
-			console.log("Stripe cancel error:", err)
-			response.reason = "Server error..."
-		}
-	}
 
-	res.json(response)
+		res.json(response)
+	} 
+	catch(e){
+		next(e)
+	}
 })
 
 router.use('/uncancel', bodyParser.urlencoded({ extended: false }))
 router.use('/uncancel', bodyParser.json({limit: '5mb'}))
-router.post('/uncancel', async (req, res) => {
-	let response = {success:false}
-	
+router.post('/uncancel', async (req, res, next) => {
 	try {
+		let response = {success:false}
+
 		if(!req.session.uid) throw "Not logged in"
 
 		//Fetch account
@@ -192,19 +177,12 @@ router.post('/uncancel', async (req, res) => {
 
 		//Subscription marked for cancellation at end period
 		response.success = true
+		res.json(response)
 	}
-	catch(err){
-		//Normal exit
-		if(typeof err === "string") response.reason = err
-		//Actual code error
-		else {
-			console.log("Stripe uncancel error:", err)
-			response.reason = "Server error..."
-		}
+	catch(e){
+		next(e)
 	}
-
-	res.json(response)
-});
+})
 
 //Webhook. Stripe calls to this point. A call to this is never from the forum
 router.use('/webhook', bodyParser.raw({type: '*/*'}))

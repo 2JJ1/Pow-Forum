@@ -3,7 +3,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 var Webhook = require('coinbase-commerce-node').Webhook
 
-const other = require('../../../my_modules/other')
 const mailgun = require('../../../my_modules/mailgun')
 const accountAPI = require('../../../my_modules/accountapi')
 
@@ -99,7 +98,7 @@ router.post('/', async (req, res) => {
         }
 		
 		// Return a response
-		res.json({received: true});
+		res.json({received: true})
 	}
 	catch (e) {
 		//The server has errored... Report 400 so Stripe can keep retrying

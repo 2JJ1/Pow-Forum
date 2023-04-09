@@ -24,12 +24,12 @@ router.use(bodyParser.json({limit: '5mb'}))
 
 // 	/api/account/register
 router.options('/')
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		//Check if user is already logged in.
-		if(req.session.uid) throw {safe:"Can't create account while logged in"};
+		if(req.session.uid) throw "Can't create account while logged in"
 		
 		//Must complete google captcha first
 		if(!await recaptcha.captchaV2(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
@@ -41,13 +41,9 @@ router.post('/', async (req, res) => {
 		if('username' in _POST){
 			let username = req.body.username
 			
-			if(!(username.length >= 3 && username.length <= 15)){
-				throw {safe:"Username must be 3-15 characters in length"}
-			}
+			if(!(username.length >= 3 && username.length <= 15)) throw "Username must be 3-15 characters in length"
 			
-			if(!other.isAlphaNumeric_(username)){
-				throw {safe:"Only letters, numbers, and underscore are allowed"}
-			}
+			if(!other.isAlphaNumeric_(username)) throw "Only letters, numbers, and underscore are allowed"
 
 			let isClean = phraseblacklist.isClean(username.toLowerCase())
 			if (typeof isClean === "string") throw `Your username contains a banned phrase: ${isClean}`
@@ -59,7 +55,7 @@ router.post('/', async (req, res) => {
 			//No need to escape since its been sanitized, but better safe than sorry
 			keyvalues.username = escape(username)
 		} 
-		else throw {safe: "Missing username"}
+		else throw "Missing username"
 		
 		if('email' in _POST){
 			if(!other.ValidateEmail(req.body.email)) throw { safe: "Invalid email" };
@@ -76,7 +72,7 @@ router.post('/', async (req, res) => {
 				}
 			})
 		} 
-		else throw {safe: "Missing email"}
+		else throw "Missing email"
 
 		
 		if('password' in _POST){
@@ -89,13 +85,13 @@ router.post('/', async (req, res) => {
 			//No need to escape since their password wouldn't be displayed as html anywhere. It may also interfere with authentication
 			keyvalues.password = await bcrypt.hash(password, 10)
 		} 
-		else throw {safe: "Missing password"}
+		else throw "Missing password"
 
 		if('confirmpassword' in _POST){
 			if(_POST.password !== _POST.confirmpassword)
-				throw {safe:"Password confirmation must be the same as password"}
+				throw "Password confirmation must be the same as password"
 		} 
-		else throw {safe: "Missing password confirmation"}
+		else throw "Missing password confirmation"
 		
 		let currentDate = new Date();
 		keyvalues.creationdate = currentDate;
@@ -136,20 +132,14 @@ router.post('/', async (req, res) => {
 		
 		//Report successful account creation
 		response.success = true
+		res.json(response)
 
 		//Logs their login event
 		await pfAPI.TrackLogin(newAccount._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 	}
-	catch(error){
-		if(typeof error === 'string') response.reason = error
-		else if(typeof error === 'object' && 'safe' in error) response.reason = error.safe
-		else{
-			console.warn(error)
-			response.reason = "Server error"
-		}
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 module.exports = router;

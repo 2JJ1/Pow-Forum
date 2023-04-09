@@ -8,10 +8,10 @@ const Accounts = mongoose.model('Accounts')
 const {fetchAccount, deleteUploadedProfilePicture} = require('../../../../my_modules/accountapi');
 
 // update account info tab
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Only allow logged in users
 		if(!req.session.uid) throw "Not logged in"
 
@@ -40,15 +40,11 @@ router.post('/', async (req, res) => {
 		response.newProfilePicture = newProfilePicture
 
 		response.success = true
+		res.json(response)
 	}
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 module.exports = router;

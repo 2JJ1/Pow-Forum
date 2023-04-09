@@ -16,10 +16,10 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 ];
 
 // Search for accounts
-router.get('/', async (req, res) => {
-	let response = {success: false}
-
+router.get('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		let filterUsername = req.query.username
 		if(filterUsername){ 
 			if(typeof filterUsername !== "string") throw "Invalid username"
@@ -56,14 +56,11 @@ router.get('/', async (req, res) => {
 
 		//No exception was thrown, so must've been successful
 		response.success = true
+		res.json(response)
 	}
 	catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
-module.exports = router;
+module.exports = router

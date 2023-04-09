@@ -21,10 +21,10 @@ const Accounts = mongoose.model("Accounts")
 // /api/thread/reply
 
 // Post a reply to forum thread
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Prevent bots/spam with Google captcha
 		if(!await recaptcha.captchaV2(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
 			throw 'Captcha failed'
@@ -195,14 +195,11 @@ router.post('/', async (req, res) => {
 		//Code hasn't exited, so assume success
 		response.replyId = newReply._id
 		response.success = true
-	} catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		res.json(response)
+	} 
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 module.exports = router;

@@ -9,11 +9,11 @@ const Threads = mongoose.model('Threads')
 // 	/v1/forum/togglethreadlock
 
 // Locks or unlocks a thread
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
-		//Only allow logged in users to view profiles
+        let response = {success: false}
+
+        //Only allow logged in users to view profiles
         if(!req.session.uid) throw 'You must be logged in'
 
         //What thread to toggle
@@ -47,14 +47,11 @@ router.post('/', async (req, res) => {
 
         //No early exit, so must've passed
         response.success = true
+        res.json(response)
     } 
     catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e;
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;

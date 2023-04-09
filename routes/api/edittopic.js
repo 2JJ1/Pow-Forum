@@ -12,10 +12,10 @@ Route: /v1/forum/thread/topic
 Desc: Edits the thread topic
 */
 
-router.patch('/', async (req, res) => {
-	let response = {success: false}
-	
+router.patch('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw "You must be logged in to post"
 
@@ -59,14 +59,11 @@ router.patch('/', async (req, res) => {
 		await Threads.updateOne({_id: tid}, {title: topic})
 
 		response.success = true
+		res.json(response)
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-		
-	res.json(response)
-});
+})
 
 module.exports = router;

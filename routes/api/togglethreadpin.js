@@ -10,10 +10,10 @@ const PinnedThreads = mongoose.model("PinnedThreads")
 // 	/v1/forum/togglethreadpin
 
 // Pins or unpins a thread
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         if(!req.session.uid) throw 'You must be logged in'
 
         var toggle = req.body.toggle || false
@@ -42,14 +42,11 @@ router.post('/', async (req, res) => {
 
         //No early exit, so must've passed
         response.success = true
+        res.json(response)
     } 
     catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e;
-		else console.warn(e)
+        next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;

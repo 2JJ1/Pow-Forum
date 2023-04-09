@@ -5,10 +5,10 @@ const ThreadReplies = mongoose.model("ThreadReplies")
 
 // /api/thread/reply
 
-router.get("/", async (req, res) => {
-	let response = {success: false}
-	
+router.get("/", async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		/* In normal behavior, only the edit button triggers this endpoint
 		That said, they'd be logged in. If not logged in, likely forged bot request */
 		if(!req.session.uid) throw 'You must be logged in'
@@ -25,13 +25,11 @@ router.get("/", async (req, res) => {
 			
 		//Code hasn't exited, so assume success
 		response.success = true
-	} catch(e){
-		response.reason = "Server error"
-		if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		res.json(response)
+	} 
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router;

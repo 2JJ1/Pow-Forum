@@ -9,10 +9,10 @@ const Accounts = mongoose.model("Accounts")
 
 // 	/api/dashboard/lockaccount
 
-router.post("/", async (req, res) => {
-    let response = {success: false}
-
+router.post("/", async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         let {uid, locked, reason} = req.body
         if(!uid) throw "Missing target user ID"
         if(!'locked' in req.body) throw "Missing locked state"
@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
 
 		//Code hasn't exited, so assume success
 		response.success = true
+        res.json(response)
 
         //Log audit
 		new ForumAuditLogs({
@@ -46,13 +47,8 @@ router.post("/", async (req, res) => {
 		.save()
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

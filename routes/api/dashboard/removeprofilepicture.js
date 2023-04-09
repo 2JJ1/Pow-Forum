@@ -9,10 +9,10 @@ const Accounts = mongoose.model("Accounts")
 
 // 	/api/dashboard/removeprofilepicture
 
-router.delete("/removeprofilepicture", async (req, res) => {
-    let response = {success: false}
-
+router.delete("/removeprofilepicture", async (req, res, next) => {
 	try{
+		let response = {success: false}
+
         const targetUID = req.body.uid
         if(!targetUID) throw "Missing target user ID"
 
@@ -30,6 +30,7 @@ router.delete("/removeprofilepicture", async (req, res) => {
 
 		//Code hasn't exited, so assume success
 		response.success = true
+		res.json(response)
 
         //Log audit
 		new ForumAuditLogs({
@@ -39,15 +40,11 @@ router.delete("/removeprofilepicture", async (req, res) => {
             targetUID,
 		})
 		.save()
+
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

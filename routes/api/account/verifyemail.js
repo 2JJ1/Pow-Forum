@@ -16,10 +16,10 @@ router.use(bodyParser.json({limit: '5mb'}))
 
 // 	/api/account/verifyemail
 
-router.post('/', async (req, res) => {
-	let response = {success: false}
-
+router.post('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		//Only an actual acount should be able to send email verification
 		if(!req.session.uid) "Must be logged in"
 
@@ -69,17 +69,11 @@ router.post('/', async (req, res) => {
 		})
 		
 		response.success = "true"
+		res.json(response)
 	}
-	catch(error){
-		if(typeof error === "string") response.reason = error
-		else if('safe' in error) response.reason = error.safe
-		else{
-			console.warn(error)
-			res.reason = "Server error"
-		}
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;

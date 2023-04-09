@@ -18,10 +18,10 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json({limit: '5mb'}))
 
 // Request password reset session or username recovery
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		if(!await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress)))
 			throw "Captcha failed"
 
@@ -87,7 +87,7 @@ router.post('/', async (req, res) => {
 					usernames = usernames.substr(0, usernames.length - 2) //Remove extra ", "
 					return usernames
 				} 
-				else throw {safe: "No account with that email"}
+				else throw "No account with that email"
 			})
 
 			let emaildata = {
@@ -107,26 +107,22 @@ router.post('/', async (req, res) => {
 			await mailgun.SendMail(emaildata)
 			
 			response.success = true
+			res.json(response)
 		}
 	} catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 // Reset password
-router.post('/passreset', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/passreset', async (req, res, next) => {
 	try {
-		if(!('token' in req.body)) throw {safe: 'Missing token'}
+		let response = {success: false}
+
+		if(!('token' in req.body)) throw 'Missing token'
 		let token = req.body.token
 		
-		if(!('password' in req.body)) throw {safe: 'Missing password'};
+		if(!('password' in req.body)) throw 'Missing password'
 		let password = req.body.password
 
 		// Validate reset session
@@ -139,7 +135,7 @@ router.post('/passreset', async (req, res) => {
 		let expireDate = resetSession.expireDate.getTime()
 		if(currentDate > expireDate){
 			await PasswordResetSessions.deleteOne({token})
-			throw {safe: "Expired token"}
+			throw "Expired token"
 		}
 		
 		//Who this session belongs to
@@ -166,6 +162,7 @@ router.post('/passreset', async (req, res) => {
 		
 		//No early exit, so report success
 		response.success = true
+		res.json(response)
 
 		// Send password has reset notice
 		let forumTitle = (await ForumSettings.findOne({type: "name"})).value
@@ -182,14 +179,9 @@ router.post('/passreset', async (req, res) => {
 		})
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 //Creates a random string as long as the specified length
 function generate_token(length){

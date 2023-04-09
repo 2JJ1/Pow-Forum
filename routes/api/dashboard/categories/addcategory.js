@@ -7,10 +7,10 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/cateogories
 
-router.post("/addcategory", async (req, res) => {
-    let response = {success: false}
-
+router.post("/addcategory", async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         if(!"name" in req.body) return res.status(400).send("Invalid request")
         let {name} = req.body
 
@@ -29,6 +29,7 @@ router.post("/addcategory", async (req, res) => {
         
 		//Code hasn't exited, so assume success
 		response.success = true
+        res.json(response)
 
         //Log audit
 		new ForumAuditLogs({
@@ -42,12 +43,8 @@ router.post("/addcategory", async (req, res) => {
         .save()
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

@@ -8,10 +8,10 @@ const ThreadReplies = mongoose.model('ThreadReplies')
 
 // /api/account/thread
 
-router.get("/", async (req, res) => {
-    let response = {success: false}
-	
+router.get("/", async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		if(!/^[0-9]+$/.test(req.query.tid)) throw "Invalid request"
 		var fromTID = parseInt(req.query.tid)
 
@@ -35,16 +35,11 @@ router.get("/", async (req, res) => {
 
         //Report successful account creation
 		response.success = true
+		res.json(response)
 	}
-	catch(error){
-		if(typeof error === "string") response.reason = error
-		else{
-			console.warn(error)
-			response.reason = "Server error"
-		}
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

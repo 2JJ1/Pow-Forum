@@ -15,10 +15,10 @@ router.use(cors)
 // 	/v1/notifications
 
 //Subscribes to native push notifications
-router.post('/subscribe', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/subscribe', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		if(!req.session.uid) throw "Must be logged in"
 
 		let subscription = req.body
@@ -52,20 +52,18 @@ router.post('/subscribe', async (req, res) => {
 		req.session.webpushsub = JSON.stringify(subscription)
 		
         response.success = true
-	} catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		res.json(response)
+	} 
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 //Remove website notification from account
-router.delete('/', async (req, res) => {
-	let response = {success: false}
-	
+router.delete('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+		
 		var id=req.body.id
 
 		//Delete only one specified notification
@@ -74,15 +72,11 @@ router.delete('/', async (req, res) => {
 		else await Notifications.deleteMany({recipientid: req.session.uid})
         
         response.success = true
-	} catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string")
-			response.reason = e;
-		else
-			console.warn(e)
+		res.json(response)
+	} 
+	catch(e){
+		next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;

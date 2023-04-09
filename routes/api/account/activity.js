@@ -8,10 +8,10 @@ const Threads = mongoose.model('Threads')
 
 // /api/account/activity
 
-router.get("/", async (req, res) => {
-    let response = {success: false}
-	
+router.get("/", async (req, res, next) => {
 	try {
+        let response = {success: false}
+
         var fromTRID = parseInt(req.query.trid)
         if(isNaN(fromTRID)) throw "Invalid request"
 
@@ -35,17 +35,11 @@ router.get("/", async (req, res) => {
 
         //Report successful account creation
 		response.success = true
+        res.json(response)
 	}
-	catch(error){
-        if(typeof error === "string") response.reason = error
-		else if('safe' in error) response.reason = error.safe
-		else{
-			console.warn(error)
-			res.reason = "Server error"
-		}
+	catch(e){
+        next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

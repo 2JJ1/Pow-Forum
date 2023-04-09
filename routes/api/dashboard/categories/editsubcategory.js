@@ -7,10 +7,10 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/categories
 
-router.post("/editsubcategory", async (req, res) => {
-    let response = {success: false}
-
+router.post("/editsubcategory", async (req, res, next) => {
 	try{
+        let response = {success: false}
+        
         if(!"id" in req.body || !"currentName" in req.body || !"newName" in req.body || !"newDescription" in req.body || !"requiredRoles" in req.body) return res.status(400).send("Invalid body")
         let {id, currentName, newName, newDescription, requiredRoles} = req.body
 
@@ -83,14 +83,11 @@ router.post("/editsubcategory", async (req, res) => {
         
 		//Code hasn't exited, so assume success
 		response.success = true
+        res.json(response)
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

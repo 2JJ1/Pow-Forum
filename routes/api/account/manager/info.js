@@ -16,16 +16,16 @@ const Accounts = mongoose.model("Accounts")
 const { JSDOM } = jsdom;
 
 // update account info tab
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Only allow logged in users
 		if(!req.session.uid)
-			throw {safe: "Not logged in"};
+			throw "Not logged in"
 		
 		if(!(Object.keys(req.body).length > 0))
-			throw {safe: "No change request made"};
+			throw "No change request made"
 		
 		//Contains all data to update in database
 		let keyvalues = {
@@ -38,11 +38,11 @@ router.post('/', async (req, res) => {
 			let username = req.body.username
 			
 			if(!(username.length >= 3 && username.length <= 15)){
-				throw {safe:"Username must be 3-15 characters in length"}
+				throw "Username must be 3-15 characters in length"
 			}
 			
 			if(!other.isAlphaNumeric_(username)){
-				throw {safe:"Only letters, numbers, and underscore is allowed"}
+				throw "Only letters, numbers, and underscore is allowed"
 			}
 
 			let isClean = phraseblacklist.isClean(username.toLowerCase())
@@ -50,12 +50,12 @@ router.post('/', async (req, res) => {
 
 			//Checks if username isnt used
 			let existingAccount = await accountAPI.fetchAccount(username)
-			if(existingAccount) throw {safe:"Username is taken"};
+			if(existingAccount) throw "Username is taken"
 			
 			//Only patrons and moderators can change their usernames
 			let isPremium = await rolesAPI.isPatron(req.session.uid)
 			let isModerator = await rolesAPI.isModerator(req.session.uid)
-			if(!isPremium && !isModerator) throw {safe:"Not a premium member"};
+			if(!isPremium && !isModerator) throw "Not a premium member"
 			
 			//No early exit, so pass
 			//No need to escape since its been sanitized, but better safe than sorry
@@ -66,7 +66,7 @@ router.post('/', async (req, res) => {
 			let {intro} = req.body
 			if(!intro) Object.assign(keyvalues.$unset, {biography: 1})
 			else {
-				if(intro.length > 200) throw {safe:"Intro has too many characters"};
+				if(intro.length > 200) throw "Intro has too many characters"
 
 				let isClean = phraseblacklist.isClean(intro.toLowerCase())
 				if (typeof isClean === "string") throw `Your intro contains a banned phrase: ${isClean}`
@@ -79,7 +79,7 @@ router.post('/', async (req, res) => {
 			let {alias} = req.body
 			if(!alias) Object.assign(keyvalues.$unset, {alias: 1})
 			else {
-				if(alias.length > 25) throw {safe:"Title has too many characters"};
+				if(alias.length > 25) throw "Title has too many characters"
 
 				let isClean = phraseblacklist.isClean(alias.toLowerCase())
 				if (typeof isClean === "string") throw `Your title contains a banned phrase: ${isClean}`
@@ -111,8 +111,8 @@ router.post('/', async (req, res) => {
 			let {discordtag} = req.body
 			if(!discordtag) delete medias.discordtag
 			else {
-				if(discordtag.length < 7) throw {safe: "Contact too short"}
-				if(discordtag.length > 32 + 5) throw {safe: "Contact too long"}
+				if(discordtag.length < 7) throw "Contact too short"
+				if(discordtag.length > 32 + 5) throw "Contact too long"
 				if(discordtag[discordtag.length - 5] !== "#") throw "Improper Discord contact"
 				if(/^\d+$/.test(discordtag.substr(discordtag.length - 4)) == false) throw "Improper Discord contact"
 				medias.discordtag = escape(discordtag)
@@ -223,21 +223,17 @@ router.post('/', async (req, res) => {
 		
 		keyvalues.medias = JSON.stringify(medias)
 
-		if(!(Object.keys(keyvalues).length > 0)) throw {safe: "Includes invalid field"};
+		if(!(Object.keys(keyvalues).length > 0)) throw "Includes invalid field"
 		
 		//Updates account
 		await Accounts.updateOne({_id: req.session.uid}, keyvalues)
 		
 		response.success = true
+		res.json(response)
 	}
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 module.exports = router;

@@ -18,9 +18,10 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json({limit: '5mb'}))
 
 router.options('/')
-router.post('/', async (req, res) => {
-	let response = {success: false}
+router.post('/', async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         //Check if they're logged in first
         if(!req.session.uid) throw "Invalid login session"
         
@@ -122,19 +123,17 @@ router.post('/', async (req, res) => {
         }
 
         response.success = true
+        res.json(response)
     } 
     catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e;
-		else console.warn(e)
+		next(e)
 	}
-
-	res.json(response)
 })
 
-router.delete("/", async (req, res) => {
-    let response = {success: false}
+router.delete("/", async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         //Sanitization
         if(!req.session.uid) throw "Invalid login session"
         if(!req.query.id) throw "Missing reputation ID"
@@ -150,14 +149,11 @@ router.delete("/", async (req, res) => {
         reputation.remove()
 
         response.success = true
+        res.json(response)
     } 
     catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e;
-		else console.warn(e)
+		next(e)
 	}
-
-	res.json(response)
 })
 
 module.exports = router;

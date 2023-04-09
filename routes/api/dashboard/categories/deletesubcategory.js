@@ -10,10 +10,10 @@ const accountAPI = require('../../../../my_modules/accountapi')
 
 // 	/api/dashboard
 
-router.delete("/deletesubcategory", async (req, res) => {
-    let response = {success: false}
-
+router.delete("/deletesubcategory", async (req, res, next) => {
 	try{
+        let response = {success: false}
+
         if(!"category" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
         let {id, password} = req.body
         id = parseInt(id)
@@ -32,6 +32,7 @@ router.delete("/deletesubcategory", async (req, res) => {
         
 		//Code hasn't exited, so assume success
 		response.success = true
+        res.json(response)
 
         //Log audit
 		new ForumAuditLogs({
@@ -45,12 +46,8 @@ router.delete("/deletesubcategory", async (req, res) => {
         .save()
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

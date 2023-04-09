@@ -18,10 +18,10 @@ var avatarspath = path.resolve('./public/images/avatars') // relative to server.
 const Accounts = mongoose.model('Accounts')
 
 // update account profile picture
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Only allow logged in users
 		if(!req.session.uid) throw "Not logged in"
 
@@ -51,13 +51,13 @@ router.post('/', async (req, res) => {
 
 				if(!extname || !mimetype){
 					//Images only!
-					form._error({safe: "Invalid file type"});
+					form._error("Invalid file type")
 				} 
 				//Prevent non-patrons from using .gif as a PFP
 				else if(
 					(part.mime === "image/gif" || path.extname(part.filename).toLowerCase() === ".gif") && 
 					!canUseGIF
-				) form._error({safe: "Only premium/patron accounts can use .gif files as their avatar."});
+				) form._error("Only premium/patron accounts can use .gif files as their avatar.");
 				//Valid file type, so lets process it
 				else form.handlePart(part);
 			}
@@ -133,19 +133,15 @@ router.post('/', async (req, res) => {
 				resolve()
 			})
 			form.on('error', function(err) {
-				var rejectMsg = err.safe || "Couldn't handle the file"
-				reject({safe: rejectMsg})
-			});
+				reject(err || "Couldn't handle the file")
+			})
 		})
+
+		res.json(response)
 	}
 	catch(e){
-		response.reason = "Unexpected server error"
-		if(e.safe) response.reason = e.safe
-		else if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;

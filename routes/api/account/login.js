@@ -12,13 +12,14 @@ const TFAs = mongoose.model("TFAs")
 // 	/api/account/login
 
 // parse application/json
-router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.urlencoded({ extended: true }))
 router.use(bodyParser.json({limit: '5mb'}))
 
 router.options('/')
-router.post('/', async (req, res) => {
-	let response = {success: false}
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Check if user is already logged in.
 		if(req.session.uid) throw "Already logged in";
 
@@ -29,9 +30,7 @@ router.post('/', async (req, res) => {
 		//Will need both username and password obviously
 		var username = req.body.username
 		var password = req.body.password
-		if(!username || !password){
-			throw {safe: 'Missing username or password'}
-		}
+		if(!username || !password) throw 'Missing username or password'
 				
 		//Fetch account information
 		var accData = await accountAPI.fetchAccount(username)
@@ -65,18 +64,14 @@ router.post('/', async (req, res) => {
 						
 		//Compile response
 		response.success = true
+		res.json(response)
 
 		//Logs their login
 		await pfAPI.TrackLogin(accData._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
+})
 
-	res.json(response)
-});
-
-module.exports = router;
+module.exports = router

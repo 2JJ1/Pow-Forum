@@ -22,10 +22,10 @@ const { JSDOM } = jsdom;
 // /api/thread
 
 // Post to forum
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try {
+		let response = {success: false}
+
 		//Prevent bots/spam with Google captcha
 		if(!await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
 			throw "Captcha failed"
@@ -150,6 +150,7 @@ router.post('/', async (req, res) => {
 		//No errors at this point? Successful thread creation
 		response.success = true
 		response.tid = newThread._id
+		res.json(response)
 
 		//Adds the convo starter role if they have over 50 threads
 		var threadCount = await Threads.countDocuments({uid: req.session.uid})
@@ -165,14 +166,10 @@ router.post('/', async (req, res) => {
 				})
 			}
 		}
-	} 
-	catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else console.warn(e)
 	}
-		
-	res.json(response)
-});
+	catch(e){
+		next(e)
+	}
+})
 
 module.exports = router;

@@ -7,10 +7,10 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/integrations
 
-router.post("/coinbasecommerce", async (req, res) => {
-    let response = {success: false}
-
+router.post("/coinbasecommerce", async (req, res, next) => {
 	try{
+        let response = { success: false }
+
         let {secret, webhookSecret} = req.body
 
         //Sanitize and validate
@@ -47,14 +47,11 @@ router.post("/coinbasecommerce", async (req, res) => {
 
 		//Code hasn't exited, so assume success
 		response.success = true
+        res.json(response)
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if (typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 })
 
 module.exports = router

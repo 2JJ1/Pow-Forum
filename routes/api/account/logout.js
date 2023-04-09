@@ -2,9 +2,10 @@ const router = require('express').Router()
 
 // 	/api/account/logout
 
-router.post('/', async (req, res) => {
-	let response = {success: false}
+router.post('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Check if user is already logged in.
 		if(!req.session.uid) throw "Already logged out";
 
@@ -13,12 +14,12 @@ router.post('/', async (req, res) => {
 
 		//No problems -> Resolve successfully
 		response.success = true
+
+		res.json(response)
 	} 
 	catch(e){
-		response.reason = typeof e === "string" ? e : "Server error"
+		next(e)
 	}
+})
 
-	res.json(response)
-});
-
-module.exports = router;
+module.exports = router

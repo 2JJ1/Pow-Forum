@@ -13,10 +13,10 @@ const PinnedThreads = mongoose.model("PinnedThreads")
 // /api/thread/reply
 
 //Delete reply
-router.delete('/', async (req, res) => {
-	let response = {success: false}
-	
+router.delete('/', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		//Check if logged in
 		if(!req.session.uid) throw "Not logged in"
 		
@@ -81,14 +81,11 @@ router.delete('/', async (req, res) => {
 		
 		//No exception was thrown, so must've been successful
 		response.success = true
+		res.json(response)
 	}
 	catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
-module.exports = router;
+module.exports = router

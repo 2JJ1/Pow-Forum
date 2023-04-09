@@ -6,10 +6,10 @@ const rolesAPI = require('../../../my_modules/rolesapi')
 // 	/api/upgrade/createCoinbaseCharge
 
 // Locks or unlocks a thread
-router.post('/', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/', async (req, res, next) => {
 	try{
+        let response = {success: false}
+
 		//Only allow logged in users to view profiles
         if(!req.session.uid) throw 'Login required'
 
@@ -46,14 +46,11 @@ router.post('/', async (req, res) => {
 
         //No early exit, so must've passed
         response.success = true
+        res.json(response)
     } 
     catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e;
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
-});
+})
 
 module.exports = router;

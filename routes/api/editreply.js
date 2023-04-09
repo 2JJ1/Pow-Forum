@@ -17,13 +17,13 @@ const { JSDOM } = jsdom;
 // 	/api/r
 
 // Post to client's wall
-router.post('/edit', async (req, res) => {
-	let response = {success: false}
-	
+router.post('/edit', async (req, res, next) => {
 	try{
+		let response = {success: false}
+
 		// Check if all necessary post fields exist
 		//Only allow logged in users to view profiles
-		if(!req.session.uid) throw {safe:"Must be logged in"} 
+		if(!req.session.uid) throw "Must be logged in"
 		
 		let trid = parseInt(req.body.trid)
 		if(!trid) throw "Thread reply ID not specified"
@@ -103,15 +103,11 @@ router.post('/edit', async (req, res) => {
 		
 		//Code hasn't exited, so assume success
 		response.success = true
+		res.json(response)
 	} 
 	catch(e){
-		response.reason = "Server error"
-		if(typeof e === "string") response.reason = e
-		else if(e.safe && e.safe.length > 0) response.reason = e.safe;
-		else console.warn(e)
+		next(e)
 	}
-	
-	res.json(response)
 });
 
 module.exports = router;
