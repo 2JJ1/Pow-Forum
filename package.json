@@ -7,7 +7,7 @@
     "test-stripe": "stripe listen --forward-to localhost:8087/api/stripe/webhook",
     "setup": "node cli.js -c setup",
     "cli": "cls && node cli.js",
-    "dev": "cls && nodemon . -e ejs"
+    "dev": "cls && nodemon . -e ejs,js"
   },
   "author": "https://powell.gg/",
   "license": "ISC",
