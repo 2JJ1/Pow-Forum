@@ -21,10 +21,10 @@
         <div id="ForumChanger">
             <div class="theme1 round border1 lessgapchildren">
                 <% categoryGroups.forEach(categoryGroup => { %>
-                <h3><%= categoryGroup.name %></h3>
+                <h3><%- categoryGroup.name %></h3>
                 <% let categoryList = categories.filter(category => category.category === categoryGroup.name) %>
                 <% categoryList.forEach(category => { %>
-                <button class="theme2 border1" data-category="<%= category._id %>"><%= category.name %></button>
+                <button class="theme2 border1" data-category="<%= category._id %>"><%- category.name %></button>
                 <% }) %>
                 <% }) %>
                 <button class="theme2 border1" onclick="$('#ForumChanger').hide('fast')">Cancel</button>
@@ -36,8 +36,8 @@
             <div class="theme2 round border1 padding">
                 <p>
                     <a href="/">Categories</a> > 
-                    <a href="/#<%= threadData.category.category %>"><%= threadData.category.category %></a> >
-                    <a href="/c/<%= threadData.category._id %>"><%= threadData.category.name %></a> >
+                    <a href="/#<%- threadData.category.category %>"><%- threadData.category.category %></a> >
+                    <a href="/c/<%= threadData.category._id %>"><%- threadData.category.name %></a> >
                 </p>
                 <h1 style="display: flex; justify-content: space-between;">
                     <span id="topic"><%- threadData.title %></span>

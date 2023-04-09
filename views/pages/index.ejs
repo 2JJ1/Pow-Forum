@@ -20,8 +20,8 @@
 				<% include ../partials/onlinelist %>
 			</div>
 			<% categoryGroups.forEach(categoryGroup => { %>
-			<div id="<%= categoryGroup.name %>" class="categoryGroup theme1 border1 round">
-				<h2 class="theme2 padding"><%= categoryGroup.name %></h2>
+			<div id="<%- categoryGroup.name %>" class="categoryGroup theme1 border1 round">
+				<h2 class="theme2 padding"><%- categoryGroup.name %></h2>
 				<div class="gridWrapper">
 					<p class="thead">Category</p>
 					<p class="thead count textCenter">Topics</p>

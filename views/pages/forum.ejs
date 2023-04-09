@@ -20,7 +20,7 @@
                 <p>
                     <a href="/">Categories</a> > 
                     <% if(subcategory.name !== "All Subcategories"){ %>
-                    <a href="/#<%= subcategory.category %>"><%- subcategory.category %></a> >
+                    <a href="/#<%- subcategory.category %>"><%- subcategory.category %></a> >
                     <% } %>
                 </p>
                 <h1><%- subcategory.name %></h1>
@@ -53,7 +53,7 @@
                     <% let thread = forumData.threads[index] %>
                     <tr>
                         <% if(subcategory.name === "All Threads"){ %> 
-                        <td class="not-mobile"><a href="/<%= thread.category %>"><%- thread.category %></a></td>
+                        <td class="not-mobile"><a href="/<%- thread.category %>"><%- thread.category %></a></td>
                         <% } %>
                         <td>
                             <a class="thread-title" href="/t/<%= thread._id %>">
