@@ -56,7 +56,11 @@ router.post('/', async (req, res, next) => {
 		let isClean = phraseblacklist.isClean(topic.toLowerCase())
 		if(typeof isClean === "string") throw `Topic contains blacklisted phrase: ${isClean}`
 		
-		if((topic.match(/\w/g)||"").length < 10 || topic.length > 250) throw "Topic must be 10-250 characters long"
+		if(
+			//Count letters only for minimum. Prevents empty spaces or random character threads
+			(topic.match(/\w/g)||"").length < 10 || 
+			topic.length > 120
+		) throw "Topic must be 10-120 characters long"
 		topic = topic.trim()	
 
 		//Get category
