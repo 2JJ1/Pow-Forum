@@ -53,11 +53,11 @@ router.get('/:tid', async (req, res) => {
     //Paginates by resultsPerPage rows. Multiply by specified page - 1 because database indexing starts at 0, not 1.
     let startingRow = resultsPerPage * (result.currentPage - 1)
 
-    var totalReplies = await ThreadReplies.countDocuments({tid})
+    var totalReplies = await ThreadReplies.countDocuments({tid, trid: {$exists: false}})
 
     result.totalPages = Math.ceil(totalReplies/resultsPerPage)
 
-    if(result.currentPage > result.totalPages) return res.redirect(302, `/t/${tid}`)
+    if(result.currentPage > result.totalPages) return res.redirect(302, `/t/${tid}?page=${result.totalPages}`)
 
     // Is a notification taking them to a certain reply?
     if(req.query.r){
