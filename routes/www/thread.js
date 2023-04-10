@@ -161,11 +161,12 @@ router.get('/:tid', async (req, res) => {
             replyRow.likes = await ThreadReplyReacts.countDocuments({trid: replyRow._id})
             replyRow.liked = await ThreadReplyReacts.exists({trid: replyRow._id, uid: req.session.uid})
             
-            replyRow.deletable = req.session.uid === replyRow || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
+            replyRow.deletable = (req.session.uid === replyRow.uid) || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
 
             //Fetch comments
-            replyRow.comments = await ThreadReplies.find({trid: replyRow._id}).sort({_id: 1}).limit(resultsPerPage).lean()
-            replyRow.comments = await AppendReplyMetadata(replyRow.comments)
+            replyRow.comments = await ThreadReplies.find({trid: replyRow._id}).sort({_id: 1}).limit(6).lean()
+            replyRow.moreCommentsAvailable = replyRow.comments.length > 5
+            replyRow.comments = await AppendReplyMetadata(replyRow.comments.slice(0,5))
         }
         
         return replies

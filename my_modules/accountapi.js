@@ -84,9 +84,17 @@ exports.ValidatePassword = function(password){
 exports.fetchAccount = async function(identifier, options){
 	options = options || {}
 
+	if("projection" in options){
+		//These projections are necessary for the auto build to work
+		options.projection.roles = 1
+		options.projection.profilepicture = 1
+		options.projection.lastonline = 1
+		options.projection.medias = 1
+	}
+
 	let account
-	if(/^\d+$/.test(identifier)) account = await Accounts.findById(identifier).lean()
-	else if(typeof identifier === "string") account = await Accounts.findOne({username: new RegExp(`^${identifier}$`, 'i')}).lean()
+	if(/^\d+$/.test(identifier)) account = await Accounts.findById(identifier, options.projection).lean()
+	else if(typeof identifier === "string") account = await Accounts.findOne({username: new RegExp(`^${identifier}$`, 'i')}, options.projection).lean()
 	if(!account) {
 		if(options.fallback) return {
 			_id: 0, 
@@ -101,6 +109,8 @@ exports.fetchAccount = async function(identifier, options){
 		delete account.email
 		delete account.stripecustomerid
 	}
+
+	if(options.reputation) account.reputation = await exports.SumReputation(account._id)
 
 	account.roles = other.StringToArray(account.roles)
 	account.highestRole = await rolesAPI.GetHighestRole(account.roles)

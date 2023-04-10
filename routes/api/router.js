@@ -29,6 +29,8 @@ router.use(bodyParser.json({limit: '5mb'}))
 //Every API route below needs cors 
 router.options('*', cors)
 
+router.use('/thread', require('./thread/router'))
+
 //Create new threads
 router.use('/thread', require('./newthread'))
 

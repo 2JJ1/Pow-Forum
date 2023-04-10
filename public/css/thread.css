@@ -204,11 +204,21 @@ main{
     margin-left: var(--gap);
     margin-bottom: var(--gap);
     background-color: rgba(0,0,0,0.1);
+    max-height: 325px;
+    overflow-y: auto;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.comments::-webkit-scrollbar-track {
+    border-radius: 0;
+}
+ 
+.comments::-webkit-scrollbar-thumb {
+    border-radius: 4px;
 }
 
 .comments > div{
-    max-height: 325px;
-    overflow-y: auto;
     padding-right: var(--gap);
 }
 
