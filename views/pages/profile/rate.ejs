@@ -54,32 +54,25 @@
             })
             
             function SendRating(){
-                $("#ratingerror").text("")
-                
-                $.ajax({
-                    type: 'POST',
-                    url: '/api/account/rate',
-                    data: JSON.stringify({
+                document.getElementById("ratingerror").textContent = ""
+
+                fetch('/api/account/rate', {
+                    method: "POST",
+                    body: JSON.stringify({
                         uid: parseInt("<%= profileInfo._id %>"),
                         rating: parseInt($("#reprating").val()),
                         comment: $("#ratingcomment").val()
                     }),
-                    contentType: "application/json",
-                    success: function(data){
-                        if(data.success){
-                            document.location.href = "/profile?uid=<%= profileInfo._id %>"
-                        } else {
-                            if(data.reason && data.reason.length > 0){
-                                $("#ratingerror").text(data.reason)
-                            } else {
-                                $("#ratingerror").text("Unknown error occured...")
-                            }
-                        }
-                    },
-                    error: function(xhr, error){
-                        $("#ratingerror").text("Failed to contact the server...")
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                });
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(!res.success) return document.getElementById("ratingerror").textContent = res.reason || "Unknown server error occured"
+                    document.location.href = "/profile?uid=<%= profileInfo._id %>" 
+                })
+                .catch(e => document.getElementById("ratingerror").textContent = "Failed to contact the server")
             }
 		</script>
 </html>

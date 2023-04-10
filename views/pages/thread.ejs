@@ -373,28 +373,23 @@
                         //Ignore the cancel button
                         return
                     }
-                    $.ajax({
-                        url: '/api/changethreadforum',
-                        type: 'POST',
-                        data: JSON.stringify({
+
+                    fetch("/api/changethreadforum", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
                             tid: <%= threadData._id %>,
                             forum: parseInt($(this).attr('data-category'))
                         }),
-                        contentType: "application/json",
-                        success: function(result) {
-                            if(result.success){
-                                location.reload();
-                            } else {
-                                if(result.reason)
-                                    alert(result.reason);
-                                else
-                                    alert('Server error');
-                            }
-                        },
-                        error: function(){
-                            alert('Error contacting server...')
-                        }
-                    });
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(!res.success) return alert(res.reason || "Unknown server error occured")
+                        location.reload()
+                    })
+                    .catch(()=>alert("Failed to contact the server or an unexpected response was received..."))
                 })
                 <% } %>
 
@@ -403,34 +398,32 @@
 
                     var replyCard = $(this).closest(".replycard")
                     var replyGroup = $(this).closest(".replygroup")
-
-                    $.ajax({
-                        url: '/api/thread/reply',
-                        type: 'DELETE',
-                        data: JSON.stringify({trid: $(this).attr('data-trid')}),
-                        contentType: "application/json",
-                        success: function(result) {
-                            if(result.success){
-                                if(result.deletedThread) document.location.href = "/";
-
-                                //removes the reply card
-                                replyCard.remove()
-                                //Removes the reply group if there is no more replies in the group
-                                if(replyGroup.find(".replycard").length <= 0) {
-                                    if(replyGroup.parent().parent().hasClass("comments")) replyGroup.parent().parent().remove()
-                                    else replyGroup.remove()
-                                }
-                            } else {
-                                if(result.reason)
-                                    alert(result.reason);
-                                else
-                                    alert('Server error');
-                            }
+                    
+                    fetch("/api/thread/reply", {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
                         },
-                        error: function(){
-                            alert('Error contacting server...')
+                        body: JSON.stringify({trid: $(this).attr('data-trid')}),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(!res.success) return alert(res.reason || "Unknown server error occured")
+                        
+                        if(res.deletedThread) document.location.href = "/";
+
+                        //removes the reply card
+                        replyCard.remove()
+                        //Removes the reply group if there is no more replies in the group
+                        if(replyGroup.find(".replycard").length <= 0) {
+                            if(replyGroup.parent().parent().hasClass("comments")) replyGroup.parent().parent().remove()
+                            else replyGroup.remove()
                         }
-                    });
+                    })
+                    .catch((e)=>{
+                        alert("Failed to contact the server or an unexpected response was received...")
+                        console.log(e)
+                    })
                 })
             })
 
