@@ -2,6 +2,7 @@ const router = require('express').Router()
 const mongoose = require("mongoose")
 const accountAPI = require('../../my_modules/accountapi')
 
+const ThreadReplies = mongoose.model("ThreadReplies")
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 
 // 	/v1/forum/togglelike
@@ -18,6 +19,11 @@ router.post('/', async (req, res, next) => {
         let trid = parseInt(req.body.trid)
 		if(!trid) throw "Thread reply ID not specified"
 		if(!Number.isInteger(trid)) throw "Invalid thread reply ID"
+
+        let reply = await ThreadReplies.findById(trid)
+        if(!reply) throw "This reply does not exist"
+
+        if(reply.uid == req.session.uid) throw "You can not like owned replies"
 
         //Email must be verified
         if(!accountAPI.emailVerified(req.session.uid)) throw "Please verify your email address first"
