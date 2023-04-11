@@ -652,6 +652,9 @@
                 let replyCard = document.querySelector(`.replycard[data-trid="${trid}"]`)
                 let commentCreator = replyCard.querySelector('.comment-creator')
 
+                //Don't reexecute if the comment creator is already shown
+                if(!commentCreator.classList.contains('hidden')) return
+
                 commentCreator.classList.remove('hidden')
                 
                 let selector = `.replycard[data-trid="${trid}"] .comment-creator-editor`
@@ -698,7 +701,7 @@
                 btnCancel.onclick = function(){
                     commentCreator.classList.add("hidden")
                     editor.remove()
-                    if(captchaId !== undefined) grecaptcha.reset(commentCreator.getAttribute("data-captchaId"))
+                    if(commentCreator.getAttribute("data-captchaId")) grecaptcha?.reset(commentCreator.getAttribute("data-captchaId"))
                 }
             }
 
