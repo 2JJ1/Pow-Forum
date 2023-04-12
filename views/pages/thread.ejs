@@ -726,7 +726,7 @@
                 if(!res.moreAvailable) buttonElem.remove()
                 
                 comments.forEach((comment, index) => {
-                    let nextCommentertUid = comments[index+1] && comments[index+1].uid
+                    let nextCommentertUid = comments[index+1]?.uid
 
                     let appendHTML = ""
 
@@ -782,6 +782,7 @@
                     if(lastCommenter != comment.uid) commentGroups.innerHTML += appendHTML
                     else lastCommentGroup.querySelector("* > div").innerHTML += appendHTML
 
+                    lastCommentGroup = commentGroups.querySelector(".replygroup:last-of-type")
                     lastCommenter = comment.uid
                     lastCommentId = comment._id
                 })
