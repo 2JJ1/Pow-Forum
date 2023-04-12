@@ -34,7 +34,7 @@ router.get("/comments", async (req, res, next) => {
 			comment.account = await accountAPI.fetchAccount(comment.uid, {projection: {username: 1}, reputation: 1})
 			comment.likes = await ThreadReplyReacts.countDocuments({trid: comment._id})
             comment.liked = await ThreadReplyReacts.exists({trid: comment._id, uid: req.session.uid})
-			comment.deletable = (req.session.uid === comment.uid) || await rolesAPI.isClientOverpowerTarget(req.session._id, comment.uid)
+			comment.deletable = (req.session.uid === comment.uid) || await rolesAPI.isClientOverpowerTarget(req.session.uid, comment.uid)
 		}
 
 		response.comments = replies
