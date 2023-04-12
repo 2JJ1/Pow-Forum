@@ -35,16 +35,17 @@ router.post('/', async (req, res, next) => {
 
 		//If this is a comment reply, trid is specified
 		let {trid} = req.body
-
 		//What thread this reply is for
 		let tid 
+		//What reply this comment is for(If is a comment)
+		let commentingTo
 		if(trid) {
 			trid = parseInt(trid)
 			if(!Number.isInteger(trid)) throw "Invalid thread reply id"
-			let reply = await ThreadReplies.findById(trid).lean()
-			if(!reply) throw "This reply does not exist"
-			if("trid" in reply) throw "You can not reply to comments"
-			tid = reply.tid
+			commentingTo = await ThreadReplies.findById(trid).lean()
+			if(!commentingTo) throw "This reply does not exist"
+			if("trid" in commentingTo) throw "You can not reply to comments"
+			tid = commentingTo.tid
 		}
 		else tid = parseInt(req.body.tid)
 		if(!tid) throw "Thread id not specified"
@@ -147,14 +148,46 @@ router.post('/', async (req, res, next) => {
 			//Don't notify self
 			(thread.uid != req.session.uid) && 
 			//Avoid repeat notifications
-			!(await Notifications.findOne({type: "threadreply", tid, recipientid: thread.uid, senderid: req.session.uid}))
+			!(await Notifications.findOne({$or: [{type: "threadreply"}, {type: "threadcomment"}], tid, recipientid: thread.uid, senderid: req.session.uid}))
 		){ 
+			if(!trid){
+				await notificationsAPI.SendNotification({
+					webpushsub: req.session.webpushsub, 
+					type: "threadreply",
+					recipientid: thread.uid,
+					senderid: req.session.uid,
+					tid: tid,
+					trid: newReply._id,
+				})
+			}
+			else {
+				await notificationsAPI.SendNotification({
+					webpushsub: req.session.webpushsub, 
+					type: "threadcomment",
+					recipientid: commentingTo.uid,
+					senderid: req.session.uid,
+					tid,
+					trid: newReply._id,
+				})
+			}
+		}
+
+		//Notify of comments to original replier
+		if(
+			trid && 
+			//Don't send repeat notification to OP
+			thread.uid != commentingTo.uid &&
+			//Don't notify self
+			commentingTo.uid != req.session.uid &&
+			//Avoid repeat notifications
+			!(await Notifications.findOne({type: "threadreplycomment", tid, recipientid: thread.uid, senderid: req.session.uid}))
+		){
 			await notificationsAPI.SendNotification({
 				webpushsub: req.session.webpushsub, 
-				type: "threadreply",
-				recipientid: thread.uid,
+				type: "threadreplycomment",
+				recipientid: commentingTo.uid,
 				senderid: req.session.uid,
-				tid: tid,
+				tid,
 				trid: newReply._id,
 			})
 		}

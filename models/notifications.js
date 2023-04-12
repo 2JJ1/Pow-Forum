@@ -17,5 +17,4 @@ module.exports = mongoose.model("Notifications", {
     trid: Number, //Thread reply ID
     //Badge related
     badgeName: String,
-    
 })

@@ -32,24 +32,34 @@ exports.CompileNotifications = async function(notifications){
             case "threadreply":
                 notification.text = `${notification.senderusername} has replied to your thread.`
                 notification.link = `/t/${row.tid}?r=${row.trid}`
-                break;
-            case "newrep":
-                notification.text = `${row.anonymous ? "Someone" : notification.senderusername} has modified your reputation.`
-                notification.link = `/profile/reputation`
-                break;
-            case "threadreplymention":
-                notification.text = `${notification.senderusername} has mentioned you in a thread reply.`
+                break
+            case "threadreplycomment":
+                notification.text = `${notification.senderusername} has commented on your reply`
                 notification.link = `/t/${row.tid}?r=${row.trid}`
-                break;
-            case "newbadge":
-                notification.text = `You received a new profile badge: ${row.badgeName}.`
-                notification.link = "/profile"
+                break
+            case "threadcomment":
+                notification.text = `${notification.senderusername} has commented on your thread`
+                notification.link = `/t/${row.tid}?r=${row.trid}`
+                break
+            case "threadreplymention":
+                notification.text = `${notification.senderusername} has mentioned you in a thread.`
+                notification.link = `/t/${row.tid}?r=${row.trid}`
                 break
             case "message":
                 notification.text = `New message from ${notification.senderusername}`
                 notification.link = `/messages/${notification.senderid}`
                 break
+            case "newrep":
+                notification.text = `${row.anonymous ? "Someone" : notification.senderusername} has modified your reputation.`
+                notification.link = `/profile/reputation`
+                break
+            case "newbadge":
+                notification.text = `You received a new profile badge: ${row.badgeName}.`
+                notification.link = "/profile"
+                break
         }
+
+        if(notification.textOverride) notification.text = textOverride
 
         result.push(notification)
     }
@@ -87,6 +97,52 @@ exports.SendNotification = async function(options){
             await exports.PushNotification(
                 options.recipientid, 
                 `${senderAccount.username} has replied to your thread`,
+                ``,
+                `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            )
+            break
+        }
+        case "threadcomment": {
+            if(notificationSettings.threadReplies === false) break
+            if(options.recipientid === options.senderid) throw new Error("Recipient and sender can't be the same")
+            if(!options.senderid) throw new Error("senderid required")
+            if(!options.recipientid) throw new Error("recipientid required")
+            if(!options.tid) throw new Error("tid required")
+            if(!options.trid) throw new Error("trid required")
+            await new Notifications({
+                type: options.type,
+                senderid: options.senderid,
+                recipientid: options.recipientid,
+                read: false,
+                tid: parseInt(options.tid),
+                trid: parseInt(options.trid),
+            }).save()
+            await exports.PushNotification(
+                options.recipientid, 
+                `${senderAccount.username} has commented on your thread`,
+                ``,
+                `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            )
+            break
+        }
+        case "threadreplycomment": {
+            if(notificationSettings.threadReplies === false) break
+            if(options.recipientid === options.senderid) throw new Error("Recipient and sender can't be the same")
+            if(!options.senderid) throw new Error("senderid required")
+            if(!options.recipientid) throw new Error("recipientid required")
+            if(!options.tid) throw new Error("tid required")
+            if(!options.trid) throw new Error("trid required")
+            await new Notifications({
+                type: options.type,
+                senderid: options.senderid,
+                recipientid: options.recipientid,
+                read: false,
+                tid: parseInt(options.tid),
+                trid: parseInt(options.trid),
+            }).save()
+            await exports.PushNotification(
+                options.recipientid, 
+                `${senderAccount.username} has commented on your reply`,
                 ``,
                 `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
             )
