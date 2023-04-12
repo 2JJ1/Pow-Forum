@@ -47,9 +47,8 @@ router.get('/', async (req, res, next) => {
         else res.render('pages/profile/rate', pagedata);
     }
     catch(e){
-        if(typeof e === "string") res.status(400).send(e)
-        else next(e)
+        next(e)
     }
-});
+})
 
 module.exports = router;

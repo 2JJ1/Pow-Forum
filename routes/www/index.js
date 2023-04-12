@@ -10,12 +10,11 @@ const ForumSettings = mongoose.model("ForumSettings")
 const SupportLinks = mongoose.model("SupportLinks")
 const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
-const Accounts = mongoose.model("Accounts")
 
 let cachedCategories
 let lastCacheTime
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
 	try {
 		let pagedata = {
 			powForum: req.powForum,
@@ -70,10 +69,10 @@ router.get('/', async (req, res) => {
 		pagedata.supportLinks = await SupportLinks.find().lean()
 
 		res.render('pages//index', pagedata)
-	} catch(err) {
-		console.warn(err)
-		res.status(400).send('Server error...')
+	} 
+	catch(e) {
+		next(e)
 	}
-});
+})
 
 module.exports = router;

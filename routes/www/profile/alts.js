@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose")
 
-const buildpfp = require('../../../my_modules/buildpfp')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const Accounts = mongoose.model("Accounts")
@@ -38,9 +37,8 @@ router.get('/', async (req, res, next) => {
         else res.render('pages/profile/alts', pagedata)
     }
     catch(e){
-        if(typeof e === "string") res.status(400).render("400", {reason: e})
-        else next(e)
+        next(e)
     }
-});
+})
 
 module.exports = router;

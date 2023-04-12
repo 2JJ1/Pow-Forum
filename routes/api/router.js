@@ -62,22 +62,4 @@ router.use('/dashboard', require('./dashboard/router'))
 
 router.use('/upgrade/createCoinbaseCharge', require('./upgrade/createCoinbaseCharge'))
 
-//Express.js exception handling
-router.use(function(err, req, res, next) {
-	try {
-        //My way of rejecting an API request
-		if (typeof err === "string") return res.status(400).json({success: false, reason: err})
-        // Handle error objects
-		else if(err.name === "URIError") return res.status(400).json({success: false, reason: "Bad request: Invalid URI"})
-		else{
-			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-			console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
-			return res.status(400).send({success: false, reason: "The server has errored... This will be fixed when the admins have noticed"});
-		}
-	}
-	catch(e){
-		console.log("Exception handler just errored: ", e)
-	}
-})
-
 module.exports = router;

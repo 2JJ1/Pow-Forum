@@ -51,9 +51,8 @@ router.get('/', async (req, res, next) => {
         res.render('pages/profile/search', pagedata)
     }
     catch(e){
-        if(typeof e === "string") res.status(400).render("400", {reason: e})
-        else next(e)
+        next(e)
     }
-});
+})
 
 module.exports = router;

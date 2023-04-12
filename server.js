@@ -191,12 +191,20 @@ app.use(function(req, res, next){
 //Express.js exception handling
 app.use(function(err, req, res, next) {
 	try {
-		if (typeof err === "string") return res.status(400).render("400", {reason: err})
-		else if(err.name === "URIError") return res.status(400).render("400", {reason: "Bad request: Invalid URI"})
+		let isAPIRoute = req.originalUrl.split("/")[1] == "api"
+
+		if (typeof err === "string") {
+			if(!isAPIRoute) res.status(400).render("400", {reason: err})
+			else res.status(400).json({success: false, reason: err})
+		}
+		else if(err.name === "URIError") {
+			if(!isAPIRoute) res.status(400).render("400", {reason: "Bad request: Invalid URI"})
+			else res.status(400).json({success: false, reason: "Bad request: Invalid URI"})
+		}
 		else{
-			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-			console.log("Express.js error:", err, `. For URL: ${fullUrl}`)
-			return res.status(400).send("The server has errored... This will be fixed when the admins have noticed");
+			console.log(`Express.js error at path: ${req.originalUrl}\n`, err)
+			if(!isAPIRoute) res.status(500).render("500", {reason: "The server has errored... This will be fixed when the admins have noticed"})
+			else res.status(500).json({success: false, reason: "The server has errored... This will be fixed when the admins have noticed"})
 		}
 	}
 	catch(e){

@@ -5,17 +5,22 @@ const ForumSettings = mongoose.model("ForumSettings")
 
 // /dashboard
 
-router.get("/", async (req, res) => {
-    let pagedata = {
-		powForum: req.powForum,
-        accInfo: req.account,
+router.get("/", async (req, res, next) => {
+    try {
+        let pagedata = {
+            powForum: req.powForum,
+            accInfo: req.account,
+        }
+
+        let name = (await ForumSettings.findOne({type: "name"})).value
+
+        let description = (await ForumSettings.findOne({type: "description"})).value
+
+        res.render("pages/dashboard/settings", {...pagedata, name, description})
     }
-
-    let name = (await ForumSettings.findOne({type: "name"})).value
-
-    let description = (await ForumSettings.findOne({type: "description"})).value
-
-    res.render("pages/dashboard/settings", {...pagedata, name, description})
+    catch(e){
+        next(e)
+    }
 })
 
 module.exports = router

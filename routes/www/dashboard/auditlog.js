@@ -6,7 +6,6 @@ const accountAPI = require('../../../my_modules/accountapi');
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
-const Accounts = mongoose.model("Accounts")
 
 // 	/profile/alts
 
@@ -63,9 +62,8 @@ router.get('/', async (req, res, next) => {
         res.render('pages/dashboard/auditlog', pagedata)
     }
     catch(e){
-        if(typeof e === "string") res.status(400).render("400", {reason: e})
-        else next(e)
+        next(e)
     }
-});
+})
 
 module.exports = router;
