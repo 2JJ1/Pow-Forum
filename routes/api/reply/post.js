@@ -150,26 +150,14 @@ router.post('/', async (req, res, next) => {
 			//Avoid repeat notifications
 			!(await Notifications.findOne({$or: [{type: "threadreply"}, {type: "threadcomment"}], tid, recipientid: thread.uid, senderid: req.session.uid}))
 		){ 
-			if(!trid){
-				await notificationsAPI.SendNotification({
-					webpushsub: req.session.webpushsub, 
-					type: "threadreply",
-					recipientid: thread.uid,
-					senderid: req.session.uid,
-					tid: tid,
-					trid: newReply._id,
-				})
-			}
-			else {
-				await notificationsAPI.SendNotification({
-					webpushsub: req.session.webpushsub, 
-					type: "threadcomment",
-					recipientid: commentingTo.uid,
-					senderid: req.session.uid,
-					tid,
-					trid: newReply._id,
-				})
-			}
+			await notificationsAPI.SendNotification({
+				webpushsub: req.session.webpushsub, 
+				type: !trid ? "threadreply" : "threadcomment",
+				recipientid: thread.uid,
+				senderid: req.session.uid,
+				tid: tid,
+				trid: newReply._id,
+			})
 		}
 
 		//Notify of comments to original replier
