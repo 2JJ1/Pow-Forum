@@ -75,7 +75,7 @@ router.get('/:tid', async (req, res, next) => {
             //Instructs page to scroll to the reply
             result.scrollToTrid = skipToReply
             //Auto page change to where reply can be found
-            let replies = await ThreadReplies.find({tid}).sort({_id: 1})
+            let replies = await ThreadReplies.find({tid, trid: {$exists: false}}).sort({_id: 1})
             replies = replies.map(row => row._id)
             let replyIndex = replies.indexOf(skipToReply) + 1
             if(replyIndex > resultsPerPage){
