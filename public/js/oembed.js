@@ -78,7 +78,7 @@ async function HTMLToOembed(html, options){
         //Converts video links to img tags
         options.videoFile = "videoFile" in options ? options.videoFile : true
         if(options.videoFile){
-            let matches = (fromString ? html : html.innerHTML).match(/https:\/\/([a-z\-_0-9\/\:\.]*\.(mp4))/ig)
+            let matches = (fromString ? html : html.innerHTML).match(/https:\/\/([a-z\-_0-9\/\:\.]*\.(mp4|mov))/ig)
             matches = [...new Set(matches)]
             for (const match of matches) {
                 //If a whitelist is specified, check if the matched URL's domain is whitelisted
