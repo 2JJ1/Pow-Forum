@@ -535,7 +535,7 @@
                     if(res.success){
                         saveDraft = false
                         localStorage.removeItem('reply-draft');
-                        document.location.href = `/t/<%= threadData._id %>/?r=${res.replyId}`
+                        document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
                     } else {
                         document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
                     }
@@ -690,7 +690,7 @@
                     .then(res => res.json())
                     .then(res => {
                         if(!res.success) return alert(res.reason || 'Unknown error occured...')
-                        document.location.href = `/t/<%= threadData._id %>/?r=${res.replyId}`
+                        document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
                     })
                     .catch(() => alert("Failed to contact the server."))
 
