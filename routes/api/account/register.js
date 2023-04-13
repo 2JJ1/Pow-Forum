@@ -58,8 +58,8 @@ router.post('/', async (req, res, next) => {
 		else throw "Missing username"
 		
 		if('email' in _POST){
-			if(!other.ValidateEmail(req.body.email)) throw { safe: "Invalid email" };
-			if(!mailgun.isEmailCompatible(req.body.email)) throw { safe: "Incompatible email provider. Use another email address such as GMail" }
+			if(!other.ValidateEmail(req.body.email)) throw "Invalid email"
+			if(!mailgun.isEmailCompatible(req.body.email)) throw "Incompatible email provider. Use another email address such as Gmail"
 			keyvalues.email = escape(req.body.email)
 
 			//Uses gravatar for pfp if one exists for their email
