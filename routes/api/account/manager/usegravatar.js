@@ -16,7 +16,7 @@ router.post('/', async (req, res, next) => {
 		if(!req.session.uid) throw "Not logged in"
 
 		//Fetch current email address
-		let account = await fetchAccount(req.session.uid, true)
+		let account = await fetchAccount(req.session.uid)
 
 		//Gravatar requires emails be hashed with md5
 		let hashedEmail = md5(account.email.toLowerCase())
