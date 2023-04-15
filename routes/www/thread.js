@@ -77,7 +77,7 @@ router.get('/:tid', async (req, res, next) => {
             //Auto page change to where reply can be found
             let replies = await ThreadReplies.find({tid, trid: {$exists: false}}).sort({_id: 1})
             replies = replies.map(row => row._id)
-            let replyIndex = replies.indexOf(skipToReply) + 1
+            let replyIndex = replies.indexOf(skipToReply)
             if(replyIndex > resultsPerPage){
                 let skipToPage = Math.floor(replyIndex / resultsPerPage)
                 startingRow = resultsPerPage * skipToPage

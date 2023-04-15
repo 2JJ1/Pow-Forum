@@ -271,17 +271,6 @@
         <script type="text/javascript" src="/js/prism.js"></script>
         <script type="text/javascript" src="/js/oembed.js?v=20"></script>
 		<script>
-            <% if(threadData.scrollToTrid) { %>
-            //Scrolls to reply from notification
-            let replyToView = document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]')
-            if(replyToView) replyToView.scrollIntoView(true)
-            <% } %> 
-
-            //Embed images in thread and signature content
-            Array.prototype.forEach.call([...document.getElementsByClassName("thread_replycontent"), ...document.getElementsByClassName("signature")], function(threadReply){
-                HTMLToOembed(threadReply, { fileDomainWhitelist: true })
-            })
-
             //Link clicked from negative reputation user warning
             function warnLinks(e) {
                 e.preventDefault()
@@ -785,6 +774,20 @@
                     lastCommentGroup = commentGroups.querySelector(".replygroup:last-of-type")
                     lastCommenter = comment.uid
                     lastCommentId = comment._id
+                })
+            }
+
+            document.querySelector("body").onload = function(){
+                <% if(threadData.scrollToTrid) { %>
+                console.log("LOADED")
+                //Scrolls to reply from notification
+                let replyToView = document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]')
+                if(replyToView) replyToView.scrollIntoView(true)
+                <% } %>
+
+                //Embed images in thread and signature content
+                Array.prototype.forEach.call([...document.getElementsByClassName("thread_replycontent"), ...document.getElementsByClassName("signature")], function(threadReply){
+                    HTMLToOembed(threadReply, { fileDomainWhitelist: true })
                 })
             }
         </script>
