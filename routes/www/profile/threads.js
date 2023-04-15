@@ -19,6 +19,7 @@ router.get('/', async (req, res, next) => {
         }
 
         var queryFor = req.query.uid || req.session.uid
+        if(!Number.isInteger(queryFor)) throw "Invalid target user ID"
         var ftid = req.query.ftid || 0 //From thread id
         
         // Retrieve main account data
