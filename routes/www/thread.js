@@ -20,10 +20,7 @@ const Notifications = mongoose.model("Notifications")
 const PinnedThreads = mongoose.model("PinnedThreads")
 const DownloadLinks = mongoose.model("DownloadLinks")
 
-//getMonth returns number, so use this to get the text
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-]
+const { monthNames } = require('../../my_modules/month')
 
 //Display's thread page on forum
 router.get('/:tid', async (req, res, next) => {
