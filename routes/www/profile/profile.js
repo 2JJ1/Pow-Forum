@@ -13,13 +13,9 @@ const GeneralSettings = mongoose.model("GeneralSettings")
 const ThreadReplies = mongoose.model("ThreadReplies")
 const Threads = mongoose.model("Threads")
 
+const { monthNames } = require('../../../public/js/month')
+
 // 	/profile
-
-//getMonth returns number, so use this to get the text
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-
 router.get('/', async (req, res, next) => {
     try {
         let pagedata = {

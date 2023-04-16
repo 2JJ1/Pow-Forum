@@ -8,13 +8,9 @@ const accountAPI = require('../../../my_modules/accountapi')
 const {EscapeRegex} = require('../../../my_modules/other')
 
 const Accounts = mongoose.model("Accounts")
+const { monthNames } = require('../../../public/js/month')
 
 // 	/profile/search
-
-//getMonth returns number, so use this to get the text
-const monthNames = ["January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
 
 router.get('/', async (req, res, next) => {
     try {
