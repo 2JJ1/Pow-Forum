@@ -8,7 +8,7 @@ const accountAPI = require('../../../my_modules/accountapi')
 const {EscapeRegex} = require('../../../my_modules/other')
 
 const Accounts = mongoose.model("Accounts")
-const { monthNames } = require('../../../public/js/month')
+const { monthNames } = require('../../../my_modules/month')
 
 // 	/profile/search
 

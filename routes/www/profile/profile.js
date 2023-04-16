@@ -13,7 +13,7 @@ const GeneralSettings = mongoose.model("GeneralSettings")
 const ThreadReplies = mongoose.model("ThreadReplies")
 const Threads = mongoose.model("Threads")
 
-const { monthNames } = require('../../../public/js/month')
+const { monthNames } = require('../../../my_modules/month')
 
 // 	/profile
 router.get('/', async (req, res, next) => {

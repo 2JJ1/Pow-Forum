@@ -20,7 +20,7 @@ const Notifications = mongoose.model("Notifications")
 const PinnedThreads = mongoose.model("PinnedThreads")
 const DownloadLinks = mongoose.model("DownloadLinks")
 
-const { monthNames } = require('../../public/js/month')
+const { monthNames } = require('../../my_modules/month')
 
 //Display's thread page on forum
 router.get('/:tid', async (req, res, next) => {
