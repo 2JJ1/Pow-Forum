@@ -755,7 +755,7 @@
                                     </div>
                                     <ul class="reply_menu verticalCenter gapchildrenx">
                                         <li><p class="btnLikeReply verticalCenter ${comment.liked ? "liked" : ""}" data-trid="${comment._id}">${comment.likes}</p></li>
-                                        ${<%= accInfo._id %> == comment.uid ? `<li onclick="EditReply(${comment._id})">Edit</li>` : ''}
+                                        ${"<%= accInfo._id %>" == comment.uid ? `<li onclick="EditReply(${comment._id})">Edit</li>` : ''}
                                         ${ comment.deletable == true ? `<li><span class="red btn_deletereply" data-trid="${comment._id}">X</span></li>` : ''}
                                     </ul>
                                 </div>
@@ -779,7 +779,6 @@
 
             document.querySelector("body").onload = function(){
                 <% if(threadData.scrollToTrid) { %>
-                console.log("LOADED")
                 //Scrolls to reply from notification
                 let replyToView = document.querySelector('[data-trid="<%= threadData.scrollToTrid %>"]')
                 if(replyToView) replyToView.scrollIntoView(true)
