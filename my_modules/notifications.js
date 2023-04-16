@@ -185,7 +185,7 @@ exports.SendNotification = async function(options){
             await new Notifications(notification).save()
             await exports.PushNotification(
                 options.recipientid, 
-                `${senderAccount.username} has rated you`,
+                `${options.anonymous ? "Someone" : senderAccount.username} has rated you`,
                 ``,
                 `${process.env.FORUM_URL}/profile/reputation`
             )
