@@ -10,7 +10,7 @@ const fetch = require('node-fetch')
 
 const other = require('../../../my_modules/other')
 const recaptcha = require('../../../my_modules/captcha')
-const mailgun = require('../../../my_modules/mailgun')
+const mailgun = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 const pfAPI = require('../../../my_modules/pfapi')
 

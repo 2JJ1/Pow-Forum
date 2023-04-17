@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 var crypto = require('crypto')
 const mongoose = require('mongoose')
 
-const mailgun = require('../../../my_modules/mailgun')
+const mailgun = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")

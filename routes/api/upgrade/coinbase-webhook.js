@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 var Webhook = require('coinbase-commerce-node').Webhook
 
-const mailgun = require('../../../my_modules/mailgun')
+const mailgun = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")

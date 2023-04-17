@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
 const recaptcha = require('../../../my_modules/captcha')
-const mailgun = require('../../../my_modules/mailgun')
+const mailgun = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")

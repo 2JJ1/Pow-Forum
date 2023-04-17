@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
 const other = require('../../../../my_modules/other')
-const mailgun = require('../../../../my_modules/mailgun')
+const mailgun = require('../../../../my_modules/email')
 const tfa = require('../../../../my_modules/2fa')
 const accountAPI = require('../../../../my_modules/accountapi')
 
