@@ -67,6 +67,7 @@ const NotificationSettings = mongoose.model("NotificationSettings")
 const Notifications = mongoose.model("Notifications")
 const AltAccounts = mongoose.model("AltAccounts")
 const ActiveUsers = mongoose.model("ActiveUsers")
+const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
 
 const commands = {
 	//Preset commands. Other commands are added dynamically
@@ -387,6 +388,32 @@ commands.fixunicode = {
 				threadReply.content = threadReply.content.replace(/Â,?/g, "")
 				await threadReply.save()
 			}
+		}
+	}
+}
+
+commands.upgradev2 = {
+	desc: "PF has made some breaking changes in v2.0.0. Run this to automatically repair database breaking changes.",
+	func: async () => {
+		let numNotifs = await PendingEmailVerifications.countDocuments()
+
+		let page = 0
+		while (page*10000 < numNotifs){
+			console.time(`page${page}`)
+			//Send from newest to oldest subs
+			let docs = await PendingEmailVerifications.find({}).sort({_id: -1}).skip(page*1000).limit(1000)
+
+			for(let doc of docs){
+				await Accounts.updateOne({_id: doc._id}, {
+					emailVerification: {
+						token: doc.token,
+						lastSent: doc.lastsent
+					}
+				})
+			}
+
+			console.timeEnd(`page${page}`)
+			page = page + 1
 		}
 	}
 }
