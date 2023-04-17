@@ -4,9 +4,6 @@ module.exports = {
 		var mailgun = require("mailgun-js")({apiKey: process.env.MAILGUN_APIKEY, domain: process.env.MAILGUN_DOMAIN});
 		
 		return new Promise( ( resolve, reject ) => {
-			//Sanitize
-			if(!this.isEmailCompatible(emaildata.to)) reject("Email not compatible")
-
 			//Sends
 			mailgun.messages().send(emaildata, function (error, body) {
 				if (error) reject(error);
@@ -25,18 +22,18 @@ module.exports = {
 			text: body
 		};
 
-		return this.SendMail(emaildata)
+		return module.exports.SendMail(emaildata)
 	},
 
-	//Checks if mailgun can send an email to this address
-	//I'm using a shared ip and it has a bad reputation unforunately.
-	//Because of the bad reputation, email providers like Outlook and Yahoo block me
-	isEmailCompatible: (address) => {
+	isMajorEmailDomain: (emailAddress) => {
+		const whitelist = ["gmail.com", "aol.com", "outlook.com", "yahoo.com", "icloud.com", "mozilla.com", 
+		"proton.com", "hotmail.com", "zoho.com", "live.com", "comcast.net"]
+
 		//Grabs the domain part of an email address. (eg. mail@domain.com = domain.com)
-		var ind = address.indexOf("@");
-		var sliced = address.slice((ind+1),address.length);
-		//If the domain is blacklisted, its imcompatible(false). Compatible(true) otherwise
-		var blackList = /outlook.com|yahoo.com/
-		return !blackList.test(sliced)
+		var ind = emailAddress.indexOf("@");
+		var sliced = emailAddress.slice((ind+1),emailAddress.length);
+
+		//Checks if the domain is whitelisted
+		return whitelist.includes(sliced)
 	}
 }

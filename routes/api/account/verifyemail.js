@@ -34,9 +34,6 @@ router.post('/', async (req, res, next) => {
 		//Where to send the verification step to
 		var accData = await accountAPI.fetchAccount(req.session.uid)
 
-		//Check if we can email this address
-		if(!mailgun.isEmailCompatible(accData.email)) throw "We can not send emails to that email provider. Please change your email address!"
-
 		// Create email verification session
 
 		//Creates verification token
