@@ -1,9 +1,7 @@
 const router = require('express').Router()
 const mongoose = require('mongoose')
 
-const accountAPI = require('../../my_modules/accountapi')
-
-const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
+const Accounts = mongoose.model("Accounts")
 const Logs = mongoose.model("Logs")
 
 // 	/verify
@@ -16,37 +14,34 @@ router.get('/', async (req, res, next) => {
         
         var token = req.query.token
 
-        if(!req.session.uid) return res.status(400).render('400', {reason: "You must be logged into the account you're trying to verify"})
+        if(!req.session.uid) throw "You must be logged into the account you're trying to verify"
 
-        let pendingVerification = await PendingEmailVerifications.findById(req.session.uid)
-        if(!pendingVerification) return res.status(400).render('400', {reason: "Your account is already verified"})
+        let {emailVerification} = await Accounts.findById(req.session.uid, 'emailVerification')
 
-        var verificationDoc = await PendingEmailVerifications.findOne({token})
+        if(!emailVerification) throw "Your account is already verified"
 
-        if(verificationDoc){
-            let uid = verificationDoc._id
-            
-            if(req.session.uid !== uid) return res.status(400).render('400', {reason: "You must be logged into the account you're trying to verify"})
+        //What account is the token associated with
+        let tokensAccount = await Accounts.findOne({"emailVerification.token": token})
 
-            //Delete the verification request to assume account is verified
-            await PendingEmailVerifications.deleteOne({_id: uid})
+        if(!tokensAccount) throw "Invalid token. Check if the email was already verified, otherwise send a new verification request from the security manager page."
 
-            pagedata.message = "Your account's email is now verified. The token has been deleted."
+        let uid = tokensAccount._id
+        
+        if(req.session.uid !== uid) throw "You must be logged into the account you're trying to verify"
 
-            // Add to logs
-            //Get email to log
-            let { email } = await accountAPI.fetchAccount(uid)
+        //Delete the verification request to assume account is verified
+        tokensAccount.emailVerification = undefined
+        await tokensAccount.save()
 
-            //Log to database
-            await Logs({
-                uid,
-                action: "verified_email",
-                description: email,
-                date: new Date() //Current date
-            }).save()
-        } else{
-            pagedata.message = "Invalid token. Check if the email was already verified, otherwise send a new verification request from the security manager page."
-        }
+        pagedata.message = "Your account's email is now verified. The token has been deleted."
+
+        //Log to database
+        await Logs({
+            uid,
+            action: "verified_email",
+            description: tokensAccount.email,
+            date: new Date() //Current date
+        }).save()
         
         res.render('pages/verify', pagedata)
     }

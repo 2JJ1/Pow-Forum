@@ -8,7 +8,6 @@ const rolesAPI = require('../../../my_modules/rolesapi')
 
 const Accounts = mongoose.model("Accounts")
 const PasswordResetSessions = mongoose.model("PasswordResetSessions")
-const PendingEmailVerifications = mongoose.model("Accounts")
 const Sessions = mongoose.model("Sessions")
 const Logs = mongoose.model("Logs")
 const LoginHistories = mongoose.model("LoginHistories")
@@ -56,7 +55,6 @@ router.delete("/", async (req, res, next) => {
         //Starts delete process
         await Accounts.deleteOne({_id: uid})
         await PasswordResetSessions.deleteOne({uid})
-        await PendingEmailVerifications.deleteOne({_id: uid})
         await Sessions.deleteMany({session: new RegExp(`"uid":${req.session.uid}[},]`)})
         await Logs.deleteMany({uid})
         await LoginHistories.deleteMany({uid})

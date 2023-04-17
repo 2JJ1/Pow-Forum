@@ -8,7 +8,6 @@ const other = require('./other')
 const rolesAPI = require('./rolesapi')
 
 const Accounts = mongoose.model("Accounts")
-const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
 const TFAs = mongoose.model("TFAs")
 const Reputations = mongoose.model("Reputations")
 
@@ -33,7 +32,8 @@ exports.is2FAEnabled = async function(userid){
  * @returns True if verified, false otherwise
  */
 exports.emailVerified = async function(uid){
-	return await PendingEmailVerifications.findById(uid) ? false : true
+	let account = await Accounts.findById(uid, {emailVerificationToken: 1})
+	return !("emailVerification" in account)
 }
 
 /**

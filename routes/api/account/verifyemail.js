@@ -7,7 +7,7 @@ const mailgun = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")
-const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
+const Accounts = mongoose.model("Accounts")
 const Logs = mongoose.model("Logs")
 
 // parse application/json
@@ -24,10 +24,10 @@ router.post('/', async (req, res, next) => {
 		if(!req.session.uid) "Must be logged in"
 
 		//Check if they've already received an email verification in the past 24 hours
-		let pendingEmailVerification = await PendingEmailVerifications.findById(req.session.uid)
-		if(!pendingEmailVerification) throw "Your email is already verified"
+		let {emailVerification} = await Accounts.findById(req.session.uid)
+		if(!emailVerification) throw "Your email is already verified"
 		
-		let expires = new Date(pendingEmailVerification.lastsent)
+		let expires = new Date(emailVerification.lastSent)
 		expires.setDate(expires.getDate()+1) //Adds 1 day to current date
 		if(expires > new Date()) throw "You must wait 24 hours since the last verification request email was sent. Please check your email if its there."
 		
@@ -48,12 +48,14 @@ router.post('/', async (req, res, next) => {
 		await mailgun.SendBasicEmail(accData.email, `${(await ForumSettings.findOne({type: "name"})).value} Email Verification`, emailBody)
 		.then(async err=>{
 			if(err) throw err
-
+			
 			//The email has sent, so update token in database to be verified against
 			//This assumes there is already a pending_email_verifications row for the requester uid
-			await PendingEmailVerifications.updateOne({_id: req.session.uid}, {
-				token: hash,
-				lastsent: new Date()
+			await Accounts.updateOne({_id: req.session.uid}, { 
+				emailVerification: {
+					token: hash,
+					lastsent: new Date()
+				}
 			})
 
 			//Log the email change request so we can rate limit to 1 email change request/day. This is rate limited so I don't get over charged by mailgun api

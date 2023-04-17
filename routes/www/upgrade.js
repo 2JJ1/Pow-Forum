@@ -1,10 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
 
 const accountAPI = require('../../my_modules/accountapi')
-
-const PendingEmailVerifications = mongoose.model("PendingEmailVerifications")
 
 // 	/upgrade
 
@@ -16,7 +13,7 @@ router.get('/', async (req, res, next) => {
             stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
         }
 
-        pagedata.accInfo.isVerifiedEmail = !(await PendingEmailVerifications.findOne({_id: req.session.uid}))
+        pagedata.accInfo.isVerifiedEmail = await accountAPI.isVerifiedEmail(req.session.uid)
 
         var account = await accountAPI.fetchAccount(req.session.uid)
         pagedata.stripecustomerid = account ? account.stripecustomerid : ""
