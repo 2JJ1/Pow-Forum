@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const mongoose = require('mongoose')
 
+const accountAPI = require("../../my_modules/accountapi")
+
 const Accounts = mongoose.model("Accounts")
 const Logs = mongoose.model("Logs")
 
@@ -28,6 +30,8 @@ router.get('/', async (req, res, next) => {
         let uid = tokensAccount._id
         
         if(req.session.uid !== uid) throw "You must be logged into the account you're trying to verify"
+
+        if(await accountAPI.emailTaken(tokensAccount.email)) throw "An account already exists with this email. Please try a new verification session with a new email."
 
         //Delete the verification request to assume account is verified
         tokensAccount.emailVerification = undefined

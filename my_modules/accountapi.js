@@ -32,8 +32,18 @@ exports.is2FAEnabled = async function(userid){
  * @returns True if verified, false otherwise
  */
 exports.emailVerified = async function(uid){
-	let account = await Accounts.findById(uid, {emailVerificationToken: 1})
+	let account = await Accounts.findById(uid, {emailVerification: 1}).lean()
 	return !("emailVerification" in account)
+}
+
+/**
+ * Checks if an account exists with the email address and does not have a pending verification session
+ * @param {*} emailAddress 
+ */
+exports.emailTaken = async function(emailAddress){
+	emailAddress = emailAddress.toLowerCase()
+	let existingVerifiedEmail = await Accounts.findOne({email: emailAddress, emailVerification: {$exists: 0}})
+	return existingVerifiedEmail ? true : false
 }
 
 /**

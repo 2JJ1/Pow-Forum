@@ -29,7 +29,10 @@ let schema = mongoose.Schema({
     //Only set by Coinbase
     premium_expires: Date,
     //If this property exists, the account is pending email verification
-    emailVerification: mongoose.Schema.Types.Mixed,
+    emailVerification: {
+        type: mongoose.Schema.Types.Mixed,
+        index: true
+    },
 })
 
 schema.plugin(AutoIncrement, {id: 'Accounts'})

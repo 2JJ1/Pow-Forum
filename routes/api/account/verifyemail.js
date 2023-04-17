@@ -34,6 +34,9 @@ router.post('/', async (req, res, next) => {
 		//Where to send the verification step to
 		var accData = await accountAPI.fetchAccount(req.session.uid)
 
+		//Checks that an account is not already verified with this email
+		if(await accountAPI.emailTaken(accData.email)) throw "An account already exists with this email" 
+
 		// Create email verification session
 
 		//Creates verification token

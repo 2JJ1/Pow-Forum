@@ -50,22 +50,20 @@ router.post('/', async (req, res, next) => {
 		
 		//Sets new email
 		if(req.body.hasOwnProperty('email') && req.body.email !== accData.email){
+			req.body.email = req.body.email.toLowerCase()
 			//Rate limit email changes to once/day to prevent mailgun over charges
 			await Logs.findOne({uid: req.session.uid, action: "update_email", date: {$gte: new Date() - 1000*60*60*24}})
 			.then(doc => {
 				if(doc) throw "You must wait 24 hours since your last email change request."
 			})
 
+			//Checks that an account is not already verified with this email
+			if(await accountAPI.emailTaken(req.body.email)) throw "An account already exists with this email" 
+
 			if(!other.ValidateEmail(req.body.email)) throw "Invalid email"
 			if(!email.isMajorEmailDomain(req.body.email)) "We only allow email addresses from major email providers, such as Gmail."
-
-			keyvalues.email = escape(req.body.email)
-		}
-
-		if(!(Object.keys(keyvalues).length > 0)) throw "No changes requested..."
-
-		// Create email verification session
-		if(keyvalues.email){
+			
+			// Create email verification session
 			//Creates verification token
 			let hash = crypto.randomBytes(64).toString('hex');
 
@@ -89,7 +87,11 @@ router.post('/', async (req, res, next) => {
 				description: keyvalues.email, //Changed to this email
 				date: new Date() //Current date
 			}).save()
+
+			keyvalues.email = escape(req.body.email)
 		}
+
+		if(!(Object.keys(keyvalues).length > 0)) throw "No changes requested..."
 
 		//Updates account
 		await Accounts.updateOne({_id: req.session.uid}, keyvalues)

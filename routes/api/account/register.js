@@ -57,12 +57,11 @@ router.post('/', async (req, res, next) => {
 		else throw "Missing username"
 		
 		if('email' in _POST){
+			req.body.email = req.body.email.toLowerCase()
 			if(!other.ValidateEmail(req.body.email)) throw "Invalid email"
 			keyvalues.email = escape(req.body.email)
 			if(!email.isMajorEmailDomain(req.body.email)) throw "We only allow email addresses from major email providers, such as Gmail."
-
-			//Check that email is not verified with another account
-			
+			if(await accountAPI.emailTaken(req.body.email)) throw "An account already exists with this email" 
 
 			//Uses gravatar for pfp if one exists for their email
 			let hashedEmail = md5(req.body.email)
@@ -104,6 +103,12 @@ router.post('/', async (req, res, next) => {
 			token: hash,
 			lastSent: new Date()
 		}
+		
+		//No exit, so create account because sanitization passed
+		let newAccount = await new Accounts(keyvalues)
+		.save()
+
+		req.session.uid = newAccount._id
 
 		//Send email verification request via email
 		var emailBody = 'Hello,\n\n' +
@@ -116,12 +121,6 @@ router.post('/', async (req, res, next) => {
 			//Handle the error, but allow account to remain created successfully
 			console.error(`Issue when sending the email verification at register for @${req.session.uid} ${keyvalues.email}: `, err)
 		})
-		
-		//No exit, so create account because sanitization passed
-		let newAccount = await new Accounts(keyvalues)
-		.save()
-
-		req.session.uid = newAccount._id
 
 		//Report successful account creation
 		response.success = true
