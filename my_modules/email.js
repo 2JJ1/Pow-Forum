@@ -27,7 +27,7 @@ module.exports = {
 
 	isMajorEmailDomain: (emailAddress) => {
 		const whitelist = ["gmail.com", "aol.com", "outlook.com", "yahoo.com", "icloud.com", "mozilla.com", 
-		"proton.com", "hotmail.com", "zoho.com", "live.com", "comcast.net"]
+		"protonmail.com", "proton.me", "hotmail.com", "zoho.com", "live.com", "comcast.net"]
 
 		//Grabs the domain part of an email address. (eg. mail@domain.com = domain.com)
 		var ind = emailAddress.indexOf("@");
