@@ -61,7 +61,7 @@ router.post('/', async (req, res, next) => {
 			if(await accountAPI.emailTaken(req.body.email)) throw "An account already exists with this email" 
 
 			if(!other.ValidateEmail(req.body.email)) throw "Invalid email"
-			if(!email.isMajorEmailDomain(req.body.email)) "We only allow email addresses from major email providers, such as Gmail."
+			if(!email.isMajorEmailDomain(req.body.email)) throw "We only allow email addresses from major email providers, such as Gmail."
 			
 			// Create email verification session
 			//Creates verification token
