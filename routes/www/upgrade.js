@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
             stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
         }
 
-        pagedata.accInfo.isVerifiedEmail = await accountAPI.isVerifiedEmail(req.session.uid)
+        pagedata.accInfo.isVerifiedEmail = await accountAPI.emailVerified(req.session.uid)
 
         var account = await accountAPI.fetchAccount(req.session.uid)
         pagedata.stripecustomerid = account ? account.stripecustomerid : ""
