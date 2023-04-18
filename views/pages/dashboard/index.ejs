@@ -11,7 +11,7 @@
         <link href="/css/prism.css" rel="stylesheet" type="text/css">
 
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
-        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
+        <script type="text/javascript" src="/js/oembed.js?v=20"></script>
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
@@ -150,12 +150,14 @@
 					}
 				})
 				.then(res => res.json())
-				.then(res => {
+				.then(async res => {
 					var {feed, moreFeedAvailable} = res
 					if(!feed) return
 					oldestTrid = feed[feed.length-1]._id
 
 					for(var i=0; i<feed.length; i++){
+                        feed[i].content = await HTMLToOembed(feed[i].content, { fileDomainWhitelist: true })
+
                         let html = 
                         `<div class="theme1 activitycard round border1 padding">`
 							if(feed[i].isLowerRanked) html += `<p class="delete" data-trid="${feed[i]._id}">x</p>`
@@ -185,6 +187,13 @@
 				})
 			}
 			<% } %>
+
+            document.querySelector("body").onload = function(){
+                //Embed images in thread and signature content
+                Array.prototype.forEach.call([...document.getElementsByClassName("threadContent")], function(threadReply){
+                    HTMLToOembed(threadReply, { fileDomainWhitelist: true })
+                })
+            }
         </script>
     </body>
 </html>

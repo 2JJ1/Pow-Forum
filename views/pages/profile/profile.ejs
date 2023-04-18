@@ -13,6 +13,7 @@
 
 		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+		<script type="text/javascript" src="/js/oembed.js?v=20"></script>
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
@@ -154,7 +155,6 @@
 		<% include ../../partials/footer %>
 
 		<script type="text/javascript" src="/js/prism.js"></script>
-		<script type="text/javascript" src="/js/oembed.js?v=20"></script>
 		<script>
 			//Embed images in thread content
             Array.prototype.forEach.call(document.getElementsByClassName("threadContent"), function(threadReply){
@@ -199,12 +199,14 @@
 					}
 				})
 				.then(res => res.json())
-				.then(res => {
+				.then(async res => {
 					var {feed, moreFeedAvailable} = res
 					if(!feed) return
 					oldestTrid = feed[feed.length-1]._id
 
 					for(var i=0; i<feed.length; i++){
+						feed[i].content = await HTMLToOembed(feed[i].content, { fileDomainWhitelist: true })
+
 						let html = 
                         `<div class="theme1 activitycard round border1 padding">`
 							<% if(isLowerRanked){ %>+ "<p class=\"delete\" data-trid=\"" + feed[i]._id + "\">x</p>"<% } %>
