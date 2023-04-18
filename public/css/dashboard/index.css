@@ -23,3 +23,68 @@ main{
     margin-bottom: 12px;
     font-weight: bold;
 }
+
+.accountRow{
+    display: flex;
+}
+
+.accountRow img{
+    width: 60px;
+    height: 60px;
+    margin-right: var(--gap);
+    border-radius: 50%;
+}
+
+.feeds{
+    display: flex;
+    gap: var(--gap);
+}
+
+.feeds > div{
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.activitycard{
+    padding: 12px;
+    margin-bottom: 12px;
+    word-break: break-word;
+}
+
+.activitycard:after { 
+    content: " "; 
+    display: block;
+    clear: both;
+}
+
+.activitycard a{
+    color: rgb(52, 152, 219);
+}
+
+.activitycard .threadTitle{
+    font-weight: bold;
+}
+
+.activitycard video{
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+}
+
+.activitycard img{
+    max-width: 100%;
+}
+
+.activitycard .pfp{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    float: left;
+    margin-right: var(--less-gap);
+}
+
+.delete{
+    color: var(--red);
+    float: right;
+    cursor: pointer;
+}

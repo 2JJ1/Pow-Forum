@@ -2,6 +2,8 @@ const router = require("express").Router()
 const mongoose = require('mongoose')
 
 const { ProcessMentions } = require('../../../my_modules/pfapi')
+const accountAPI = require('../../../my_modules/accountapi')
+const rolesAPI = require('../../../my_modules/rolesapi')
 
 const ThreadReplies = mongoose.model('ThreadReplies')
 const Threads = mongoose.model('Threads')
@@ -13,12 +15,20 @@ router.get("/", async (req, res, next) => {
         let response = {success: false}
 
         var fromTRID = parseInt(req.query.trid)
-        if(isNaN(fromTRID)) throw "Invalid request"
+        if(!Number.isInteger(fromTRID)) throw "Invalid request"
 
         var byUID = parseInt(req.query.uid)
-        if(isNaN(byUID)) throw "Invalid request"
+        if(!Number.isInteger(byUID)) throw "Invalid request"
 
-        var replies = await ThreadReplies.find({uid: byUID, _id: { $lt: fromTRID }}).sort({_id: -1}).limit(16).lean()
+        let filter = {
+            _id: { 
+                $lt: fromTRID 
+            },
+        }
+        
+        if(byUID !== 0) filter.uid = byUID
+
+        var replies = await ThreadReplies.find(filter).sort({_id: -1}).limit(16).lean()
         for(let reply of replies){
             //Grabs the first reply assigned to that thread
             let OP = await ThreadReplies.findOne({tid: reply.tid}).sort({_id: 1})
@@ -28,6 +38,11 @@ router.get("/", async (req, res, next) => {
 
             //Replaces mentions with a username and link to their profile
             reply.content = await ProcessMentions(reply.content)
+            
+            if(byUID == 0){
+                reply.isLowerRanked = await rolesAPI.isClientOverpowerTarget(req.session.uid, reply.uid)
+                reply.account = await accountAPI.fetchAccount(reply.uid)
+            }
         }
 
         response.moreFeedAvailable = replies.length > 15
