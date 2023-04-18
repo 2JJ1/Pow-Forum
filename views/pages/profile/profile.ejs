@@ -205,17 +205,24 @@
 					oldestTrid = feed[feed.length-1]._id
 
 					for(var i=0; i<feed.length; i++){
-						document.getElementsByClassName("activitycards")[0].innerHTML += (
-							'<div class="theme1 activitycard round border1">' +
-								<% if(isLowerRanked){ %>"<p class=\"delete\" data-trid=\"" + feed[i]._id + "\">x</p>" +<% } %>
-								"<p>" +
-									(feed[i].isOP ? "Created a new thread: " : "Replied to thread: ") +
-									'<a href="/t/' + feed[i].tid + '"><span class="threadTitle">' + feed[i].threadTitle + '</span></a>' +
-								"</p>" +
-								"<br>" +
-								"<div>" + feed[i].content + "</div>" +
-							"</div>"
-						)
+						let html = 
+                        `<div class="theme1 activitycard round border1 padding">`
+							<% if(isLowerRanked){ %>+ "<p class=\"delete\" data-trid=\"" + feed[i]._id + "\">x</p>"<% } %>
+                            if(feed[i].isOP) html += "Created a new thread"
+                            else {
+                                html += `<a href="/t/${feed[i].tid}?r=${feed[i]._id}">`
+                                    if("trid" in feed[i]) html += "Commented"
+                                    else html += "Replied"
+                                html += `</a> to thread`
+                            }
+
+                            html += `
+								: <a href="/t/${feed[i].tid}"><span class="threadTitle">${feed[i].threadTitle}</span></a>
+							</p>
+							<div class="threadContent">${feed[i].content}</div>
+						</div>`
+
+                        document.getElementsByClassName("activitycards")[0].innerHTML += html
 					}
 
 					if(!moreFeedAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
