@@ -230,7 +230,7 @@
 			}
 			<% } %>
 
-			<% if(accInfo.isModerator){ %>
+			<% if(!viewingSelf && accInfo.isModerator && isLowerRanked){ %>
 			document.getElementById("btnResetPFP").onclick = function(){
                 if(!confirm("Are you sure you want to delete <%- profileInfo.username %>'s profile picture?")) return
 
@@ -275,7 +275,7 @@
             }
 			<% } %>
 
-			<% if(accInfo.isAdmin){ %>
+			<% if(!viewingSelf && accInfo.isAdmin){ %>
 			function DisplayAccountDeleteModal(){
 				document.querySelector(".deleteAccount.modal").style.display = "flex"
 			}
