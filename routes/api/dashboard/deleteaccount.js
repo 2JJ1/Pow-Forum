@@ -34,7 +34,7 @@ router.delete("/", async (req, res, next) => {
         let {uid, grecaptcharesponse, password, reason, keepForumContent} = req.body
 
         //Prevent bots/spam with Google captcha
-		let captchaResult = await recaptcha.captchaV2(grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+		let captchaResult = await recaptcha.captcha(grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
 		if(!captchaResult) throw "Captcha failed"
 
         let isAdmin = await rolesAPI.isAdmin(req.session.uid)

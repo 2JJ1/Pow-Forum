@@ -24,12 +24,12 @@ router.post("/grecaptcha2", async (req, res, next) => {
         let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
 
         if(secret !== "****") {
-            parsedEnv.CAPTCHAV2_APIKEY = secret
-            process.env.CAPTCHAV2_APIKEY = secret
+            parsedEnv.CAPTCHA_APIKEY = secret
+            process.env.CAPTCHA_APIKEY = secret
         }
 
-        parsedEnv.CAPTCHAV2_SITEKEY = public
-        process.env.CAPTCHAV2_SITEKEY = public
+        parsedEnv.CAPTCHA_SITEKEY = public
+        process.env.CAPTCHA_SITEKEY = public
 
         fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
 

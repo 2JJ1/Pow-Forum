@@ -31,7 +31,7 @@ router.post('/', async (req, res, next) => {
 		if(req.session.uid) throw "Can't create account while logged in"
 		
 		//Must complete google captcha first
-		if(!await recaptcha.captchaV2(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
+		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
 			throw "Captcha failed"
 	
 		//Sanitization

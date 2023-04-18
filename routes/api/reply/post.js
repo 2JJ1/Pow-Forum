@@ -26,7 +26,7 @@ router.post('/', async (req, res, next) => {
 		let response = {success: false}
 
 		//Prevent bots/spam with Google captcha
-		if(!await recaptcha.captchaV2(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
+		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
 			throw 'Captcha failed'
 		
 		// Check if all necessary post fields exist

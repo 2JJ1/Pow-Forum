@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
 	try {
 		let response = {success: false}
 
-		if(!await recaptcha.captchaV2(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress)))
+		if(!await recaptcha.captcha(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress)))
 			throw "Captcha failed"
 
 		let forumTitle = (await ForumSettings.findOne({type: "name"})).value

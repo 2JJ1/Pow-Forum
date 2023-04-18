@@ -115,6 +115,7 @@ pre code *{
     --less-round: 9px;
     --red: #C0392B;
     --green: #27AE60;
+    --link: rgb(52, 152, 219);
 }
 
 .hidden{

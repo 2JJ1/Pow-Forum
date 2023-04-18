@@ -12,7 +12,7 @@
         <link href="/css/newthread.css?v=20" rel="stylesheet" type="text/css">
         <link href="/css/prism.css" rel="stylesheet" type="text/css">
         
-        <script src='https://www.google.com/recaptcha/api.js' defer></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
         <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>        
 	</head>
@@ -30,7 +30,7 @@
                 <p class="bold padding">Body</p>
                 <textarea id="editor"></textarea>
                 <div class="padding lessgapchildren">
-                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
                     <button
                     class="theme2 button"
                     onclick="PostThread()">

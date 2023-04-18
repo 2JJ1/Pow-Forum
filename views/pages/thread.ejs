@@ -13,7 +13,7 @@
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="/js/timestamp.js?c=1"></script>
-        <script src='https://www.google.com/recaptcha/api.js?render=explicit' defer></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
         <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
 	</head>
 	<body class="container">
@@ -200,7 +200,7 @@
                 <% } %>
                 <div class="hidden comment-creator padding lessgapchildren note">
                     <div class="comment-creator-editor"></div>
-                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
                     <div class="commentControls verticalCenter gapchildrenx">
                         <p name="cancel" class="cursorpointer">Cancel</p>
                         <p name="post" class="cursorpointer">Post</p>
@@ -240,7 +240,7 @@
                 <h2 class="padding">Add your reply</h2>
                 <textarea id="editor"></textarea>
                 <div class="lessgapchildren padding">
-                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
                     <button class="theme2 button" onclick="PostReply()">Post Reply</button>
                     <p id="errormessage" style="color: var(--red); text-align: center"></p>
                 </div>

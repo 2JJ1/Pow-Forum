@@ -12,7 +12,7 @@
         <link href="/css/dashboard/integrations.css?v=20" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
 	</head>
 	<body class="container">
         <% include ../../partials/global %>
@@ -40,38 +40,21 @@
                 <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMailgun()">Save</button>
             </div>
             <div class="integrationSection theme1 border1 round padding">
-                <p class="header">Google reCaptcha v2 Configuration</p>
-                <p class="subtext">v2 is used to protect resource sensitive pages like account registration from bot behavior</p>
+                <p class="header">Cloudflare Turnstile</p>
+                <p class="subtext"><a href="https://www.cloudflare.com/products/turnstile/" target="_blank">Cloudflare Turnstile</a> is used to protect resource sensitive pages like account registration and thread posting from bot behavior</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
-                        <p>v2 API Key</p>
-                        <input class="grecaptcha2Secret theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.CAPTCHAV2_APIKEY ? "****" : "" %>"/>
+                        <p>API Key</p>
+                        <input class="grecaptcha2Secret theme2 border1 round less-padding" type="text" placeholder="your-api-key-here" value="<%= process.env.CAPTCHA_APIKEY ? "****" : "" %>"/>
                     </div>
                     <div class="lessgapchildren">
-                        <p>v2 Site Key</p>
-                        <input class="grecaptcha2Public theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.CAPTCHAV2_SITEKEY %>"/>
+                        <p>Site Key</p>
+                        <input class="grecaptcha2Public theme2 border1 round less-padding" type="text" placeholder="your-site-key-here" value="<%= process.env.CAPTCHA_SITEKEY %>"/>
                     </div>
                 </div>
                 <br>
                 <button class="btnSave theme2 border1 round less-padding" onclick="UpdateGrecaptcha2()">Save</button>
-            </div>
-            <div class="integrationSection theme1 border1 round padding">
-                <p class="header">Google reCaptcha v3 Configuration</p>
-                <p class="subtext">Google reCaptcha is used to protect certain actions from bots, such as when creating a new thread or thread reply</p>
-                <br>
-                <div class="gapchildren">
-                    <div class="lessgapchildren">
-                        <p>v3 API Key</p>
-                        <input class="grecaptcha3Secret theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.CAPTCHAV3_APIKEY ? "****" : "" %>"/>
-                    </div>
-                    <div class="lessgapchildren">
-                        <p>v3 Site Key</p>
-                        <input class="grecaptcha3Public theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.CAPTCHAV3_SITEKEY %>"/>
-                    </div>
-                </div>
-                <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateGrecaptcha3()">Save</button>
             </div>
             <div class="integrationSection theme1 border1 round padding">
                 <p class="header">Stripe Configuration</p>

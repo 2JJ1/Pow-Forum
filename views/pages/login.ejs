@@ -10,7 +10,7 @@
         <link href="/css/login.css?v=20" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
 	</head>
 	<body class="container">
 		<main style="display: flex; min-height: 100vh;">
@@ -32,7 +32,7 @@
                                 <p>2FA Token <span style="color: grey;">- Leave empty if not applicable</span></p>
                                 <input type="text" name="token2fa" placeholder="000000" class="theme2 round border1 padding"/>
                             </div>
-                            <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+                            <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
                             <button class="theme2 round border1 padding">Submit</button>
                         </form>
                         <p><a href="/register">Register</a> | <a href="/recovery">Forgot username/password</a></p>

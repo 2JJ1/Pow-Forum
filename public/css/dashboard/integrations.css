@@ -23,6 +23,10 @@ main{
     color: gray;
 }
 
+.subtext a{
+    color: var(--link);
+}
+
 .integrationSection .btnSave{
     width: 100%;
     font-weight: 400;

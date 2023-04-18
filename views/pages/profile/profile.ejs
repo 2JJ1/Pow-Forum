@@ -12,7 +12,7 @@
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
 
 		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
-		<script src='https://www.google.com/recaptcha/api.js'></script>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
@@ -34,7 +34,7 @@
 						<input class="theme2 border1 round less-padding" type="checkbox" checked/>
 					</label>
 				</div>
-				<div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHAV2_SITEKEY %>"></div>
+				<div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
 				<div class="verticalCenter finalControls">
 					<button id="cancelDeleteAccount" class="theme2 border1 round less-padding">Cancel</button>
 					<button class="theme2 border1 round less-padding" onclick="deleteAccount()">Delete</button>
