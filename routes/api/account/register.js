@@ -94,9 +94,6 @@ router.post('/', async (req, res, next) => {
 		} 
 		else throw "Missing password confirmation"
 		
-		let currentDate = new Date()
-		keyvalues.creationdate = currentDate
-
 		//Creates verification session
 		let hash = crypto.randomBytes(64).toString('hex');
 		keyvalues.emailVerification = {

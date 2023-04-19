@@ -13,7 +13,10 @@ let schema = mongoose.Schema({
     },
     email: String,
     roles: String,
-    creationdate: Date,
+    creationdate: {
+        type: Date,
+        default: new Date(),
+    },
     stripecustomerid: String,
     pendingcancellation: String,
     profilepicture: String,
