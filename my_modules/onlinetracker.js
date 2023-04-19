@@ -29,7 +29,7 @@ exports.track = async function(req, description="Undisclosed"){
 };
 
 exports.retrieve = async function(options){
-    var filter = {
+    let filter = {
         //Gets docs marked as browsing within the past 15 minutes
         time: {
             $gte: Date.now() - (1000*60*15)
@@ -46,9 +46,9 @@ exports.retrieve = async function(options){
         }
     }
 
-    var activeUsers = await ActiveUsers.find(filter).sort({time: -1}).lean()
+    let activeUsers = await ActiveUsers.find(filter).sort({uid: 1}).lean()
 
-    var onlines = {
+    let onlines = {
         members: [],
         guestcount: 0,
         //anonymous: [] //Create this and limit to patrons
