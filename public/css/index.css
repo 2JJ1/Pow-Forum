@@ -18,6 +18,8 @@
 
 .onlineList{
     margin-bottom: var(--gap);
+    max-height: 156px;
+    overflow-y: auto;
 }
 
 .buttons{
