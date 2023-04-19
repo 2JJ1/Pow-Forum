@@ -8,7 +8,11 @@ exports.track = async function(req, description="Undisclosed"){
     var urlPath = url.parse(req.originalUrl).pathname.substr(1);
 
     //Tracks for logged in users
-    if(req.session.uid){
+    if(
+        req.session.uid 
+        //Must also be a verified account
+        && !("emailVerification" in req.account)
+    ){
         await ActiveUsers.findOneAndUpdate({uid: req.session.uid}, {
             //Cache current data because of situations where it would be too intensive to grab every online member's data 1 by 1
             username: req.account.username,
