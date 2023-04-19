@@ -104,6 +104,16 @@ mongoose.connect(mongoURL)
 			})
 		}
 		webpush.setVapidDetails(`mailto:${process.env.SUPPORT_EMAIL_ADDRESS}`, process.env.PUBLIC_VAPID_KEY, process.env.PRIVATE_VAPID_KEY);
+
+		//Creates original(bot) account if it doesn't exist
+		//I say original because uid assumes the identity of this forum
+		//If there are zero accounts, create an account
+		if(!await Accounts.countDocuments()){
+			await new Accounts({
+				username: "BOT"
+			})
+			.save()
+		}
 	}
 
 	//Clean database on every launch
