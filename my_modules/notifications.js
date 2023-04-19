@@ -7,6 +7,8 @@ const Notifications = mongoose.model("Notifications")
 const NotificationSettings = mongoose.model("NotificationSettings")
 const Sessions = mongoose.model("Sessions")
 
+const buildpfp = require('./buildpfp')
+
 //Compiles notifications for display
 exports.CompileNotifications = async function(notifications){
     //If is number ? its a user id : its an array of notifications
@@ -24,8 +26,15 @@ exports.CompileNotifications = async function(notifications){
         notification.type = row.type
         if(row.senderid && !row.anonymous){
             notification.senderid = row.senderid
-            notification.senderusername = await accountapi.GetUsername(row.senderid)
-            notification.senderpfp = await accountapi.GetPFP(row.senderid)   
+            try {
+                notification.senderusername = await accountapi.GetUsername(row.senderid)
+                notification.senderpfp = await accountapi.GetPFP(row.senderid)  
+            }  catch(err) {
+                notification.senderusername = "Unknown"
+                notification.senderpfp = buildpfp("anovatar.png")
+
+                console.log(`Error getting sender information: ${err}`)
+            }
         }
         
         switch(row.type){
@@ -59,7 +68,7 @@ exports.CompileNotifications = async function(notifications){
                 break
         }
 
-        if(notification.textOverride) notification.text = textOverride
+        if(notification.textOverride) notification.text = notification.textOverride
 
         result.push(notification)
     }

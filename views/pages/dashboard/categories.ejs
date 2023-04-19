@@ -177,7 +177,7 @@
                                 document.location.reload()
                             }
                             else {
-                                alert(res.reason || "An unknown server error has occured")
+                                alert(res.error || "An unknown server error has occured")
                             }
                         })
                     }
@@ -206,7 +206,7 @@
                                 document.location.reload()
                             }
                             else {
-                                alert(res.reason || "An unknown server error has occured")
+                                alert(res.error || "An unknown server error has occured")
                             }
                         })
                     }
@@ -236,7 +236,7 @@
                             document.location.reload()
                         }
                         else {
-                            alert(res.reason || "An unknown server error has occured")
+                            alert(res.error || "An unknown server error has occured")
                         }
                     })
                 }
@@ -284,7 +284,7 @@
                             document.location.reload()
                         }
                         else {
-                            alert(res.reason || "An unknown server error has occured")
+                            alert(res.error || "An unknown server error has occured")
                         }
                     })
                 }
@@ -316,7 +316,7 @@
                                     document.location.reload()
                                 }
                                 else {
-                                    alert(res.reason || "An unknown server error has occured")
+                                    alert(res.error || "An unknown server error has occured")
                                 }
                             })
                         }
@@ -348,7 +348,7 @@
                                 document.location.reload()
                             }
                             else {
-                                alert(res.reason || "An unknown server error has occured")
+                                alert(res.error || "An unknown server error has occured")
                             }
                         })
                     }
@@ -360,8 +360,6 @@
 
                 document.querySelector('.addcategory button[type="submit"]').onclick = function(){
                     let name = document.querySelector('.addcategory input[name="name"]').value
-
-                    if(name.length < 3) alert("Name is too short")
 
                     fetch('/api/dashboard/categories/addcategory', {
                         method: "POST",
@@ -377,8 +375,9 @@
                         if(res.success){
                             document.location.reload()
                         }
+
                         else {
-                            alert(res.reason || "An unknown server error has occured")
+                            alert(res.error || "An unknown server error has occured")
                         }
                     })
                 }

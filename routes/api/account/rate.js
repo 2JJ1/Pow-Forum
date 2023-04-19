@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-mixed-spaces-and-tabs */
 const router = require('express').Router()
 var escape = require('escape-html')
 const bodyParser = require('body-parser')
@@ -38,7 +40,7 @@ router.post('/', async (req, res, next) => {
         var selfReputation = await accountAPI.SumReputation(req.session.uid)
         
         // Sanitize rating
-        if(!"rating" in req.body) throw "Missing rating"
+        if(!("rating" in req.body)) throw "Missing rating"
         var rating = parseInt(req.body.rating)
         //Can only rate 0,(-)1,(-)2
         if((rating !== 0) && (Math.abs(rating) !== 1) && (Math.abs(rating) !== 2)) throw "Invalid rating"

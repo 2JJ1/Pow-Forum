@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
 
+const buildErrorMessage = require("../../../../my_modules/errorMessages")
+
 const Subcategories = mongoose.model("Subcategories")
 const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
@@ -9,9 +11,13 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 router.post("/changecategory", async (req, res, next) => {
 	try{
-        let response = {success: false}
+        let { currentId, newName } = req.body
 
-        if(!"category" in req.body || !"categoryGroup" in req.body) return res.status(400).send("Invalid body")
+        console.log(req.body)
+
+        if(!("target" in req.body) || !("newCategory" in req.body)) {
+            return res.status(400).send({success: false, error: buildErrorMessage("missingRequiredFields", "category")})
+        }
         let {target, newCategory} = req.body
 
         //Fetch subcategory
@@ -19,7 +25,9 @@ router.post("/changecategory", async (req, res, next) => {
         if(!subcategory) return res.status(400).send("Subcategory does not exist")
 
         //Check new category exists
-        if(!await Categories.findOne({name: newCategory})) return res.status(400).send("Category does not exist")
+        if(!await Categories.findOne({name: newCategory})) {
+            return res.status(400).send({success: false, error: buildErrorMessage("doesNotExist", "category")})
+        }
 
         //Process change
         subcategory.category = newCategory
@@ -38,16 +46,14 @@ router.post("/changecategory", async (req, res, next) => {
         })
         .save()
         
-		//Code hasn't exited, so assume success
-		response.success = true
-        res.json(response)
+        res.send({success: true})
 
         //Log audit
 		new ForumAuditLogs({
             time: Date.now(),
 			type: "Rename category group",
             byUID: req.session.uid,
-            currentName,
+            currentId,
             newName
 		})
 		.save()

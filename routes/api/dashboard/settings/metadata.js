@@ -1,8 +1,6 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
 
-const {ValidateEmail, extractHostname} = require('../../../../my_modules/other')
-
 const ForumSettings = mongoose.model("ForumSettings")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 

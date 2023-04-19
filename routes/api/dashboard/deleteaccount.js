@@ -30,7 +30,7 @@ router.delete("/", async (req, res, next) => {
 	try{
         let response = {success: false}
 
-        if(!"uid" in req.body || !"grecaptcharesponse" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
+        if(!("uid" in req.body) || !("grecaptcharesponse" in req.body) || !("password" in req.body)) return res.status(400).send("Invalid body")
         let {uid, grecaptcharesponse, password, reason, keepForumContent} = req.body
 
         //Prevent bots/spam with Google captcha

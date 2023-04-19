@@ -10,7 +10,7 @@ class sanitizeHTML_wrapper {
 	
 	//Get's a persons role'ss by account user id
 	async GetRolesFromUID(uid){
-		let ClientRoles = await connection.query("SELECT roles FROM accounts WHERE uid=? LIMIT 1" , [uid])
+		let ClientRoles = await connection.query("SELECT roles FROM accounts WHERE uid=? LIMIT 1" , [uid]) // unsafe
 		.then(result => {
 			if(result.length){
 				return result[0].roles

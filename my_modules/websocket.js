@@ -11,7 +11,6 @@ const rolesAPI = require('./rolesapi');
 const notificationsAPI = require('./notifications')
 const HandleCommand = require('./chatcommands')
 const { ProcessMentions } = require('./pfapi');
-const { find } = require('./chatcommands/flatdbs/eightball');
 
 const Messages = mongoose.model("Messages")
 const Notifications = mongoose.model("Notifications")

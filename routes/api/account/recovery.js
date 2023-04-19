@@ -80,7 +80,7 @@ router.post('/', async (req, res, next) => {
 			.then(async result => {
 				if(result.length > 0){
 					let usernames = ""
-					for(index in result){
+					for(let index in result){
 						usernames += result[index].username + ", "
 					}
 					usernames = usernames.substr(0, usernames.length - 2) //Remove extra ", "

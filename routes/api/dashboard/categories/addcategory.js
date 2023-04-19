@@ -2,6 +2,8 @@ const router = require('express').Router()
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
+const buildErrorMessage = require("../../../../my_modules/errorMessages")
+
 const Categories = mongoose.model("Categories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
@@ -9,38 +11,28 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 router.post("/addcategory", async (req, res, next) => {
 	try{
-        let response = {success: false}
+        let { name } = req.body
 
-        if(!"name" in req.body) return res.status(400).send("Invalid request")
-        let {name} = req.body
+        if (!name || typeof name !== 'string') return res.status(400).json({ success: false, error: buildErrorMessage('missingRequiredFields', 'category') })
 
-        // Sanitize category name
+        const sanitized = escape(name)
+        if (sanitized.length < 3 || sanitized.length > 30) return res.status(400).json({ success: false, error: buildErrorMessage('lengthInvalid', 'category name') })
 
-        if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"
-        name = escape(name)
+        const existingCategory = await Categories.findOne({ name: sanitized })
+        if (existingCategory) return res.status(400).json({ success: false, error: buildErrorMessage('alreadyExists', 'category') })
 
-        if(await Categories.findOne({name})) throw "This category already exists"
- 
-        //Create new category
-        await new Categories({
-            name,
-        })
-        .save()
-        
-		//Code hasn't exited, so assume success
-		response.success = true
-        res.json(response)
+        const newCategory = new Categories({ name: sanitized })
+        await newCategory.save()
 
-        //Log audit
-		new ForumAuditLogs({
+        new ForumAuditLogs({
             time: Date.now(),
-            type: "Add category",
-            byUID: req.session.uid,
-            content: {
-                name,
-            },
+            type: 'Add Category',
+            by: req.session.uid,
+            content: { name: sanitized }
         })
         .save()
+
+        res.json({ success: true })
 	} 
 	catch(e){
 		next(e)

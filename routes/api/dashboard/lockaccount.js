@@ -15,8 +15,7 @@ router.post("/", async (req, res, next) => {
 
         let {uid, locked, reason} = req.body
         if(!uid) throw "Missing target user ID"
-        if(!'locked' in req.body) throw "Missing locked state"
-
+        if(!('locked' in req.body)) throw "Missing locked state"
         if(uid == req.session.uid) throw "Can't affect self"
 
         if(!await rolesapi.isClientOverpowerTarget(req.session.uid, uid)) throw "No permission"

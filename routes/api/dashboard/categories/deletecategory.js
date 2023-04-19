@@ -7,49 +7,44 @@ const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
+const buildErrorMessage = require("../../../../my_modules/errorMessages")
+
 const accountAPI = require('../../../../my_modules/accountapi')
 
 // 	/api/dashboard/categories
 
 router.delete("/deletecategory", async (req, res, next) => {
-	try{
-        let response = {success: false}
+	try {
+        const { name, password } = req.body
+        if(!name || !password) return res.status(400).json({ success: false, error: buildErrorMessage("missingRequiredFields", "name or password") })
 
-        if(!"name" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
-        let {name, password} = req.body
-
-        //First validate password
-        if(!await accountAPI.CheckPassword(req.session.uid, password)) throw "Incorrect password"
-
-        //Delete the category
-        await Categories.deleteOne({name})
-
-        //Delete related threads of all child categories
-        let subCategories = await Subcategories.find({category: name})
-        for(let subCategory of subCategories){
-            //Delete related threads
-            await Threads.deleteMany({category: subCategory._id})
-            await ThreadReplies.deleteMany({category: subCategory._id})
-            //TODO- Delete info related to thread replies(reacts...)
-            await subCategory.deleteOne()
+        // Validate password
+        if(!await accountAPI.CheckPassword(req.session.uid, password)) {
+            return res.status(400).json({ success: false, error: buildErrorMessage("specificFieldInvalid", "password") })
         }
 
-		//Code hasn't exited, so assume success
-		response.success = true
-        res.json(response)
+        await Promise.all([
+            Categories.deleteOne({name}),
+            Subcategories.deleteMany({category: name})
+        ])
 
-        //Log audit
-		new ForumAuditLogs({
+        const subCategoryIds = await Subcategories.find({category: name}).distinct('_id')
+        await Promise.all([
+            Threads.deleteMany({category: { $in: subCategoryIds } }),
+            ThreadReplies.deleteMany({category: { $in: subCategoryIds } })
+        ])
+
+		res.json({ success: true })
+
+        // Log audit
+		await new ForumAuditLogs({
             time: Date.now(),
             type: "Delete category",
             byUID: req.session.uid,
-            content: {
-                category: name,
-            },
-        })
-        .save()
-	} 
-	catch(e){
+            content: { category: name },
+        }).save()
+
+	} catch(e) {
 		next(e)
 	}
 })

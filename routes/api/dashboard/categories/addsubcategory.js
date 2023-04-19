@@ -1,68 +1,78 @@
-const router = require('express').Router()
-const mongoose = require("mongoose")
-const escape = require("escape-html")
+const router = require('express').Router();
+const mongoose = require("mongoose");
+const escape = require("escape-html");
 
-const Categories = mongoose.model("Categories")
-const Subcategories = mongoose.model("Subcategories")
-const ForumAuditLogs = mongoose.model("ForumAuditLogs")
+const buildErrorMessage = require("../../../../my_modules/errorMessages")
+
+const Categories = mongoose.model("Categories");
+const Subcategories = mongoose.model("Subcategories");
+const ForumAuditLogs = mongoose.model("ForumAuditLogs");
 
 // 	/api/dashboard/categories
 
 router.post("/addsubcategory", async (req, res, next) => {
-	try{
-        let response = {success: false}
+	try {
+		const { name, description, requiredRoles, group } = req.body;
 
-        if(!"name" in req.body || !"description" in req.body || !"requiredRoles" in req.body || !"group" in req.body) return res.status(400).send("Invalid body")
-        let {name, description, requiredRoles, group} = req.body
+		if(!name || !description || !group) {
+			return res.status(400).send({success: false, error: buildErrorMessage("missingRequiredFields", "subcategory")});
+		}
 
-        //Sanitize category name
-        if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"
-        name = escape(name)
-         // *Future* Make it so category names can be reused
-        if(await Subcategories.findOne({name})) throw "This category already exists"
- 
-        //Sanitize description
-        if(description < 3 || description.length > 250) throw "Description length must be between 3-250 characters"
-        description = escape(description)
+		const sanitizedCategoryName = escape(name.trim());
+		const sanitizedDescription = escape(description.trim());
 
-        //Process required roles
-        requiredRoles = requiredRoles.trim()
-        if(requiredRoles) requiredRoles = requiredRoles.split(",")
-        else requiredRoles = []
-        if(requiredRoles.length == 0) requiredRoles = undefined
+		if(sanitizedCategoryName.length < 3 || sanitizedCategoryName.length > 30) {
+			return res.status(400).send({success: false, error: buildErrorMessage("lengthInvalid", "subcategory name")});
+		}
+		if(sanitizedDescription.length < 3 || sanitizedDescription.length > 250) {
+			return res.status(400).send({success: false, error: buildErrorMessage("biggerLengthInvalid", "subcategory description")});
+		}
 
-        //It must be added to an existing group
-        let category = await Categories.findOne({name: group})
-        if(!category) return res.status(400).send("This category does not exist")
+		// Process required roles
+		let sanitizedRequiredRoles = requiredRoles.trim();
+		if(sanitizedRequiredRoles) {
+			sanitizedRequiredRoles = sanitizedRequiredRoles.split(",").map(role => role.trim());
+		}
+		else {
+			sanitizedRequiredRoles = [];
+		}
+		if(sanitizedRequiredRoles.length === 0) {
+			sanitizedRequiredRoles = undefined;
+		}
 
-        //Create new category
-        await new Subcategories({
-            name,
-            description,
-            requiredRoles,
-            category: category.name,
-        })
-        .save()
-        
-		//Code hasn't exited, so assume success
-		response.success = true
-        res.json(response)
+		// Check if the group category exists
+		const category = await Categories.findOne({name: group});
+		if(!category) return res.status(400).send({success: false, error: buildErrorMessage("doesNotExist", "category")});
 
-        //Log audit
+		// Check if the subcategory already exists
+		if(await Subcategories.findOne({name: sanitizedCategoryName})) {
+			return res.status(400).send({success: false, error: buildErrorMessage("alreadyExists", "subcategory")});
+		}
+
+		// Create new subcategory
+		await new Subcategories({
+			name: sanitizedCategoryName,
+			description: sanitizedDescription,
+			requiredRoles: sanitizedRequiredRoles,
+			category: category.name
+		}).save();
+
+		//Log audit
 		new ForumAuditLogs({
-            time: Date.now(),
-            type: "Add category",
-            byUID: req.session.uid,
-            content: {
-                category: name,
-                group: group.name,
-            },
-        })
-        .save()
-	} 
-	catch(e){
-		next(e)
-	}
-})
+			time: Date.now(),
+			type: "Add subcategory",
+			byUID: req.session.uid,
+			content: {
+				category: sanitizedCategoryName,
+				group: category.name,
+			},
+		}).save();
 
-module.exports = router
+		res.send({success: true});
+	}
+	catch(e) {
+		next(e);
+	}
+});
+
+module.exports = router;

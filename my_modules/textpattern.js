@@ -14,46 +14,24 @@ exports.autoResponders = {
 }
 
 //Checks if string has all of the strings in the words array
-function TextHasWords(text, words){
-	//Simplify parsing
-	text = text.toLowerCase()
-	
-	//Check all words
-	for(index in words){
-		//Define the word to check for
-		let word = words[index]
-		
-		if(Array.isArray(word)){
-			// Must contain either of the words in the array
-			
-			let hasWord = false
-			
-			for(subword in word){
-				let _word = word[subword].toLowerCase();
-				
-				//Check if string has the word
-				if(text.indexOf(_word) !== -1){
-					//String has word
-					hasWord = true
-					break
+function TextHasWords(text, words) {
+	text = text.toLowerCase();
+	for (let word of words) {
+		if (Array.isArray(word)) {
+			let foundSubword = false;
+			for (let subword of word) {
+				if (text.includes(subword.toLowerCase())) {
+					foundSubword = true;
+					break;
 				}
 			}
-			
-			if(!hasWord) return false;
-		} 
-		else {
-			//Must contain the word
-			
-			//Simplify parsing
-			word = word.toLowerCase();
-			
-			//If string does not have the word
-			if(text.indexOf(word) === -1) return false
+			if (!foundSubword) return false;
+		} else if (!text.includes(word.toLowerCase())) {
+			return false;
 		}
 	}
-	//No early exit, so must've passed
-	return true
-}
+	return true;
+} 
 
 module.exports = function(text){
     for(var i=0; i<exports.autoResponders.checkers.length; i++){ //Goes through each checker

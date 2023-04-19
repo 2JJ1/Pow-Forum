@@ -2,92 +2,92 @@ const router = require('express').Router()
 const mongoose = require("mongoose")
 const escape = require("escape-html")
 
+const buildErrorMessage = require("../../../../my_modules/errorMessages")
+
 const Subcategories = mongoose.model("Subcategories")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
-// 	/api/dashboard/categories
-
 router.post("/editsubcategory", async (req, res, next) => {
-	try{
-        let response = {success: false}
-        
-        if(!"id" in req.body || !"currentName" in req.body || !"newName" in req.body || !"newDescription" in req.body || !"requiredRoles" in req.body) return res.status(400).send("Invalid body")
-        let {id, currentName, newName, newDescription, requiredRoles} = req.body
+  try {
+    let { id, currentName, newName, newDescription, requiredRoles } = req.body
 
-        //Sanitize name
-        if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
-        newName = escape(newName)
+    if (!id || !currentName || !newName || !newDescription) {
+      return res.status(400).send({ success: false, error: buildErrorMessage("missingRequiredFields", "subcategory") })
+    }
 
-        //Sanitize description
-        if(newDescription < 3 || newDescription.length > 250) throw "Description length must be between 3-250 characters"
-        newDescription = escape(newDescription)
+    // Sanitize input
+    newName = escape(newName.trim())
+    newDescription = escape(newDescription.trim())
 
-        //Fetch category
-        let category = await Subcategories.findById(id)
-        if(!category) throw "Category does not exist"
+    if (newName.length < 3 || newName.length > 30) { 
+      return res.status(400).send({ success: false, error: buildErrorMessage("lengthInvalid", "subcategory name") })
+    }
 
-        // Process update
-        if(category.name !== newName){
-            category.name = newName
+    if (newDescription.length < 3 || newDescription.length > 250) {
+       return res.status(400).send({ success: false, error: buildErrorMessage("biggerLengthInvalid", "subcategory description") })
+    }
 
-            new ForumAuditLogs({
-                time: Date.now(),
-                type: "Rename category",
-                byUID: req.session.uid,
-                content: {
-                    oldName: currentName,
-                    newName
-                },
-            })
-            .save()
-        }
+    // Fetch category
+    const category = await Subcategories.findById(id)
 
-        if(category.description !== newDescription){
-            category.description = newDescription
+    if (!category) return res.status(400).send({ success: false, error: buildErrorMessage("doesNotExist", "subcategory") })
 
-            new ForumAuditLogs({
-                time: Date.now(),
-                type: "Change subcategory description",
-                byUID: req.session.uid,
-                content: {
-                    category: newName,
-                    description: newDescription,
-                },
-            })
-            .save()
-        }
+    // Process update
+    if (category.name !== newName) {
+      category.name = newName
+      
+      new ForumAuditLogs({
+        time: Date.now(),
+        type: "Rename subcategory",
+        byUID: req.session.uid,
+        content: {
+            oldName: currentName,
+            newName
+        },
+      })
+      .save()
+    }
 
+    if (category.description !== newDescription) {
+      category.description = newDescription
 
-        //Process required roles
-        requiredRoles = requiredRoles.trim()
-        if(requiredRoles) requiredRoles = requiredRoles.split(",")
-        else requiredRoles = []
-        if(JSON.stringify(category.requiredRoles) !== JSON.stringify(requiredRoles)){
-            category.requiredRoles = requiredRoles
-            if(requiredRoles.length == 0) category.requiredRoles = undefined
+        new ForumAuditLogs({
+            time: Date.now(),
+            type: "Change subcategory description",
+            byUID: req.session.uid,
+            content: {
+                subcategory: category.name,
+                description: newDescription,
+            },
+        })
+        .save()
+    }
 
-            new ForumAuditLogs({
-                time: Date.now(),
-                type: "sategory required roles",
-                byUID: req.session.uid,
-                content: {
-                    id,
-                    requiredRoles: JSON.stringify(requiredRoles),
-                },
-            })
-            .save()
-        }
+    requiredRoles = requiredRoles.trim()
 
-        //Officiate update
-        await category.save()
-        
-		//Code hasn't exited, so assume success
-		response.success = true
-        res.json(response)
-	} 
-	catch(e){
-		next(e)
-	}
+    if (JSON.stringify(category.requiredRoles) !== JSON.stringify(requiredRoles)) {
+        category.requiredRoles = requiredRoles
+
+        if (requiredRoles.length === 0) category.requiredRoles = undefined
+
+        new ForumAuditLogs({
+            time: Date.now(),
+            type: "Change subcategory required roles",
+            byUID: req.session.uid,
+            content: {
+                id,
+                requiredRoles,
+            },
+        })
+        .save()
+    }
+
+    await category.save()
+
+    res.json({ success: true })
+  } catch (e) {
+    next(e)
+  }
 })
 
 module.exports = router
