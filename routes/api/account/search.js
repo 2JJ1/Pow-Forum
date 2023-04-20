@@ -5,9 +5,9 @@ const buildpfp = require('../../../my_modules/buildpfp')
 const rolesAPI = require('../../../my_modules/rolesapi')
 const accountAPI = require('../../../my_modules/accountapi')
 const {EscapeRegex} = require('../../../my_modules/other')
+const { monthNames } = require('../../../my_modules/month')
 
 const Accounts = mongoose.model('Accounts')
-const { monthNames } = require('../../../my_modules/month')
 
 // 	/api/account/search
 

@@ -7,9 +7,9 @@ const rolesapi = require('../../my_modules/rolesapi')
 const accountAPI = require('../../my_modules/accountapi')
 const badges = require("../../my_modules/badges")
 const onlinetracker = require("../../my_modules/onlinetracker")
-const buildpfp = require("../../my_modules/buildpfp")
 const { ProcessMentions } = require('../../my_modules/pfapi')
 const { CompileNotifications } = require('../../my_modules/notifications')
+const { monthNames } = require('../../my_modules/month')
 
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 const Categories = mongoose.model("Categories")
@@ -19,8 +19,6 @@ const ThreadReplies = mongoose.model("ThreadReplies")
 const Notifications = mongoose.model("Notifications")
 const PinnedThreads = mongoose.model("PinnedThreads")
 const DownloadLinks = mongoose.model("DownloadLinks")
-
-const { monthNames } = require('../../my_modules/month')
 
 //Display's thread page on forum
 router.get('/:tid', async (req, res, next) => {
