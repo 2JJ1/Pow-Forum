@@ -120,6 +120,15 @@ exports.TrackLogin = async function(uid, ip){
     }
 }
 
+exports.CountAccountsOnIp = async function(ip, daysRange){
+    let filter = { ip }
+
+    if(daysRange) filter.date = { $gt: new Date(Date.now() - 1000*60*60*24*daysRange) }
+
+    let sharedAccounts = await LoginHistories.distinct('uid', filter)
+    return sharedAccounts.length
+}
+
 exports.validateTopic = function(topic){
     //Check that the topic is family friendly
     let isClean = phraseblacklist.isClean(topic.toLowerCase())
