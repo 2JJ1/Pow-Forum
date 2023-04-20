@@ -53,6 +53,9 @@
 
                 let form = new FormData(document.getElementById('registerform'))
 
+                if(form.get('password') !== form.get('confirmpassword'))
+                    return document.getElementById('req_Response').innerHTML = "Password confirmation must be the same as password"
+
                 fetch('/api/account/register', {
 					method: "POST",
                     headers: {
@@ -63,7 +66,6 @@
                         email: form.get('email'),
                         username: form.get('username'),
                         password: form.get('password'),
-                        confirmpassword: form.get('confirmpassword'),
                     }),
 				})
 				.then(res => res.json())

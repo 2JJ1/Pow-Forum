@@ -10,7 +10,7 @@ const fetch = require('node-fetch')
 
 const other = require('../../../my_modules/other')
 const recaptcha = require('../../../my_modules/captcha')
-const email = require('../../../my_modules/email')
+const { isMajorEmailDomain, SendBasicEmail } = require('../../../my_modules/email')
 const accountAPI = require('../../../my_modules/accountapi')
 const pfAPI = require('../../../my_modules/pfapi')
 
@@ -33,90 +33,78 @@ router.post('/', async (req, res, next) => {
 		//Must complete google captcha first
 		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
 			throw "Captcha failed"
+
+		let { username, email, password } = req.body
 	
-		//Sanitization
-		var _POST = req.body
-		var keyvalues = {}
-		if('username' in _POST){
-			let username = req.body.username
-			
-			if(!(username.length >= 3 && username.length <= 15)) throw "Username must be 3-15 characters in length"
-			
-			if(!other.isAlphaNumeric_(username)) throw "Only letters, numbers, and underscore are allowed"
-
-			let isClean = phraseblacklist.isClean(username.toLowerCase())
-			if (typeof isClean === "string") throw `Your username contains a banned phrase: ${isClean}`
-			
-			let existingAccount = await accountAPI.fetchAccount(username)
-			if(existingAccount) throw "Username is taken"
-			
-			//No early exit, so pass
-			//No need to escape since its been sanitized, but better safe than sorry
-			keyvalues.username = escape(username)
-		} 
-		else throw "Missing username"
+		//Validate username
+		if(!username) throw "Missing username"
+		if(!(username.length >= 3 && username.length <= 15)) throw "Username must be 3-15 characters in length"
 		
-		if('email' in _POST){
-			req.body.email = req.body.email.toLowerCase()
-			if(!other.ValidateEmail(req.body.email)) throw "Invalid email"
-			keyvalues.email = escape(req.body.email)
-			if(!email.isMajorEmailDomain(req.body.email)) throw "We only allow email addresses from major email providers, such as Gmail."
-			if(await accountAPI.emailTaken(req.body.email)) throw "An account already exists with this email" 
+		//No need to escape username because of alphanumeric_ limit
+		if(!other.isAlphaNumeric_(username)) throw "Only letters, numbers, and underscore are allowed"
 
-			//Uses gravatar for pfp if one exists for their email
-			let hashedEmail = md5(req.body.email)
-			await fetch(`https://en.gravatar.com/${hashedEmail}.json`)
-			.then(res => res.json())
-			.then(res => {
-				if(res !== "User not found") {
-					keyvalues.profilepicture = "https://www.gravatar.com/avatar/" + hashedEmail
-				}
-			})
-		} 
-		else throw "Missing email"
-
+		let isClean = phraseblacklist.isClean(username.toLowerCase())
+		if (typeof isClean === "string") throw `Your username contains a banned phrase: ${isClean}`
 		
-		if('password' in _POST){
-			let password = _POST.password
-			
-			let validatedPassword = accountAPI.ValidatePassword(password)
-			if(validatedPassword !== true) throw validatedPassword
-			
-			//No need to sanitize password. It can be what ever they want!
-			//No need to escape since their password wouldn't be displayed as html anywhere. It may also interfere with authentication
-			keyvalues.password = await bcrypt.hash(password, 10)
-		} 
-		else throw "Missing password"
-
-		if('confirmpassword' in _POST){
-			if(_POST.password !== _POST.confirmpassword)
-				throw "Password confirmation must be the same as password"
-		} 
-		else throw "Missing password confirmation"
+		let existingAccount = await accountAPI.fetchAccount(username)
+		if(existingAccount) throw "Username is taken"
 		
+		//Validate & sanitze email
+		if(!email) throw "Missing email"
+		email = email.toLowerCase()
+		if(!other.ValidateEmail(email)) throw "Invalid email"
+		email = escape(email)
+		if(!isMajorEmailDomain(email)) throw "We only allow email addresses from major email providers, such as Gmail."
+		if(await accountAPI.emailTaken(email)) throw "An account already exists with this email" 
+
+		//Uses gravatar for pfp if one exists for their email
+		let toAttach = {}
+		let hashedEmail = md5(email)
+		await fetch(`https://en.gravatar.com/${hashedEmail}.json`)
+		.then(res => res.json())
+		.then(res => {
+			if(res !== "User not found") {
+				toAttach.profilepicture = "https://www.gravatar.com/avatar/" + hashedEmail
+			}
+		})
+
+		if(!password) throw "Missing password"
+		let validatedPassword = accountAPI.ValidatePassword(password)
+		if(validatedPassword !== true) throw validatedPassword
+		
+		//No need to sanitize password. It can be what ever they want!
+		//No need to escape since their password wouldn't be displayed as html anywhere. It may also interfere with authentication
+		password = await bcrypt.hash(password, 10)
+
 		//Creates verification session
 		let hash = crypto.randomBytes(64).toString('hex');
-		keyvalues.emailVerification = {
+		let emailVerification = {
 			token: hash,
 			lastSent: new Date()
 		}
 		
 		//No exit, so create account because sanitization passed
-		let newAccount = await new Accounts(keyvalues)
+		let newAccount = await new Accounts({
+			email, 
+			username, 
+			password, 
+			emailVerification, 
+			...toAttach
+		})
 		.save()
 
 		req.session.uid = newAccount._id
 
 		//Send email verification request via email
 		var emailBody = 'Hello,\n\n' +
-		`Someone has signed up for the account, ${keyvalues.username}(ID:${req.session.uid}) at ${process.env.FORUM_URL} using your email. To verify this address, please visit the link below. In doing so, you remove restriction from services such as posting to the forum and enable higher account security.\n\n` +
+		`Someone has signed up for the account, ${username}(ID:${req.session.uid}) at ${process.env.FORUM_URL} using your email. To verify this address, please visit the link below. In doing so, you remove restriction from services such as posting to the forum and enable higher account security.\n\n` +
 		`${process.env.FORUM_URL}/verify?token=${hash}\n\n` + 
 		`This message was generated by ${process.env.FORUM_URL}.`
 		
-		email.SendBasicEmail(keyvalues.email, `${(await ForumSettings.findOne({type: "title"})).value} | Email Verification`, emailBody)
+		SendBasicEmail(email, `${(await ForumSettings.findOne({type: "title"})).value} | Email Verification`, emailBody)
 		.catch(err=>{
 			//Handle the error, but allow account to remain created successfully
-			console.error(`Issue when sending the email verification at register for @${req.session.uid} ${keyvalues.email}: `, err)
+			console.error(`Issue when sending the email verification at register for @${req.session.uid} ${email}: `, err)
 		})
 
 		//Report successful account creation
