@@ -10,10 +10,10 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 router.post("/addsubcategory", async (req, res, next) => {
 	try{
-        let response = {success: false}
+        let response = { success: false }
 
-        if(!"name" in req.body || !"description" in req.body || !"requiredRoles" in req.body || !"group" in req.body) return res.status(400).send("Invalid body")
-        let {name, description, requiredRoles, group} = req.body
+        let { name, description, requiredRoles, group } = req.body
+        if(!name || !description || !requiredRoles || !group) throw "Invalid request"
 
         //Sanitize category name
         if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"

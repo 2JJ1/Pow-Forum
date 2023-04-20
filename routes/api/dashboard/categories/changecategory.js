@@ -9,10 +9,10 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 router.post("/changecategory", async (req, res, next) => {
 	try{
-        let response = {success: false}
+        let response = { success: false }
 
-        if(!"category" in req.body || !"categoryGroup" in req.body) return res.status(400).send("Invalid body")
         let {target, newCategory} = req.body
+        if(!target || !newCategory) throw "Invalid request"
 
         //Fetch subcategory
         let subcategory = await Subcategories.findById(target)

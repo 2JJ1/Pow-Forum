@@ -14,8 +14,8 @@ router.delete("/deletesubcategory", async (req, res, next) => {
 	try{
         let response = {success: false}
 
-        if(!"category" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
-        let {id, password} = req.body
+        let {id, category, password} = req.body
+        if(!category || !password) throw "Invalid request"
         id = parseInt(id)
 
         //First validate password

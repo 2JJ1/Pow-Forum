@@ -15,7 +15,8 @@ router.post("/", async (req, res, next) => {
 
         let {uid, locked, reason} = req.body
         if(!uid) throw "Missing target user ID"
-        if(!'locked' in req.body) throw "Missing locked state"
+        //Boolean value, so use in operator
+        if(!('locked' in req.body)) throw "Invalid request"
 
         if(uid == req.session.uid) throw "Can't affect self"
 

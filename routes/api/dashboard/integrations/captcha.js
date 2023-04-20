@@ -7,7 +7,7 @@ const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/integrations
 
-router.post("/grecaptcha3", async (req, res, next) => {
+router.post("/captcha", async (req, res, next) => {
 	try{
         let response = {success: false}
 
@@ -24,19 +24,19 @@ router.post("/grecaptcha3", async (req, res, next) => {
         let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
 
         if(secret !== "****") {
-            parsedEnv.CAPTCHAV3_APIKEY = secret
-            process.env.CAPTCHAV3_APIKEY = secret
+            parsedEnv.CAPTCHA_APIKEY = secret
+            process.env.CAPTCHA_APIKEY = secret
         }
 
-        parsedEnv.CAPTCHAV3_SITEKEY = public
-        process.env.CAPTCHAV3_SITEKEY = public
+        parsedEnv.CAPTCHA_SITEKEY = public
+        process.env.CAPTCHA_SITEKEY = public
 
         fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
 
         //Log audit
 		new ForumAuditLogs({
             time: Date.now(),
-            type: "captcha v3 updated",
+            type: "captcha v2 updated",
             byUID: req.session.uid,
         })
         .save()

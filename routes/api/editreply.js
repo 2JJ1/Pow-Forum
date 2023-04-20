@@ -24,10 +24,15 @@ router.post('/edit', async (req, res, next) => {
 		// Check if all necessary post fields exist
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw "Must be logged in"
+
+		let { trid, content } = req.body
 		
-		let trid = parseInt(req.body.trid)
+		trid = parseInt(trid)
 		if(!trid) throw "Thread reply ID not specified"
 		if(!Number.isInteger(trid)) throw "Invalid thread id"
+
+		if(!content) throw "Missing content"
+		if(typeof content !== "string") throw "Invalid request"
 
 		//Get account and its roles
 		let account = await accountAPI.fetchAccount(req.session.uid)
@@ -39,7 +44,7 @@ router.post('/edit', async (req, res, next) => {
 		var isOriginalPost = originalPost._id === parseInt(trid)
 
 		//Escape content for safe HTMl display
-		let safeContent = ThreadSanitizeHTML(req.body.content)
+		let safeContent = ThreadSanitizeHTML(content)
 
 		//Converts the plain HTML text to a workable DOM
 		let dom = new JSDOM(safeContent)
@@ -71,8 +76,6 @@ router.post('/edit', async (req, res, next) => {
 		//<-20 rep cant edit or create replies
 		if(reputation<=-20) throw "Your reputation is too low"
 
-		//Content must exist and length between 10 - 5000 chars
-		if(!('content' in req.body)) throw "Invalid content"
 		//Patrons, VIPs, and users with 10+ rep get an increased OP character limit
 		var characterLimit = await rolesAPI.isSupporter(account.roles) || reputation > 10 ? 15000 : 8000;
 		//Original posts should have long content so it will have a higher chance of community engagement

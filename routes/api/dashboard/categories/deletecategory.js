@@ -13,11 +13,11 @@ const accountAPI = require('../../../../my_modules/accountapi')
 
 router.delete("/deletecategory", async (req, res, next) => {
 	try{
-        let response = {success: false}
+        let response = { success: false }
 
-        if(!"name" in req.body || !"password" in req.body) return res.status(400).send("Invalid body")
         let {name, password} = req.body
-
+        if(!name || !password) throw "Invalid request"
+        
         //First validate password
         if(!await accountAPI.CheckPassword(req.session.uid, password)) throw "Incorrect password"
 

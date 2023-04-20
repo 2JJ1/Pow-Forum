@@ -145,7 +145,7 @@
                 if(!public) return alert("Missing public site key")
                 
                 //Send update request
-                fetch('/api/dashboard/integrations/grecaptcha2', {
+                fetch('/api/dashboard/integrations/captcha', {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json',

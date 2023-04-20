@@ -12,15 +12,16 @@ router.post("/editcategorygroupname", async (req, res, next) => {
 	try{
         let response = {success: false}
 
-        if(!"currentName" in req.body || !"newName" in req.body) return res.status(400).send("Invalid body")
         let {currentName, newName} = req.body
+        if(!currentName || !newName) throw "Invalid request"
         
-        //Sanitize name
+        //Validate name
         if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
+        //Sanitize name
         newName = escape(newName)
 
         let category = await Categories.findOneAndUpdate({name: currentName}, {name: newName})
-        if(!category) return res.status(400).send("Category group does not exist")
+        if(!category) throw "Category group does not exist"
 
         let subcategories = await Subcategories.find({category: currentName})
         for (let subcategory of subcategories){

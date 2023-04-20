@@ -143,7 +143,7 @@ module.exports = async (socket) => {
 			if (await rateLimitedChats.removeTokens(1) < 0) throw "Chat system has been throttled"
 
 			//Sanitize recipient
-			if (!"to" in msg || !/\d+/.test(msg.to)) throw "Invalid recipient"
+			if (!("to" in msg) || !/\d+/.test(msg.to)) throw "Invalid recipient"
 			msg.to = parseInt(msg.to)
 			if (msg.to == socket.uid) throw "You can not message yourself"
 

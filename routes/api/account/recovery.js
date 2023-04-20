@@ -115,11 +115,11 @@ router.post('/passreset', async (req, res, next) => {
 	try {
 		let response = {success: false}
 
-		if(!('token' in req.body)) throw 'Missing token'
-		let token = req.body.token
+		let { token, password } = req.body
+
+		if(!token) throw 'Missing token'
 		
-		if(!('password' in req.body)) throw 'Missing password'
-		let password = req.body.password
+		if(!password) throw 'Missing password'
 
 		// Validate reset session
 		//Fetch session
