@@ -22,6 +22,7 @@ function replaceTextInDOM(element, pattern, replacement) {
  * @param options An object which contains your options
  */
 async function HTMLToOembed(html, options){
+    return console.log("Temp disabled")
     //Default options
     options = options || {}
 
@@ -35,7 +36,7 @@ async function HTMLToOembed(html, options){
         /https:\/\/(i\.)?redd\.it/,
         /https:\/\/(i\.)?imgur\.com/,
         /https:\/\/(i\.)?gyazo\.com/,
-        /https:\/\/cdn\.discordapp\.com/,
+        /https:\/\/(cdn|media)\.discordapp\.com/,
         /https:\/\/media\.discordapp\.net/,
         new RegExp("https?:\/\/([a-zA-Z0-9-]*\.)?" + document.location.origin.replace(/^[^.]+\./g, "")),
     ]
@@ -58,7 +59,7 @@ async function HTMLToOembed(html, options){
         if(options.imgFile){
             let matches = (fromString ? html : html.innerHTML).match(/https:\/\/([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif|webp))/ig)
             matches = [...new Set(matches)]
-            for (const match of matches) {
+            for (let match of matches) {
                 //If a whitelist is specified, check if the matched URL's domain is whitelisted
                 if("fileDomainWhitelist" in options){
                     //Do not convert this match because it is not a whitelisted domain
@@ -69,6 +70,10 @@ async function HTMLToOembed(html, options){
 
                 //Inserts embed; Replaces image link with img tag
                 let rx = new RegExp(match, 'g')
+                console.log("1", match)
+                match = pFUtils.escapeHTML(match)
+                console.log("2", match)
+                console.log(fromString)
                 let replacement = `<img src="${match}"/>`
                 if(fromString) html = html.replaceAll(rx, replacement)
                 else replaceTextInDOM(html, rx, replacement)
