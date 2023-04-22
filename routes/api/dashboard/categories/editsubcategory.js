@@ -12,7 +12,8 @@ router.post("/editsubcategory", async (req, res, next) => {
         let response = { success: false }
         
         let {id, currentName, newName, newDescription, requiredRoles} = req.body
-        if(!id, currentName, !newName, !newDescription, !requiredRoles) throw "Invalid request"
+        console.log(id, currentName, newName, newDescription, requiredRoles)
+        if(!id || !currentName || !newName || !newDescription) throw "Invalid request"
 
         //Sanitize name
         if(newName < 3 || newName.length > 30) throw "Category name must be between 3-30 characters"
