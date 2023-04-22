@@ -22,7 +22,6 @@ function replaceTextInDOM(element, pattern, replacement) {
  * @param options An object which contains your options
  */
 async function HTMLToOembed(html, options){
-    return console.log("Temp disabled")
     //Default options
     options = options || {}
 
@@ -48,6 +47,10 @@ async function HTMLToOembed(html, options){
 
     //Setup
     let fromString = typeof html === 'string'
+
+    if(fromString) return html
+    else return console.log("Temp disabled")
+
 
     //In case of a bug, we don't want to fail to display the content
     //Let alone halt the entire web page
