@@ -10,7 +10,10 @@ function replaceTextInDOM(element, pattern, replacement) {
             case window.Node.TEXT_NODE: {
                 if(!node.parentElement) continue
                 if(node.nodeValue === "\n") continue
-                node.parentElement.innerHTML = node.parentElement.innerHTML.replace(pattern, replacement)
+                let elem = document.createElement("span")
+                node.textContent = pFUtils.escapeHTML(node.textContent)
+                elem.innerHTML = node.textContent.replace(pattern, replacement)
+                node.replaceWith(elem)
                 break;
             }
             case window.Node.DOCUMENT_NODE:
@@ -53,9 +56,8 @@ async function HTMLToOembed(html, options){
     try {
         //Get all links
         //Regex considers html encoding
-        let links = (fromString ? html : html.innerHTML).match(/https:\/\/[a-z0-9\-_]+\.[a-z0-9\-_]+[a-z0-9\-_\/\.\?\&=;]+/ig)
+        let links = (fromString ? html : html.textContent).match(/https:\/\/[a-z0-9\-_]+\.[a-z0-9\-_]+[a-z0-9\-_\/\.\?\&=;]+/ig)
         for(let link of [...new Set(links)]){
-            let rx = new RegExp(link.replaceAll(".", "\\.").replaceAll("?", "\\?"), 'g')
             let replacement
 
             // Image embeding
@@ -119,6 +121,10 @@ async function HTMLToOembed(html, options){
                 replacement = `<a href="${link}">${link}</a>`
             }
 
+            let rxString = link.replaceAll(".", "\\.").replaceAll("?", "\\?")
+            if(!fromString) rxString = pFUtils.escapeHTML(rxString)
+            let rx = new RegExp(rxString, 'g')
+            
             if(fromString) html = html.replaceAll(rx, replacement)
             else replaceTextInDOM(html, rx, replacement)
         }
