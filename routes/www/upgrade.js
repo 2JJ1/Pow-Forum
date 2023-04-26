@@ -13,6 +13,8 @@ router.get('/', async (req, res, next) => {
             stripePublicKey: process.env.STRIPE_PUBLIC_KEY,
         }
 
+        if(!req.session.uid) throw "Only logged in users can view this page"
+
         pagedata.accInfo.isVerifiedEmail = await accountAPI.emailVerified(req.session.uid)
 
         var account = await accountAPI.fetchAccount(req.session.uid)
