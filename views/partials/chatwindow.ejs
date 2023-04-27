@@ -1,5 +1,5 @@
 <% if(accInfo._id){ %>
-<link href="/css/chatwindow.css?v=21&v2=5" rel="stylesheet" type="text/css">
+<link href="/css/chatwindow.css?v=21&v2=6" rel="stylesheet" type="text/css">
 <p class="chat-btnopen theme1 border1 round">Open Chat</p>
 <div id="chat-window" class="theme1 round border1 less-padding">
     <div id="chat-windowheader">
@@ -263,60 +263,9 @@
             if(!document.querySelector("chat-group")) lastChat = {}
         })
 
-        // Drag and resize controls
-        let chatWindowCache = function(chatWindow){
-            let cache = localStorage.getItem("chatWindowSettings")
-            cache = JSON.parse(cache) || {}
-
-            if(chatWindow) {
-                let x = parseFloat(chatWindow.getAttribute('data-x')) || 0
-                let y = parseFloat(chatWindow.getAttribute('data-y')) || 0
-                let width = chatWindow.offsetWidth
-                let height = chatWindow.offsetHeight
-                
-                Object.assign(cache, {x, y, width, height})
-                localStorage.setItem("chatWindowSettings", JSON.stringify(cache))
-            }
-
-            return cache
-        }
-
-        interact('#chat-window').draggable({
-            allowFrom: '#chat-windowheader',
-            // enable inertial throwing
-            inertia: true,
-            // keep the element within the area of it's parent
-            modifiers: [
-                interact.modifiers.restrictRect({
-                    restriction: 'parent',
-                    endOnly: true
-                })
-            ],
-            listeners: {
-                // call this function on every dragmove event
-                move(event) {
-                    let target = event.target
-                    // keep the dragged position in the data-x/data-y attributes
-                    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
-                    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
-
-                    //Forces chat to remain above screen
-                    if(y > 0) y=0
-
-                    // translate the element
-                    target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
-
-                    // update the posiion attributes
-                    target.setAttribute('data-x', x)
-                    target.setAttribute('data-y', y)
-                },
-                end(e){
-                    chatWindowCache(e.target)
-                }
-            }
-        })
+        interact('#chat-window')
         .resizable({
-            edges: { left: true, top: true },
+            edges: { top: true, bottom: true, left: true },
             listeners: {
                 move(event) {
                     var target = event.target
@@ -332,44 +281,26 @@
 
                     target.setAttribute('data-x', x)
                     target.setAttribute('data-y', y)
-                },
-                end(e){
-                    chatWindowCache(e.target)
                 }
             },
             modifiers: [
                 // keep the edges inside the parent
                 interact.modifiers.restrictEdges({
-                    outer: 'parent'
+                    outer: '.mainxchat'
                 }),
                 // minimum size
                 interact.modifiers.restrictSize({
                     min: { 
                         width: 310, 
                         height: 410, 
+                    },
+                    max: {
+                        height: 600
                     }
                 })
             ],
             inertia: true
         })
-        //Load cached chat window position and size
-        if(screen.width > 400 && chatWindowCache()) {
-            //Fetches cache
-            let cache = chatWindowCache()
-            
-            //If browser window loads with different size, ensures chat window loads in bounds
-            let x = cache.x < (window.innerWidth-cache.width)*-1 ? (window.innerWidth-cache.width-50)*-1 : cache.x
-            let y = cache.y < (window.innerHeight-cache.height)*-1 ? (window.innerHeight-cache.height-50)*-1 : cache.y
-
-            //Loads cached position
-            chatWindow.setAttribute('data-x', x)
-            chatWindow.setAttribute('data-y', x)
-            chatWindow.style.transform = `translate(${x}px,${y}px)`
-
-            //Loads cached height and width
-            chatWindow.style.height = cache.height+"px"
-            chatWindow.style.width = cache.width+"px"
-        }
     </script>
 </div>
 <% } %>

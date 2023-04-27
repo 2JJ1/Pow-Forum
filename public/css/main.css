@@ -222,6 +222,13 @@ pre code *{
     cursor: pointer;
 }
 
+/* PF UI */
+
+.mainxchat{
+    display: flex;
+    position: relative;
+}
+
 /* Modal design */
 
 .modal{

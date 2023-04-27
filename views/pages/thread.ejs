@@ -32,239 +32,242 @@
         </div>
         <% } %>
 		<% include ../partials/global %>
-		<main class="screenPadding" style="max-width: 1100px; margin: auto">
-            <div class="theme2 round border1 padding">
-                <p>
-                    <a href="/">Categories</a> > 
-                    <a href="/#<%- threadData.category.category %>"><%- threadData.category.category %></a> >
-                    <a href="/c/<%= threadData.category._id %>"><%- threadData.category.name %></a> >
-                </p>
-                <h1 style="display: flex; justify-content: space-between;">
-                    <span id="topic"><%- threadData.title %></span>
-                    <% if(threadData.canEditTopic){ %><span id="btnEditTopic">Edit</span><% } %>
-                </h1>
-            </div>
-            <br/>
-            <div style="text-align: right">
-                <% if(threadData.canChangeForum){ %>
-                <button id="btn_changeforum" class="theme1 round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Forum</button>
-                <% } %>
-
-                <% if(threadData.canChangeForum){ %>
-                <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadLock(<%= !threadData.locked %>)"><% if(threadData.locked){ %>Unlock<% }else{ %>Lock<% } %></button>
-                <% } %>
-
-                <% if(clientIsMod){ %>
-                <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
-                <% } %>
-                <% if(threadData.canReply){ %>
-                <a href="#replyform" class="theme1 round border1 btn_newrelpy">New Reply</a>
-                <% } %>
-            </div> 
-            <br>
-            <% var lastReplier = null; %>
-            <% threadData.replies.forEach((obj, index) => { %>
-            <% var nextUId = threadData.replies[index+1] && threadData.replies[index+1].uid %>
-            <!--Open new reply group if previous replier is different-->
-            <% if(lastReplier !== obj.uid) { %>
-            <div class="theme1 replygroup round border1">
-                <div class="theme2 thread_replierdata">
-                    <a href="/profile?uid=<%= obj.uid %>"><div style="background-image: url('<%= obj.account.profilepicture %>')" class="thread_pfp"></div></a>
-                    <div class="userdesc" style="flex: 1">
-                        <a href="/profile?uid=<%= obj.uid %>"><p class="username <%= obj.account.highestRole %>">
-                            <% if(obj.account.isOnline){ %>
-                            <span class="online-icon"title="online"></span>
-                            <% } %>
-                            <%= obj.account.username %>
-                        </p></a>
-                        <p class="usertitle"><%- obj.account.alias || "" %></p>
-                        <% if(obj.account.badge){ %><img src="<%- obj.account.badge %>" class="badge" alt="<%= obj.account.highestRole %>"/><% } %>
-                    </div>
-                    <div class="userstats">
-                        <p>Posts: <%= obj.account.totalposts || "0" %></p>
-                        <p>Threads: <%= obj.account.totalthreads || "0" %></p>
-                        <p>Joined: <%= obj.account.joinDate || "?" %></p>
-                        <p>Reputation: <span class="<% if(obj.account.reputation>0){ %>good<% } %><% if(obj.account.reputation<0){ %>bad<% } %>"><%= obj.account.reputation %></span></p>
-                    </div>
-                </div>
-            <% } %>
-            <!--Reply Metadata-->
-            <div class="replycard" data-trid="<%= obj._id %>">
-                <div style="position: relative">
-                    <p class="note paddingx">
-                        <% if(ogTRID === obj._id){ %>
-                            <!--OP-->
-                            Posted 
-                        <% } else if(lastReplier === obj.uid){ %>
-                            <!--Previous replier, so stack-->
-                            Added
-                        <% } else { %>
-                            <!--New reply-->
-                            Replied 
-                        <% } %>
-                        <!--When this reply was made-->
-                        <script>document.write(TimeStamp.Beautify('<%= obj.date %>'))</script>
+        <div class="mainxchat">
+            <main class="screenPadding" style="max-width: 1100px; margin: auto">
+                <div class="theme2 round border1 padding">
+                    <p>
+                        <a href="/">Categories</a> > 
+                        <a href="/#<%- threadData.category.category %>"><%- threadData.category.category %></a> >
+                        <a href="/c/<%= threadData.category._id %>"><%- threadData.category.name %></a> >
                     </p>
+                    <h1 style="display: flex; justify-content: space-between;">
+                        <span id="topic"><%- threadData.title %></span>
+                        <% if(threadData.canEditTopic){ %><span id="btnEditTopic">Edit</span><% } %>
+                    </h1>
                 </div>
-
-                <!--Reply Content-->
-                <div class="replyEditor"></div>
-                <div 
-                class="thread_replycontent padding <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
-                <% if(obj.reputation <= 0){ %>
-                onclick="warnLinks(event)"
-                <% } %>
-                ><%- obj.content %></div>
-                <div class="replyEditorControls hidden padding">
-                    <button name="cancel" class="theme2 round border1 padding">Cancel</button>
-                    <button name="save" class="theme2 round border1 padding">Save Changes</button>
-                </div>
-
-                <!--Comments-->
-                <% if(obj.comments.length){ %>
-                <div class="comments padding lessgapchildren round">
-                    <p class="note">Comments</p>
-                    <div class="commentGroups gapchildren">
-                        <% let lastCommenter = null; %>
-                        <% let lastCommentId = null; %>
-                        <% obj.comments.forEach((comment, index) => { %>
-                        <% let nextCommentertUid = obj.comments[index+1] && obj.comments[index+1].uid %>
-                        <!--Open new reply group if previous replier is different-->
-                        <% if(lastCommenter !== comment.uid) { %>
-                        <div class="comment replygroup">
-                            <a class="commentPfp" style="background-image: url('<%= comment.account.profilepicture %>')" href="/profile?uid=<%= comment.uid %>"></a>
-                            <div>
-                                <p class="verticalCenter lessgapchildrenx">
-                                    <a class="username <%= comment.account.highestRole %>" href="/profile?uid=<%= comment.uid %>">
-                                        <% if(comment.account.isOnline){ %>
-                                        <span class="online-icon"title="online"></span>
-                                        <% } %>
-                                        <%= comment.account.username %>
-                                    </a>
-                                    <span><span class="<% if(comment.account.reputation>0){ %>good<% } %><% if(comment.account.reputation<0){ %>bad<% } %>"><%= comment.account.reputation %></span> Reputation</span>
-                                </p>
-                        <% } %>
-                                <!--Reply Metadata-->
-                                <div class="replycard" data-trid="<%= comment._id %>">
-                                    <div style="position: relative">
-                                        <p class="note">
-                                            <% if(ogTRID === comment._id){ %>
-                                                <!--OP-->
-                                                Posted 
-                                            <% } else if(lastCommenter === comment.uid){ %>
-                                                <!--Previous replier, so stack-->
-                                                Added
-                                            <% } else { %>
-                                                <!--New reply-->
-                                                Commented 
-                                            <% } %>
-                                            <!--When this reply was made-->
-                                            <script>document.write(TimeStamp.Beautify('<%= comment.date %>'))</script>
-                                        </p>
-                                    </div>
-                                    <!--Reply Content-->
-                                    <div class="replyEditor"></div>
-                                    <div 
-                                    class="thread_replycontent <% if(ogTRID !== comment._id){ %>limitReplyHeight<% } %>"
-                                    <% if(comment.reputation <= 0){ %>
-                                    onclick="warnLinks(event)"
-                                    <% } %>
-                                    ><%- comment.content %></div>
-                                    <div class="replyEditorControls hidden padding">
-                                        <button name="cancel" class="theme2 round border1 padding">Cancel</button>
-                                        <button name="save" class="theme2 round border1 padding">Save Changes</button>
-                                    </div>
-                                    <ul class="reply_menu verticalCenter gapchildrenx">
-                                        <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
-                                        <% if(accInfo._id === comment.uid){ %>
-                                        <li onclick="EditReply(<%= comment._id %>)">Edit</li>
-                                        <% } %>
-                                        <% if(comment.deletable === true){ %>
-                                        <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
-                                        <% } %>
-                                    </ul>
-                                </div>
-                        <!--Close reply group if the next replier is different-->
-                        <% if(nextCommentertUid !== comment.uid){ %>
-                            </div>
-                        </div>
-                        <% } %>
-                        <% lastCommenter = comment.uid %>
-                        <% lastCommentId = comment._id %>
-                        <% }) %>
-                    </div>
-                    <% if(obj.moreCommentsAvailable) { %>
-                    <button class="theme2 border1 round padding" onclick="LoadComments(this)">Load more</button>
+                <br/>
+                <div style="text-align: right">
+                    <% if(threadData.canChangeForum){ %>
+                    <button id="btn_changeforum" class="theme1 round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Forum</button>
                     <% } %>
-                </div>
-                <% } %>
-                <div class="hidden comment-creator padding lessgapchildren note">
-                    <div class="comment-creator-editor"></div>
-                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                    <div class="commentControls verticalCenter gapchildrenx">
-                        <p name="cancel" class="cursorpointer">Cancel</p>
-                        <p name="post" class="cursorpointer">Post</p>
-                    </div>
-                </div>
-                <ul class="reply_menu padding verticalCenter gapchildrenx">
-                    <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
+
+                    <% if(threadData.canChangeForum){ %>
+                    <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadLock(<%= !threadData.locked %>)"><% if(threadData.locked){ %>Unlock<% }else{ %>Lock<% } %></button>
+                    <% } %>
+
+                    <% if(clientIsMod){ %>
+                    <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
+                    <% } %>
                     <% if(threadData.canReply){ %>
-                    <li onclick="AddComment(<%= obj._id %>)">Comment</li>
+                    <a href="#replyform" class="theme1 round border1 btn_newrelpy">New Reply</a>
                     <% } %>
-                    <% if(accInfo._id === obj.uid){ %>
-                    <li onclick="EditReply(<%= obj._id %>)">Edit</li>
-                    <% } %>
-                    <% if(obj.deletable === true){ %>
-                    <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
-                    <% } %>
-                </ul>
-            </div>
+                </div> 
+                <br>
+                <% var lastReplier = null; %>
+                <% threadData.replies.forEach((obj, index) => { %>
+                <% var nextUId = threadData.replies[index+1] && threadData.replies[index+1].uid %>
+                <!--Open new reply group if previous replier is different-->
+                <% if(lastReplier !== obj.uid) { %>
+                <div class="theme1 replygroup round border1">
+                    <div class="theme2 thread_replierdata">
+                        <a href="/profile?uid=<%= obj.uid %>"><div style="background-image: url('<%= obj.account.profilepicture %>')" class="thread_pfp"></div></a>
+                        <div class="userdesc" style="flex: 1">
+                            <a href="/profile?uid=<%= obj.uid %>"><p class="username <%= obj.account.highestRole %>">
+                                <% if(obj.account.isOnline){ %>
+                                <span class="online-icon"title="online"></span>
+                                <% } %>
+                                <%= obj.account.username %>
+                            </p></a>
+                            <p class="usertitle"><%- obj.account.alias || "" %></p>
+                            <% if(obj.account.badge){ %><img src="<%- obj.account.badge %>" class="badge" alt="<%= obj.account.highestRole %>"/><% } %>
+                        </div>
+                        <div class="userstats">
+                            <p>Posts: <%= obj.account.totalposts || "0" %></p>
+                            <p>Threads: <%= obj.account.totalthreads || "0" %></p>
+                            <p>Joined: <%= obj.account.joinDate || "?" %></p>
+                            <p>Reputation: <span class="<% if(obj.account.reputation>0){ %>good<% } %><% if(obj.account.reputation<0){ %>bad<% } %>"><%= obj.account.reputation %></span></p>
+                        </div>
+                    </div>
+                <% } %>
+                <!--Reply Metadata-->
+                <div class="replycard" data-trid="<%= obj._id %>">
+                    <div style="position: relative">
+                        <p class="note paddingx">
+                            <% if(ogTRID === obj._id){ %>
+                                <!--OP-->
+                                Posted 
+                            <% } else if(lastReplier === obj.uid){ %>
+                                <!--Previous replier, so stack-->
+                                Added
+                            <% } else { %>
+                                <!--New reply-->
+                                Replied 
+                            <% } %>
+                            <!--When this reply was made-->
+                            <script>document.write(TimeStamp.Beautify('<%= obj.date %>'))</script>
+                        </p>
+                    </div>
 
-            <!--Close reply group if the next replier is different-->
-            <% if(nextUId !== obj.uid){ %>
-                <% if(obj.account.signature){ %>
-                <div class="signature theme2 padding"><%- obj.account.signature %></div>
-                <% } %>
-            </div>
-            <% } %>
-            <% lastReplier = obj.uid %>
-            <% }) %>
-            <% if(threadData.canReply){ %>
-            <br/>
-            <div id="replyform" class="theme1 round border1">
-                <% if(!accInfo._id){ %>
-                <a href="/login" class="requireLogin round">
-                    <p>Login to unlock the reply editor</p>
-                </a>
-                <% } %>
-                <h2 class="padding">Add your reply</h2>
-                <textarea id="editor"></textarea>
-                <div class="lessgapchildren padding">
-                    <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                    <button class="theme2 button" onclick="PostReply()">Post Reply</button>
-                    <p id="errormessage" style="color: var(--red); text-align: center"></p>
+                    <!--Reply Content-->
+                    <div class="replyEditor"></div>
+                    <div 
+                    class="thread_replycontent padding <% if(ogTRID !== obj._id){ %>limitReplyHeight<% } %>"
+                    <% if(obj.reputation <= 0){ %>
+                    onclick="warnLinks(event)"
+                    <% } %>
+                    ><%- obj.content %></div>
+                    <div class="replyEditorControls hidden padding">
+                        <button name="cancel" class="theme2 round border1 padding">Cancel</button>
+                        <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                    </div>
+
+                    <!--Comments-->
+                    <% if(obj.comments.length){ %>
+                    <div class="comments padding lessgapchildren round">
+                        <p class="note">Comments</p>
+                        <div class="commentGroups gapchildren">
+                            <% let lastCommenter = null; %>
+                            <% let lastCommentId = null; %>
+                            <% obj.comments.forEach((comment, index) => { %>
+                            <% let nextCommentertUid = obj.comments[index+1] && obj.comments[index+1].uid %>
+                            <!--Open new reply group if previous replier is different-->
+                            <% if(lastCommenter !== comment.uid) { %>
+                            <div class="comment replygroup">
+                                <a class="commentPfp" style="background-image: url('<%= comment.account.profilepicture %>')" href="/profile?uid=<%= comment.uid %>"></a>
+                                <div>
+                                    <p class="verticalCenter lessgapchildrenx">
+                                        <a class="username <%= comment.account.highestRole %>" href="/profile?uid=<%= comment.uid %>">
+                                            <% if(comment.account.isOnline){ %>
+                                            <span class="online-icon"title="online"></span>
+                                            <% } %>
+                                            <%= comment.account.username %>
+                                        </a>
+                                        <span><span class="<% if(comment.account.reputation>0){ %>good<% } %><% if(comment.account.reputation<0){ %>bad<% } %>"><%= comment.account.reputation %></span> Reputation</span>
+                                    </p>
+                            <% } %>
+                                    <!--Reply Metadata-->
+                                    <div class="replycard" data-trid="<%= comment._id %>">
+                                        <div style="position: relative">
+                                            <p class="note">
+                                                <% if(ogTRID === comment._id){ %>
+                                                    <!--OP-->
+                                                    Posted 
+                                                <% } else if(lastCommenter === comment.uid){ %>
+                                                    <!--Previous replier, so stack-->
+                                                    Added
+                                                <% } else { %>
+                                                    <!--New reply-->
+                                                    Commented 
+                                                <% } %>
+                                                <!--When this reply was made-->
+                                                <script>document.write(TimeStamp.Beautify('<%= comment.date %>'))</script>
+                                            </p>
+                                        </div>
+                                        <!--Reply Content-->
+                                        <div class="replyEditor"></div>
+                                        <div 
+                                        class="thread_replycontent <% if(ogTRID !== comment._id){ %>limitReplyHeight<% } %>"
+                                        <% if(comment.reputation <= 0){ %>
+                                        onclick="warnLinks(event)"
+                                        <% } %>
+                                        ><%- comment.content %></div>
+                                        <div class="replyEditorControls hidden padding">
+                                            <button name="cancel" class="theme2 round border1 padding">Cancel</button>
+                                            <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                                        </div>
+                                        <ul class="reply_menu verticalCenter gapchildrenx">
+                                            <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
+                                            <% if(accInfo._id === comment.uid){ %>
+                                            <li onclick="EditReply(<%= comment._id %>)">Edit</li>
+                                            <% } %>
+                                            <% if(comment.deletable === true){ %>
+                                            <li><span class="red btn_deletereply" data-trid="<%= comment._id %>">X</span></li>
+                                            <% } %>
+                                        </ul>
+                                    </div>
+                            <!--Close reply group if the next replier is different-->
+                            <% if(nextCommentertUid !== comment.uid){ %>
+                                </div>
+                            </div>
+                            <% } %>
+                            <% lastCommenter = comment.uid %>
+                            <% lastCommentId = comment._id %>
+                            <% }) %>
+                        </div>
+                        <% if(obj.moreCommentsAvailable) { %>
+                        <button class="theme2 border1 round padding" onclick="LoadComments(this)">Load more</button>
+                        <% } %>
+                    </div>
+                    <% } %>
+                    <div class="hidden comment-creator padding lessgapchildren note">
+                        <div class="comment-creator-editor"></div>
+                        <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
+                        <div class="commentControls verticalCenter gapchildrenx">
+                            <p name="cancel" class="cursorpointer">Cancel</p>
+                            <p name="post" class="cursorpointer">Post</p>
+                        </div>
+                    </div>
+                    <ul class="reply_menu padding verticalCenter gapchildrenx">
+                        <li><p class="btnLikeReply verticalCenter <% if(obj.liked){ %>liked<% } %>" data-trid="<%= obj._id %>"><%= obj.likes %></p></li>
+                        <% if(threadData.canReply){ %>
+                        <li onclick="AddComment(<%= obj._id %>)">Comment</li>
+                        <% } %>
+                        <% if(accInfo._id === obj.uid){ %>
+                        <li onclick="EditReply(<%= obj._id %>)">Edit</li>
+                        <% } %>
+                        <% if(obj.deletable === true){ %>
+                        <li><span class="red btn_deletereply" data-trid="<%= obj._id %>">X</span></li>
+                        <% } %>
+                    </ul>
                 </div>
-            </div>
-            <% } %>
-            <br>
-            <div style="text-align: right">
-                <% if((threadData.currentPage - 1) > 0) { %>
-                <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
+
+                <!--Close reply group if the next replier is different-->
+                <% if(nextUId !== obj.uid){ %>
+                    <% if(obj.account.signature){ %>
+                    <div class="signature theme2 padding"><%- obj.account.signature %></div>
+                    <% } %>
+                </div>
                 <% } %>
-                <% if(threadData.nextPageAvailable) { %>
-                <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage + 1 %>" class="theme1 round border1 btn_newrelpy">Next</a>
+                <% lastReplier = obj.uid %>
+                <% }) %>
+                <% if(threadData.canReply){ %>
+                <br/>
+                <div id="replyform" class="theme1 round border1">
+                    <% if(!accInfo._id){ %>
+                    <a href="/login" class="requireLogin round">
+                        <p>Login to unlock the reply editor</p>
+                    </a>
+                    <% } %>
+                    <h2 class="padding">Add your reply</h2>
+                    <textarea id="editor"></textarea>
+                    <div class="lessgapchildren padding">
+                        <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
+                        <button class="theme2 button" onclick="PostReply()">Post Reply</button>
+                        <p id="errormessage" style="color: var(--red); text-align: center"></p>
+                    </div>
+                </div>
                 <% } %>
-                <% if(threadData.nextPageAvailable) { %>
-                <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
-                <% } %>
-            </div>
-            <br>
-            <div class="theme2 border1 round" style="padding: 12px;">
-                <h3>Users viewing this thread:</h3>
-				<br>
-				<% include ../partials/onlinelist %>
-			</div>
-        </main>
+                <br>
+                <div style="text-align: right">
+                    <% if((threadData.currentPage - 1) > 0) { %>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
+                    <% } %>
+                    <% if(threadData.nextPageAvailable) { %>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage + 1 %>" class="theme1 round border1 btn_newrelpy">Next</a>
+                    <% } %>
+                    <% if(threadData.nextPageAvailable) { %>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
+                    <% } %>
+                </div>
+                <br>
+                <div class="theme2 border1 round" style="padding: 12px;">
+                    <h3>Users viewing this thread:</h3>
+                    <br>
+                    <% include ../partials/onlinelist %>
+                </div>
+            </main>
+            <% include ../partials/chatwindow %>
+		</div>
 		<% include ../partials/footer %>
         
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
