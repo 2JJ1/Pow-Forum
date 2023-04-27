@@ -196,11 +196,13 @@
                         src="${msg.sender.profilepicture}" 
                         alt="Profile Picture"/>
                     </a>
-                    <div class="chat-metadata">
-                        <span class="chat-username ${msg.sender.highestRole}">${msg.sender.username}</span>
-                        <span class="chat-timestamp">${TimeStamp.Beautify(msg.time)}</span>
+                    <div>
+                        <div class="chat-metadata">
+                            <span class="chat-username ${msg.sender.highestRole}">${msg.sender.username}</span>
+                            <span class="chat-timestamp">${TimeStamp.Beautify(msg.time)}</span>
+                        </div>
+                        <div class="chat-content"></div>
                     </div>
-                    <div class="chat-content"></div>
                 </li>`
                 document.querySelector(".chat-groups").innerHTML += card
             }
@@ -219,8 +221,8 @@
 
             //Adds actual chat content
             chatContent.innerHTML += `<p class="chat-row ${isMentioned ? "highlight" : ""}" data-id="${msg._id}">
-                <span class="content">${msg.content}</span>
                 ${canDelete ? `<span class="chat-row-delete" onclick="RequestDeleteChat(this)">x</span>` : ""}
+                <span class="content">${msg.content}</span>
             </p>`
 
             //Limit chats to prevent lag from bulk

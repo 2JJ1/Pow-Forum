@@ -88,6 +88,10 @@
     cursor: pointer;
 }
 
+.chat-group{
+    display: flex;
+}
+
 .chat-groups{
     flex: 1;
     overflow-y: auto;
@@ -97,12 +101,6 @@
 .chat-groups::-webkit-scrollbar{
     display: none;
     scrollbar-width: none;
-}
-
-.chat-profile{
-    display: flex;
-    float: left;
-    margin-right: var(--less-gap);
 }
 
 .chat-pfp{
@@ -145,6 +143,7 @@
 
 .chat-row{
     display: flex;
+    position: relative;
 }
 
 .chat-row .content{
@@ -163,9 +162,11 @@
 .chat-row-delete{
     display: none;
     color: var(--red);
-    float: right;
+    float: left;
     cursor: pointer;
     padding: 0 var(--less-gap);
+    position: absolute;
+    left: -23px;
 }
 
 .chat-input{
