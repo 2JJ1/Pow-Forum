@@ -13,7 +13,7 @@ router.post("/addsubcategory", async (req, res, next) => {
         let response = { success: false }
 
         let { name, description, requiredRoles, group } = req.body
-        if(!name || !description || !requiredRoles || !group) throw "Invalid request"
+        if(!name || !description || !group) throw "Invalid request"
 
         //Sanitize category name
         if(name < 3 || name.length > 30) throw "Category name must be between 3-30 characters"
