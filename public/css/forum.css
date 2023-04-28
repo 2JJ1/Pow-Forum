@@ -25,12 +25,6 @@ th{
     padding-bottom: 0;
 }
 
-.forum_btnnewthread{
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
-}
-
 #paginator{
     max-width: 350px;
     margin: auto;
@@ -55,15 +49,7 @@ th{
     display: flex;
     flex-wrap: wrap;
     justify-content: right;
-    margin-bottom: -12px;
-}
-
-.forumMenu > *{
-    margin-bottom: 12px;
-}
-
-#searchbar{
-    margin-left: 12px; 
+    gap: var(--gap);
 }
 
 input, select, option{

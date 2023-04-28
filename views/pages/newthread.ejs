@@ -19,12 +19,11 @@
 	<body class="container">
 		<% include ../partials/global %>
         <div class="mainxchat">
-            <main class="screenPadding" style="padding: 20px; max-width: 1100px; margin: auto">
+            <main class="screenPadding gapchildren padding" style="max-width: 1100px; margin: auto">
                 <div class="theme1 round border1 padding">
                     <p><a href="/">Categories</a> > <a href="/c/<%= forumData.category._id %>"><%= forumData.category.name %></a> ></p>
                     <h1>Thread creator</h1>
                 </div>
-                <br/>
                 <div class="lessgapchildren theme1 round border1">
                     <p class="bold padding">Topic</p>
                     <input id="topic" class="theme2 border1" type="text" placeholder="What do you want to talk about?" autocomplete="off"/>
@@ -40,7 +39,6 @@
                         <p id="errormessage" style="color: var(--red); text-align: center"></p>
                     </div>
                 </div>
-                <br/>
                 <div class="padding theme1 round border1">
                     <ul class="gapchildren">
                         <li>Direct image links (.jpg, .jpeg, .png, .gif, .mp4) from Streamable, Imgur, Gyazo, and Discord will automatically embed.</li>

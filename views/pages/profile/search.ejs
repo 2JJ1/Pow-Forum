@@ -13,12 +13,10 @@
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
-		<br>
-		<main>
+		<main class="gapchildren">
 			<form id="searchbar">
 				<input name="username" class="theme1 border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
 			</form>
-			<br>
 			<% if(accounts.length > 0){ %>
             <div id="cards">
                 <% for (var key in accounts){ %>
@@ -41,7 +39,6 @@
 			<% } else { %>
 			<p id="zeromatches">0 matches</p>
 			<% } %>
-			<br>
 			<% if(loadMore){ %><button id="btnLoadMore" class="theme1 border1 round button">Load More</button><% } %>
 		</main>
 		<% include ../../partials/footer %>

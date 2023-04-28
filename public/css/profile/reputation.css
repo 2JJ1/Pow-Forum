@@ -207,18 +207,20 @@ main{
 #reputationcontainer{
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-between;
+    gap: var(--gap);
     width: 100%;
 }
 
 .repcard{
     width: 250px;
     height: 180px;
-    margin-bottom: 12px;
     padding: 12px;
     overflow-y: auto;
     overflow-x: hidden;
     word-wrap: break-word;
+    flex-grow: .5;
+    margin: auto;
 }
 
 .date{

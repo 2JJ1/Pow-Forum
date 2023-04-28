@@ -16,7 +16,7 @@
 	<body class="container">
 		<% include ../partials/global %>
         <div class="mainxchat">
-            <main class="screenPadding" style="max-width: 1100px; margin: auto">
+            <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
                 <div class="theme2 round border1 padding">
                     <p>
                         <a href="/">Categories</a> > 
@@ -27,7 +27,6 @@
                     <h1><%- subcategory.name %></h1>
                     <p><%- subcategory.description %></p>
                 </div>
-                <br/>
                 <div class="forumMenu">
                     <select id="order" class="theme1 border1">
                         <option value="latestactive">Sort latest active</option>
@@ -35,10 +34,9 @@
                     </select>
                     <input id="searchbar" class="theme1 border1" type="text" placeholder="Search..." autocomplete="off"/>
                     <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 round border1 padding">New Thread</a>
                     <% } %>
                 </div>
-                <br/>
                 <table class="forumcontainer theme1 round border1 padding">
                     <thead>
                         <tr>
@@ -79,7 +77,6 @@
                     <% } %>
                     </tbody>
                 </table>
-                <br/>
                 <div style="display: flex">
                     <div class="theme2 round border1" style="flex: 1; margin-right: 15px;">
                         <div id="paginator" class="padding" style="text-align: center; display: flex; justify-content: space-around;">
@@ -91,10 +88,9 @@
                         </div>
                     </div>
                     <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 forum_btnnewthread round border1 padding">New Thread</a>
+                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 round border1 padding">New Thread</a>
                     <% } %>
                 </div>
-                <br>
                 <div class="theme2 border1 round padding gapchildren">
                     <h3>Users browsing <%= subcategory.name %>:</h3>
                     <% include ../partials/onlinelist %>

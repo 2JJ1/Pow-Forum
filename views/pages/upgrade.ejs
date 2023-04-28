@@ -16,26 +16,26 @@
 	</head>
 	<body class="container">
         <% include ../partials/global %>
-        <main style="padding: 12px;">
+        <main class="padding gapchildren">
             <% if(accInfo.isPatron !== true){ %>
-            <div class="section theme1 border1 round padding">
+            <div class="theme1 border1 round padding gapchildren">
                 <h1>Get Premium - <span class="price">$5 / Month</span></h1>
                 <p>Help <%- powForum.name %> push more content by becoming a premium member!</p>
-                <br>
-                <div class="shopButtons">
-                    <button id="buybutton" class="border1 round"><span class="icon creditcard"></span> Pay with credit or debit</button>
-                    <button class="border1 round" onclick="createCoinbaseCharge()"><span class="icon cryptocoin"></span>Pay with Crypto</button>
+                <div>
+                    <div class="shopButtons">
+                        <button id="buybutton" class="border1 round"><span class="icon creditcard"></span> Pay with credit or debit</button>
+                        <button class="border1 round" onclick="createCoinbaseCharge()"><span class="icon cryptocoin"></span>Pay with Crypto</button>
+                    </div>
+                    <p id="stripe_status"></p>
                 </div>
                 <% if(accInfo.isPatron === true){ %><a id="manageBilling" href="/manager/billing">Manage Billing</a> <% } %>
-                <p id="stripe_status"></p>
             </div>
             <% } else { %>
-            <div class="section theme1 border1 round padding premiumMarkingContainer">
+            <div class="theme1 border1 round padding premiumMarkingContainer">
                 <p>You're a premium member!</p>
             </div>
             <% } %>
-            <br>
-            <div class="section">
+            <div class="gapchildren">
                 <h2>Included Perks</h2>
                 <div id="perks">
                     <div class="perk_card theme1 border1 round padding">
@@ -76,24 +76,16 @@
                     </div>
                 </div>
             </div>
-            <br>
-            <div class="section theme1 border1 round padding">
+            <div class="theme1 border1 round padding gapchildren">
                 <h3>Definitions</h3>
-                <br>
                 <p><span class="term">Lifetime</span>: The time that your account exists. Its life is considered at an end if it has been deleted or banned.</p>
-                <br>
                 <p><span class="term">VIP</span>: Members of elevated status in the community. Received as a token of gratitude. VIP members can diff 1 user ratings and get a badge on their profile.</p>
-                <br>
                 <p><span class="term">Reputation/Rep</span>: A number which reflects a user's total rating by the community. Positive reputation will unlock certain features for free. Negative reputation will take away abilities such as giving negative reputation or creating threads.</p>
             </div>
-            <br>
-            <div class="section theme1 border1 round padding">
+            <div class="theme1 border1 round padding gapchildren">
                 <h3>Additional Info</h3>
-                <br>
                 <p>Premium is a monthly subscription of $5 USD.</p>
-                <br>
                 <p>Cancel anytime with the peace of mind that your benefits will remain until the end of your period.</p>
-                <br>
                 <p>Donating helps the creators develop more great content. By supporting us, we give back additional abilities across the website and inside our content. We hope to introduce more perks to our supporters. Perks are subject to change.</p>
             </div>
         </main>

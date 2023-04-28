@@ -13,14 +13,12 @@
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
-		<br>
-		<main>
-			<div class="section pmd">
+		<main class="gapchildren padding">
+			<div class="pmd">
 				<a href="/profile?uid=<%= profileInfo._id %>"><img class="border1" src="<%= profileInfo.profilepicture %>"></a>
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Threads List</h1>
 			</div>
-			<br>
-			<div class="gapchildren theme1 round border1 section threads">
+			<div class="gapchildren theme1 round border1 threads">
 				<% if (threads.length <= 0){ %>
 				<p style="text-align: center;">This user has no threads.</p>
 				<% } else { %>
@@ -35,7 +33,6 @@
 				<% } %>
 			</div>
 			<% if(moreAvailable){ %>
-			<br>
 			<button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button
 			><% } %>
 		</main>

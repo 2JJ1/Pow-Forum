@@ -14,8 +14,7 @@
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
-		<br>
-		<main>
+		<main class="gapchildren">
             <div id="accheader" class="theme1 round border1">
                 <a href="/profile?uid=<%= profileInfo._id %>">
                     <img id="pfp" class="round" src="<%= profileInfo.profilepicture %>" alt="profile picture"/>
@@ -25,7 +24,6 @@
                     <p id="repsum">Reputation: <span class="<%= profileInfo.reputation>=0?"positive":"negative" %>"><%= profileInfo.reputation %></a></span></p>
                 </div>
             </div>
-            <br/>
             <div id="reputationcontainer">
                 <% for(var i=0; i<repcards.length; i++){ %>
                     <% var repCard=repcards[i] %>
@@ -46,7 +44,6 @@
                         <% } %>
                     </p>
                     <p class="date"><%= repCard.date %></p>
-                    <br/>
                     <p>
                         <span class="<%= repCard.diff >= 0 ? 'positive' : 'negative' %>"><%= repCard.diff %></span>
                         : <%- repCard.comment %>

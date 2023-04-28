@@ -62,7 +62,6 @@ header li {
     display: flex;
     align-items: center;
     padding: 3px 25px;
-    margin-bottom: var(--less-gap);
 }
 
 #navigationbar #foologo{

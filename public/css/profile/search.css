@@ -16,14 +16,14 @@ main{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: var(--gap);
 }
 
 .userCard{
     padding: 12px;
-    margin-bottom: 12px;
     display: flex;
-    width: 100%;
-    max-width: 320px;
+    min-width: 320px;
+    flex: 1;
 }
 
 .userCard img{

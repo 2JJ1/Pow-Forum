@@ -13,14 +13,12 @@
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
-		<br>
-		<main>
-			<div class="section pmd">
+		<main class="gapchildren">
+			<div class="pmd">
 				<a href="/profile?uid=<%= profileInfo._id %>"><img src="<%= profileInfo.profilepicture %>"></a>
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Suspected Alternate Accounts</h1>
 			</div>
-			<br>
-			<div class="theme1 round section threads gapchildren">
+			<div class="theme1 round threads gapchildren">
 				<% if (Object.keys(matches).length <= 0){ %>
 				<p style="text-align: center;">This user has no suspected alternate accounts.</p>
 				<% } else { %>

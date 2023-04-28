@@ -2,7 +2,7 @@ h1, h2, h3, .term, button{
     font-weight: 400;
 }
 
-.section{
+main{
     max-width: 800px;
     margin: auto;
 }
@@ -73,6 +73,7 @@ h1, h2, h3, .term, button{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    gap: var(--gap);
 }
 
 .perk_card{
@@ -80,7 +81,6 @@ h1, h2, h3, .term, button{
     min-height: 125px;
     overflow: hidden;
     display: inline-block;
-    margin-top: 12px;
 }
 
 .perk_card p:first-of-type{

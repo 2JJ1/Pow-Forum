@@ -17,10 +17,8 @@
 	</head>
 	<body class="container">
         <% include ../../partials/global %>
-        <br>
-        <main class="screenPadding">
+        <main class="screenPadding gapchildren">
             <% include ./nav %>
-            <br>
 			<div class="manager_container gapchildren theme1 round border1"">
                 <h2>General</h2>
                 <div class="verticalCenter">
@@ -32,7 +30,6 @@
                 </div><br>
                 <button id="savegeneral" class="theme2 round border1 padding" type="submit">Save</button>
             </div>
-            <br>
             <div class="manager_container gapchildren theme1 round border1"">
                 <h2>Notifications</h2>
                 <div class="verticalCenter">
@@ -65,7 +62,6 @@
                 </div><br>
                 <button id="savenotifs" class="theme2 round border1 padding" type="submit">Save</button>
             </div>
-            <br>
             <p id="errormsg" style="color: var(--red); text-align: center"><p>
         </main>
         <% include ../../partials/footer %>

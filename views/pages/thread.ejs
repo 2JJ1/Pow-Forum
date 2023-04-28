@@ -33,7 +33,7 @@
         <% } %>
 		<% include ../partials/global %>
         <div class="mainxchat">
-            <main class="screenPadding" style="max-width: 1100px; margin: auto">
+            <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
                 <div class="theme2 round border1 padding">
                     <p>
                         <a href="/">Categories</a> > 
@@ -45,7 +45,6 @@
                         <% if(threadData.canEditTopic){ %><span id="btnEditTopic">Edit</span><% } %>
                     </h1>
                 </div>
-                <br/>
                 <div style="text-align: right">
                     <% if(threadData.canChangeForum){ %>
                     <button id="btn_changeforum" class="theme1 round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Forum</button>
@@ -62,7 +61,6 @@
                     <a href="#replyform" class="theme1 round border1 btn_newrelpy">New Reply</a>
                     <% } %>
                 </div> 
-                <br>
                 <% var lastReplier = null; %>
                 <% threadData.replies.forEach((obj, index) => { %>
                 <% var nextUId = threadData.replies[index+1] && threadData.replies[index+1].uid %>
@@ -231,7 +229,6 @@
                 <% lastReplier = obj.uid %>
                 <% }) %>
                 <% if(threadData.canReply){ %>
-                <br/>
                 <div id="replyform" class="theme1 round border1">
                     <% if(!accInfo._id){ %>
                     <a href="/login" class="requireLogin round">
@@ -247,7 +244,6 @@
                     </div>
                 </div>
                 <% } %>
-                <br>
                 <div style="text-align: right">
                     <% if((threadData.currentPage - 1) > 0) { %>
                     <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
@@ -259,7 +255,6 @@
                     <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
                     <% } %>
                 </div>
-                <br>
                 <div class="theme2 border1 round gapchildren padding">
                     <h3>Users viewing this thread:</h3>
                     <% include ../partials/onlinelist %>
