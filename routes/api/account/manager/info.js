@@ -113,8 +113,7 @@ router.post('/', async (req, res, next) => {
 			else {
 				if(discordtag.length < 7) throw "Contact too short"
 				if(discordtag.length > 32 + 5) throw "Contact too long"
-				if(discordtag[discordtag.length - 5] !== "#") throw "Improper Discord contact"
-				if(/^\d+$/.test(discordtag.substr(discordtag.length - 4)) == false) throw "Improper Discord contact"
+				if(!/^\w{1,32}#[0-9]{4}$/.test(discordtag)) throw "Invalid Discord tag"
 				medias.discordtag = escape(discordtag)
 			}
 		}
@@ -146,7 +145,7 @@ router.post('/', async (req, res, next) => {
 			let {snapchat} = req.body
 			if(!snapchat) delete medias.snapchat
 			else {
-				if(!snapchat.match(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/)) throw "Invalid Snapchat username"
+				if(!snapchat.match(/^\w{3,15}$/)) throw "Invalid Snapchat username"
 				medias.snapchat = escape(snapchat)
 			}
 		}
