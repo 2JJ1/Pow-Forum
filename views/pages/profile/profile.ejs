@@ -8,7 +8,7 @@
 		<title><%= profileInfo.username %>'s Profile | <%- powForum.name %></title>
 		
 		<% include ../../partials/headimps %>
-		<link href="/css/profile/profile.css?v=22" rel="stylesheet" type="text/css">
+		<link href="/css/profile/profile.css?v=22&v2=2" rel="stylesheet" type="text/css">
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
 
 		<script type="text/javascript" src="/js/timestamp.js?c=1"></script>   
@@ -57,48 +57,57 @@
 					</div>
 				</div>
 				<% } %>
-				<div class="round border1" style="overflow: hidden;">
-					<div class="theme1" style="display: flex; min-height: 180px">
-						<div id="info">
-							<p class="username">
-								<% if(profileInfo.isOnline){ %>
-								<span class="online-icon"title="online"></span>
+				<div id="intro" class="theme1 round border1 padding gapchildren">
+					<div class="basicdata">
+						<img id="profile_mainprofilepicture" class="border1" src="<%= profileInfo.profilepicture %>" alt="Profile Picture"/>
+						<div>
+							<div id="info">
+								<p class="username">
+									<% if(profileInfo.isOnline){ %>
+									<span class="online-icon"title="online"></span>
+									<% } %>
+									<%= profileInfo.username %>
+									<% if(profileInfo.alias){ %>
+									<span class="alias">(<%- profileInfo.alias %>)</span>
+									<% } %>
+								</p>
+								<p>
+									Reputation: 
+									<span class="<%= profileInfo.reputation >= 0 ? "positive" : "negative" %>">
+										<a href="/profile/reputation?uid=<%= profileInfo._id %>"><%= profileInfo.reputation %></a>
+									</span>
+									<% if(!viewingSelf) { %>
+									<a href="/profile/rate?uid=<%= profileInfo._id %>">[rate]</a>
+									<% } %>
+								</p>
+								<p>Joined: <%= profileInfo.joinDate %></p>
+								<% if(profileInfo.lastonline && !profileInfo.isOnline){ %>
+								<p>Last online: 
+									<script>document.write(TimeStamp.Beautify('<%= profileInfo.lastonline %>'))</script>
+								</p>
 								<% } %>
-								<%= profileInfo.username %>
-							</p>
-							<% if(profileInfo.alias){ %>
-							<p class="alias">(<%- profileInfo.alias %>)</p>
-							<% } %>
-							<p>
-								Reputation: 
-								<span class="<%= profileInfo.reputation >= 0 ? "positive" : "negative" %>">
-									<a href="/profile/reputation?uid=<%= profileInfo._id %>"><%= profileInfo.reputation %></a>
-								</span>
-								<% if(!viewingSelf) { %>
-								<a href="/profile/rate?uid=<%= profileInfo._id %>">[rate]</a>
-								<% } %>
-							</p>
-							<p>Joined: <%= profileInfo.joinDate %></p>
-							<% if(profileInfo.lastonline && !profileInfo.isOnline){ %>
-							<p>Last online: 
-								<script>document.write(TimeStamp.Beautify('<%= profileInfo.lastonline %>'))</script>
-							</p>
-							<% } %>
+							</div>
+							<div>
+								<% if(profileInfo.medias.youtube){ %> <a href="<%- profileInfo.medias.youtube %>" title="YouTube channel" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/youtube.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.github){ %> <a href="https://github.com/<%- profileInfo.medias.github %>" title="GitHub profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(https://github.com/favicon.ico)"></span></a> <% } %>
+								<% if(profileInfo.medias.website){ %> <a href="<%- profileInfo.medias.website %>" title="Personal website" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/domain.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.discordtag){ %> <a onClick="prompt('Discord Contact:', '<%- profileInfo.medias.discordtag %>')" title="Discord Contact" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.discord){ %> <a href="<%- profileInfo.medias.discord %>" title="Discord Server" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.v3rmillion){ %> <a href="<%- profileInfo.medias.v3rmillion %>" title="V3rmillion Profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/v3rm.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.snapchat){ %> <a onClick="prompt('Snapchat username:', '<%- profileInfo.medias.snapchat %>')" title="Snapchat Username"><span class="profile_mediaicon" style="background-image: url(/images/icons/snapchat.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.twitter){ %> <a href="https://twitter.com/<%- profileInfo.medias.twitter %>" title="Twitter profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/twitter.png)"></span></a> <% } %>
+								<% if(profileInfo.medias.facebook){ %> <a href="<%- profileInfo.medias.facebook %>" target="_blank" rel="noopener noreferrer" title="Facebook Page"><span class="profile_mediaicon" style="background-image: url(/images/icons/facebook.png)"></span></a> <% } %>
+							</div>
 						</div>
 					</div>
-					<div id="medias">
-						<% if(profileInfo.medias.youtube){ %> <a href="<%- profileInfo.medias.youtube %>" title="YouTube channel" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/youtube.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.github){ %> <a href="https://github.com/<%- profileInfo.medias.github %>" title="GitHub profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(https://github.com/favicon.ico)"></span></a> <% } %>
-						<% if(profileInfo.medias.website){ %> <a href="<%- profileInfo.medias.website %>" title="Personal website" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/domain.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.discordtag){ %> <a onClick="prompt('Discord Contact:', '<%- profileInfo.medias.discordtag %>')" title="Discord Contact" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.discord){ %> <a href="<%- profileInfo.medias.discord %>" title="Discord Server" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/discord.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.v3rmillion){ %> <a href="<%- profileInfo.medias.v3rmillion %>" title="V3rmillion Profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/v3rm.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.snapchat){ %> <a onClick="prompt('Snapchat username:', '<%- profileInfo.medias.snapchat %>')" title="Snapchat Username"><span class="profile_mediaicon" style="background-image: url(/images/icons/snapchat.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.twitter){ %> <a href="https://twitter.com/<%- profileInfo.medias.twitter %>" title="Twitter profile" target="_blank" rel="noopener noreferrer"><span class="profile_mediaicon" style="background-image: url(/images/icons/twitter.png)"></span></a> <% } %>
-						<% if(profileInfo.medias.facebook){ %> <a href="<%- profileInfo.medias.facebook %>" target="_blank" rel="noopener noreferrer" title="Facebook Page"><span class="profile_mediaicon" style="background-image: url(/images/icons/facebook.png)"></span></a> <% } %>
-					</div>
-					<img id="profile_mainprofilepicture" class="border1" src="<%= profileInfo.profilepicture %>" alt="Profile Picture"/>
 				</div>
+				<% if(profileInfo.signature){ %>
+				<div class="theme1 padding border1 round">
+					<div id="signature">
+						<%- profileInfo.signature %>
+					</div>
+				</div>
+				<% } %>
 				<div id="profile_contentcontainer" style="display: flex">
 					<div id="profile_sidecards" class="gapchildren">
 						<% if(profileInfo.biography){ %>
@@ -159,6 +168,7 @@
 
 		<script type="text/javascript" src="/js/prism.js"></script>
 		<script>
+			HTMLToOembed(document.getElementById("signature"), { fileDomainWhitelist: true })
 			//Embed images in thread content
             Array.prototype.forEach.call(document.getElementsByClassName("threadContent"), function(threadReply){
                 HTMLToOembed(threadReply, { fileDomainWhitelist: true })

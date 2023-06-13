@@ -17,13 +17,29 @@
     }
 }
 
+#intro .basicdata{
+    display: flex;
+    gap: var(--gap);
+}
+
 #profile_mainprofilepicture{
     width: 160px;
     height: 160px;
     border-radius: 50%;
-    position: absolute;
-    margin: 10px;
-    margin-top: -170px;
+}
+
+#signature{
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#signature::-webkit-scrollbar-track {
+    border-radius: var(--round);
+}
+
+#signature img{
+    max-width: 100%;
 }
 
 .profile_mediaicon{
@@ -140,13 +156,6 @@
     margin: 0px 8px 8px 0px;
 }
 
-#info{
-    margin-top: auto; 
-    padding: 13px; 
-    padding-left: 180px; 
-    flex: 1;
-}
-
 .username{
     font-weight: 400;
     display: flex;
@@ -156,13 +165,7 @@
 .alias{
     font-size: 14px;
     color: gray;
-    margin-bottom: 12px;
-}
-
-#medias{
-    background-color: grey; 
-    text-align: right; 
-    padding-left: 180px;
+    padding-left: 5px;
 }
 
 .positive{
