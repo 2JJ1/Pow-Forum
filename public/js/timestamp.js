@@ -33,25 +33,28 @@
 
 			let currentDate = new Date();
 			
-			//If older than a year
-			if(currentDate.getFullYear() > timestamp.getFullYear()){ //If timestamp is older than a year
+			//If older than a year (365 days)
+			if((currentDate - timestamp) / (1000*60*60*24*365) > 1){ //If timestamp is older than a year
 				dateToReturn += this.getMonth(timestamp) + " " + timestamp.getDate() + ", " + timestamp.getFullYear(); //January 1, 1999
 			}
 			//If same year
 			else{
-				//If timestamp older than a month or week
-				if(currentDate.getMonth() > timestamp.getMonth() || currentDate.getDate() > timestamp.getDate() + 7){
+				//If timestamp older than a week (7 days)
+				if((currentDate - timestamp) / (1000*60*60*24*7) > 1){
 					dateToReturn += this.getMonth(timestamp) + " " + timestamp.getDate(); //January 1
 				}
 				//If same week
 				else{
-					if(currentDate.getDate() > timestamp.getDate() + 1){ //If timestamp is from past week (Except for yesterday)
-						dateToReturn += this.getWeekDay(timestamp) + " at " + this.getAMPM(timestamp); //Monday as 12:00 AM
+					//If older than yesterday
+					if((currentDate - timestamp) / (1000*60*60*24*2) > 1){
+						dateToReturn += this.getWeekDay(timestamp) + " at " + this.getAMPM(timestamp); //Monday at 12:00 AM
 					}
 					else{
-						if(currentDate.getDate()-1 === timestamp.getDate()){ //If timestamp was yesterday
+						//Yesterday
+						if((currentDate - timestamp) / (1000*60*60*24*1) > 1){
 							dateToReturn += "Yesterday at " + this.getAMPM(timestamp); //Yesterday at 12:00 AM
 						}
+						//Today
 						else{
 							//posted today
 							dateToReturn += this.getAMPM(timestamp); //12:00 AM
