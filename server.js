@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 const helmet = require("helmet")
 const compression = require('compression')
 const socketio = require("socket.io")
+const crypto = require('crypto')
 
 const updateEnv = require('./my_modules/updateenv')
 const other = require('./my_modules/other')
@@ -150,16 +151,7 @@ app.use(express.static('public', { extensions: ['html'] }))
 
 //Generate session secret if one does not exist
 if(!process.env.SESSION_SECRET) {
-	let result = '';
-	let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	let charactersLength = characters.length;
-	let counter = 0;
-	while (counter < 20) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		counter += 1;
-	}
-
-	updateEnv({SESSION_SECRET: result})
+	updateEnv({SESSION_SECRET: crypto.randomBytes(64).toString('hex')})
 }
 
 //Express routes will get sessions through session

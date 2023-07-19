@@ -2,6 +2,7 @@ const router = require('express').Router()
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 const recaptcha = require('../../../my_modules/captcha')
 const mailgun = require('../../../my_modules/email')
@@ -43,10 +44,10 @@ router.post('/', async (req, res, next) => {
 			})
 			if(resetSession) throw "A password reset session already exists. Please check your email inbox, including the spam folder."
 
-			let token = generate_token(64)
+			let token = crypto.randomBytes(64).toString('hex')
 			//Generates new token per the extremely rare chance it exists
 			do{
-				token = generate_token(64)
+				token = crypto.randomBytes(64).toString('hex')
 			} while(await PasswordResetSessions.findOne({token}))
 
 			//Set expires after 15 minutes
@@ -178,17 +179,5 @@ router.post('/passreset', async (req, res, next) => {
 		next(e)
 	}
 })
-
-//Creates a random string as long as the specified length
-function generate_token(length){
-    //edit the token allowed characters
-    var a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".split("");
-    var b = [];  
-    for (var i=0; i<length; i++) {
-        var j = (Math.random() * (a.length-1)).toFixed(0);
-        b[i] = a[j];
-    }
-    return b.join("");
-}
 
 module.exports = router;
