@@ -63,8 +63,8 @@ router.post('/', async (req, res, next) => {
             //Sanitize comment
             var comment = req.body.comment
             if(!comment) throw "Missing comment"
-            var commentLength = comment.replace(/\ /g, "").length
-            if(commentLength < 12 || commentLength > 300) throw "Comment must be between 12-300 characters in length"
+            var commentLength = comment.length
+            if(commentLength < 12 || commentLength > 250) throw "Comment must be between 12-250 characters in length"
             let isClean = phraseblacklist.isClean(comment.toLowerCase())
 		    if(typeof isClean === "string") throw `Please keep your comment friendly(e.g no cussing)! A banned phrase was found: ${isClean}`
             comment = escape(comment)

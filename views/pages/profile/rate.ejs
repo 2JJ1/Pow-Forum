@@ -46,8 +46,8 @@
 			//Limits textarea's text length to 140 chars
 			$("#ratingcomment").keypress(function(){
 				var comment = $("#ratingcomment").val()
-				if(comment.length > 140){
-					var limitedttext = $("#ratingcomment").val().substr(0,140)
+				if(comment.length > 250){
+					var limitedttext = $("#ratingcomment").val().substr(0,250)
 					$("#ratingcomment").val(limitedttext)
 				}
             })
