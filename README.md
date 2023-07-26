@@ -7,7 +7,7 @@ You must have the following installed in order to continue with installation
 - This runs on Node.js. Pow Forum is constantly updating, so be sure to install the latest version for a seamless experience.
 Node.js LTS : https://nodejs.org/en/download
 
-- The only database we support is MongoDB. We prefer Mongo because of it's seemingly automatic database configuration.
+- The only database we support is MongoDB. We prefer Mongo because of its mostly automatic database configuration.
 https://www.mongodb.com/try/download/community
 
 You must have the following to continue with setup
