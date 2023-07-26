@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+		<meta name="keywords" content="Exploits, dll, hacks, cheats, developers, social, media" />
+        <meta name="description" content="Add, edit, or remove categories here." />
+	
+		<title>Moderator Dashboard - <%- powForum.name %></title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/dashboard/moderators.css?v=22" rel="stylesheet" type="text/css">
+        
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+	</head>
+	<body class="container">
+        <% include ../../partials/global %>
+        <main class="gapchildren">
+            <h1>Moderator Dashboard</h1>
+            <div class="theme1 border1 round padding gapchildren">
+                <h2>Moderator List</h2>
+                <% moderators.forEach(moderator => { %>
+                <p class="modcontainer" data-uid="<%= moderator._id %>">
+                    <span class="deletemod">x</span>
+                    <span class="modusername"><%= moderator.username %></span>
+                </p>
+                <% }) %>
+            </div>
+            <div class="theme1 border1 round padding gapchildren">
+                <h2>Add moderator</h2>
+                <div>
+                    <input type="text" name="addmodusername" placeholder="Username" class="theme2 border2 round padding">
+                    <button class="theme2 border1 round padding" name="addmod">+</button>
+                </div>
+            </div>
+        </main>
+        <script>
+            document.querySelector('button[name="addmod"]').onclick = function(){
+                let username = document.querySelector('input[name="addmodusername"]').value
+
+                //Send update request
+                fetch('/api/dashboard/moderators/addmod', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) {
+                        document.location.reload()
+                    }
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+
+            document.querySelectorAll(".deletemod").forEach(btn => {
+                btn.onclick = function(){
+                    let uid = btn.parentElement.getAttribute("data-uid")
+                    uid = parseInt(uid)
+
+                    //Send delete request
+                    fetch('/api/dashboard/moderators/removemod', {
+                        method: "DELETE",
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            uid
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success) {
+                            document.location.reload()
+                        }
+                        else  alert(res.reason || "An unknown server error has occured")
+                    })
+                }
+            })
+        </script>
+	</body>
+</html>

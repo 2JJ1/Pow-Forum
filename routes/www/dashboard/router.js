@@ -26,6 +26,7 @@ router.use('/', require('./index'));
 router.use("/settings", AdminRequirement, require('./settings'))
 router.use("/integrations", AdminRequirement, require('./integrations'))
 router.use("/categories", AdminRequirement, require('./categories'))
+router.use("/moderators", AdminRequirement, require('./moderators'))
 
 //Moderators
 router.use('/auditlog', require('./auditlog'));

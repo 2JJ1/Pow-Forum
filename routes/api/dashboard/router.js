@@ -29,5 +29,6 @@ router.use('/settings', AdminRequirement, require('./settings/router'))
 router.use('/categories', AdminRequirement, require('./categories/router'))
 router.use("/account", AdminRequirement, require('./deleteaccount'))
 router.use("/integrations", AdminRequirement, require("./integrations/router"))
+router.use("/moderators", AdminRequirement, require("./moderators/router"))
 
 module.exports = router;
