@@ -27,7 +27,7 @@ async function handleCommand(command){
 
 //Connects to MongoDB database
 mongoose.set('strictQuery', false)
-mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFForum"}`)
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "db_powrum"}`)
 .then(async ()=> {
 	//Handle command through process options
 	if(argv.c) {
@@ -36,7 +36,7 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFFo
 	}
 
 	//Handle commands through CLI
-	console.log("Welcome to Pow Forum's admin panel")
+	console.log("Welcome to Powrum's admin panel")
 	console.log("Say 'help' for list of commands\n")
 	while (true){
 		if(!process.env.SUPPORT_EMAIL_ADDRESS || !process.env.FORUM_URL || !process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
@@ -97,7 +97,7 @@ function DisplayCommandsList(compact=true){
 }
 
 commands.setup = {
-	desc: "Change this Pow Forum's installation",
+	desc: "Change this Powrum's installation",
 	func: async () => {
 		if(!fs.existsSync('.env')) fs.writeFileSync('.env', '')
 

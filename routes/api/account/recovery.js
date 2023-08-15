@@ -56,7 +56,7 @@ router.post('/', async (req, res, next) => {
 
 			// Sends reset session email
 			await mailgun.SendMail({
-				from: `"noreply" ${process.env.MAILGUN_NOREPLY_ADDRESS}`, // sender address
+				from: `"noreply" noreply@${process.env.MAILGUN_DOMAIN}`, // sender address
 				to: accountdata.email, // list of receivers
 				subject: `${forumTitle} | Password Reset Request`, // Subject line
 				text: `Someone has requested to reset ${accountdata.username}(id: ${accountdata._id})'s on ${process.env.FORUM_URL}` + 
@@ -91,7 +91,7 @@ router.post('/', async (req, res, next) => {
 			})
 
 			let emaildata = {
-				from: `"noreply" ${process.env.MAILGUN_NOREPLY_ADDRESS}`, // sender address
+				from: `"noreply" noreply@${process.env.MAILGUN_DOMAIN}`, // sender address
 				to: req.body.email, // list of receivers
 				subject: `${forumTitle} | Username Recovery Request`, // Subject line
 				text: `You have requested a reminder of ${forumTitle} accounts associated with this email address. Your accounts are listed below:` +
@@ -165,7 +165,7 @@ router.post('/passreset', async (req, res, next) => {
 		let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 		
 		await mailgun.SendMail({
-			from: `"noreply" ${process.env.MAILGUN_NOREPLY_ADDRESS}`, // sender address
+			from: `"noreply" noreply@${process.env.MAILGUN_DOMAIN}`, // sender address
 			to: account.email, // list of receivers
 			subject: `${forumTitle} | Password Reset Confirmation`, // Subject line
 			text: `The password for ${account.username}(id: ${account._id})'s on ${process.env.FORUM_URL} has been reset through the password recovery form.` + 

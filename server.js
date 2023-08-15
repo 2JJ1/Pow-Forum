@@ -14,21 +14,6 @@ const crypto = require('crypto')
 const updateEnv = require('./my_modules/updateenv')
 const other = require('./my_modules/other')
 
-if(!process.env.SUPPORT_EMAIL_ADDRESS) {
-	console.error("Missing support email address. Please run 'npm run setup'")
-	process.exit(2)
-}
-
-if(!process.env.FORUM_URL) {
-	console.error("Missing domain. Please run 'npm run setup'")
-	process.exit(2)
-}
-
-if(!process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
-	console.error("Incomplete mailgun setup. Please run 'npm run setup'")
-	process.exit(2)
-}
-
 // MongoDB setup
 
 //Loads up all models
@@ -66,7 +51,7 @@ async function CleanMongoDatabase(){
 }
 
 //Connect to database
-let mongoURL = `mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "PFForum"}`
+let mongoURL = `mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "db_powrum"}`
 mongoose.set('strictQuery', false)
 mongoose.connect(mongoURL)
 .then(async ()=> {
@@ -76,19 +61,11 @@ mongoose.connect(mongoURL)
 	{
 		let settings = await ForumSettings.find().lean()
 
-		//Sets default forum name
-		if(!settings.find(setting => setting.type === "name")) {
-			await new ForumSettings({
-				type: "name",
-				value: "Pow Forums"
-			}).save()
-		}
-
 		//Sets default description
 		if(!settings.find(setting => setting.type === "description")) {
 			await new ForumSettings({
 				type: "description",
-				value: "An online community powered by Pow Forums"
+				value: "An online community powered by Powrum"
 			}).save()
 		}
 
@@ -139,7 +116,7 @@ app.set('view engine', 'ejs')
 
 //gibe me kreditz
 app.use((req, res, next) => {
-    res.append('X-Forum-Software', 'Pow-Forum');
+    res.append('X-Forum-Software', 'Powrum');
     next();
 });
 
@@ -166,8 +143,8 @@ let sessionConf = {
 	rolling: true, //Resets expiration date
 	resave: true, //Resaves cookie on server. Necessary because of the expiration date being reset
 	cookie: { 
-		httpOnly: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
-		secure: process.env.NODE_ENV !== 'development' && new URL(process.env.FORUM_URL).hostname !== "localhost",
+		httpOnly: process.env.FORUM_URL && new URL(process.env.FORUM_URL).hostname !== "localhost",
+		secure: process.env.FORUM_URL && new URL(process.env.FORUM_URL).hostname !== "localhost",
 		maxAge: 1000*60*60*24*365 // (1 week in milliseconds) 1 second -> 1 minute -> 1 hour -> 1 day -> 1 year
 	}
 }
@@ -183,7 +160,16 @@ app.use(sessionMiddleware)
 app.use('/api/', require('./routes/api/router'))
 
 //Handle everything else. Aka the view
-app.use("/", require('./routes/www/router'))
+function isSetup(){
+	if(!process.env.FORUM_URL) return false
+	if(!process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY) return false
+	return true
+}
+module.exports.isSetup = isSetup
+
+let wwwRouter = require("./routes/install/index")
+app.use("/", (req, res, next) => wwwRouter(req, res, next))
+if(isSetup()) wwwRouter = require('./routes/www/router')
 
 //No route matched? Default route -> Send 404 page
 app.use(function(req, res, next){
@@ -216,7 +202,7 @@ app.use(function(err, req, res, next) {
 
 //Starts HTTP server
 http.listen(process.env.PORT || 8087, () => {
-	console.log(`Pow Forum server started on http://localhost:${process.env.PORT || 8087}`)
+	console.log(`Powrum server started on http://localhost:${process.env.PORT || 8087}`)
 })
 
 // Socket.io configuration

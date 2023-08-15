@@ -30,11 +30,6 @@
                         <p>API Key</p>
                         <input class="mailgunSecret theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.MAILGUN_APIKEY ? "****" : "" %>"/>
                     </div>
-                    <div class="lessgapchildren">
-                        <p>Sending Email Address</p>
-                        <p class="subtext">What address do you want to send email froms</p>
-                        <input class="mailgunSender theme2 border1 round less-padding" type="email" placeholder="noreply@yourdomain.com" value="<%= process.env.MAILGUN_NOREPLY_ADDRESS %>"/>
-                    </div>
                 </div>
                 <br>
                 <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMailgun()">Save</button>

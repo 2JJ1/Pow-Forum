@@ -10,13 +10,13 @@ module.exports = {
 				resolve();
 			});
 		})
-		.catch(e => {console.log("Failed to send email1: ", e)})
+		//.catch(e => {console.log("Failed to send email1: ", e)})
 	},
 
 	//Just the bare minimum to sending an email
 	SendBasicEmail: (to, subject, body) => {
 		let emaildata = {
-			from: `"noreply" <${process.env.MAILGUN_NOREPLY_ADDRESS}>`,
+			from: `"noreply" <noreply@${process.env.MAILGUN_DOMAIN}>`,
 			to: to,
 			subject: subject,
 			text: body

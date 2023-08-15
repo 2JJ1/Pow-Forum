@@ -6,6 +6,8 @@ const fs = require("fs")
 const buildpfp = require('./buildpfp')
 const other = require('./other')
 const rolesAPI = require('./rolesapi')
+const { isMajorEmailDomain } = require('./email')
+const phraseblacklist = require('phrase-blacklist')
 
 const Accounts = mongoose.model("Accounts")
 const TFAs = mongoose.model("TFAs")
@@ -70,6 +72,30 @@ exports.SumReputation = async function(uid){
 		sum += reputation.diff
 	}
 	return sum
+}
+
+exports.validateEmail = async function(email, options){
+	//Validate & sanitze email
+	if(!email) throw "Missing email"
+	email = email.toLowerCase()
+	if(!other.ValidateEmail(email)) throw "Invalid email"
+	email = escape(email)
+	if(!options.bypassMajorEmail && !isMajorEmailDomain(email)) throw "We only allow email addresses from major email providers, such as Gmail."
+	if(await exports.emailTaken(email)) throw "An account already exists with this email" 
+}
+
+exports.validateUsername = async function(username){
+	if(!username) throw "Missing username"
+	if(!(username.length >= 3 && username.length <= 15)) throw "Username must be 3-15 characters in length"
+
+	//No need to escape username because of alphanumeric_ limit
+	if(!other.isAlphaNumeric_(username)) throw "Only letters, numbers, and underscore are allowed"
+
+	let isClean = phraseblacklist.isClean(username.toLowerCase())
+	if (typeof isClean === "string") throw `Your username contains a banned phrase: ${isClean}`
+	
+	let existingAccount = await exports.fetchAccount(username)
+	if(existingAccount) throw "Username is taken"
 }
 
 exports.ValidatePassword = function(password){

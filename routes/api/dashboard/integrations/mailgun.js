@@ -1,9 +1,8 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
-const envfile = require('envfile')
-const fs = require('fs')
 
 const {ValidateEmail, extractHostname} = require('../../../../my_modules/other')
+const updateEnv = require('../../../../my_modules/updateenv')
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
@@ -13,35 +12,23 @@ router.post("/mailgun", async (req, res, next) => {
 	try{
         let response = {success: false}
 
-        let {domain, secret, senderEmail} = req.body
+        let {domain, secret} = req.body
 
         //Sanitize and validate
         if(!domain) throw "Missing domain"
         domain = extractHostname(domain)
         if(domain.length < 5) throw "Invalid domain"
 
-        if(!senderEmail) throw "Missing sender email address"
-        if(!ValidateEmail(senderEmail)) throw "Invalid email address"
-
         if(!secret) throw "Missing API key"
         if(secret !== "****" && !/^[\w-]{10,}$/.test(secret)) throw "Invalid API key"
 
         // Save changes
 
-        let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
-
-        parsedEnv.MAILGUN_DOMAIN = senderEmail
-        process.env.MAILGUN_DOMAIN = domain
-
         if(secret !== "****") {
-            parsedEnv.MAILGUN_APIKEY = secret
-            process.env.MAILGUN_APIKEY = secret
+            updateEnv({MAILGUN_APIKEY: secret})
         }
 
-        parsedEnv.MAILGUN_NOREPLY_ADDRESS = senderEmail
-        process.env.MAILGUN_NOREPLY_ADDRESS = senderEmail
-
-        fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
+        updateEnv({MAILGUN_DOMAIN: domain})
 
         //Log audit
 		new ForumAuditLogs({

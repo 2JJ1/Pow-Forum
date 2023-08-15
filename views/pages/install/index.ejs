@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=0">
+        <meta name="description" content="Complete the setup for this forum" />
+        
+		<title>PForum Setup</title>
+		
+		<% include ../../partials/headimps %>
+        <link href="/css/install.css?v=22" rel="stylesheet" type="text/css">
+        
+        <script type="text/javascript" src="/js/timestamp.js?c=1"></script>  
+	</head>
+	<body class="padding">
+		<div class="installmodal gapchildren theme1 border1 round padding">
+            <h1>Powrum Setup</h1>
+
+            <h2>Website Settings</h2>
+            <div class="lessgapchildren">
+                <p>Name</p>
+                <input name="name" type="text" placeholder="..." class="theme2 border2 round less-padding" value="Powrum"/>
+            </div>
+            <div class="lessgapchildren">
+                <p>Forum URL</p>
+                <input name="url" type="text" placeholder="..." class="theme2 border2 round less-padding" value=""/>
+            </div>
+
+            <hr>
+            <h2>Admin Account</h2>
+            <div class="lessgapchildren">
+                <p>Email</p>
+                <input name="email" type="email" placeholder="..." class="theme2 border2 round less-padding"/>
+            </div>
+            <div class="lessgapchildren">
+                <p>Username</p>
+                <input name="username" type="text" placeholder="..." class="theme2 border2 round less-padding"/>
+            </div>
+            <div class="lessgapchildren">
+                <p>Password</p>
+                <input name="password" type="password" placeholder="****" class="theme2 border2 round less-padding"/>
+            </div>
+            <div class="lessgapchildren">
+                <p>Confirm Password</p>
+                <input name="confirmPassword" type="password" placeholder="****" class="theme2 border2 round less-padding"/>
+            </div>
+
+            <hr/>
+            <div>
+                <h2>Mailgun API Settings</h2>
+                <p class="note">Powrum uses the Mailgun API to send out critical emails; Such as when confirming account registration</p>
+            </div>
+            <div class="lessgapchildren">
+                <p>Mailgun Domain</p>
+                <input name="mailgunDomain" type="text" placeholder="mg.yourdomain.com" class="theme2 border2 round less-padding"/>
+            </div>
+            <div class="lessgapchildren">
+                <p>API Key</p>
+                <input name="mailgunSecret" type="password" placeholder="****" class="theme2 border2 round less-padding"/>
+            </div>
+
+            <hr>
+            <input type="submit" class="theme2 border2 round padding"/>
+        </div>
+	</body>
+    <script>
+        document.querySelector('input[name="url"]').value = `${window.location.protocol}//${window.location.host}`
+
+        document.querySelector('input[type=submit]').onclick = function(){
+            let name = document.querySelector('input[name="name"]').value
+            let url = document.querySelector('input[name="url"]').value
+            let email = document.querySelector('input[name="email"]').value
+            let username = document.querySelector('input[name="username"]').value
+            let password = document.querySelector('input[name="password"]').value
+            let confirmPassword = document.querySelector('input[name="confirmPassword"]').value
+            let mailgunDomain = document.querySelector('input[name="mailgunDomain"]').value
+            let mailgunSecret = document.querySelector('input[name="mailgunSecret"]').value
+
+            if(password !== confirmPassword) return alert("Passwords do not match")
+
+            fetch('/api/setup', {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify({
+                    name,
+                    url,
+                    email,
+                    username,
+                    password,
+                    mailgunDomain,
+                    mailgunSecret,
+                }),
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) alert("Initial setup complete! Please restart the website to show changes.")
+                else alert(res.reason || 'Unknown error occured...')
+            })
+            .catch(() => alert("Failed to contact the server."))
+        }
+    </script>
+</html>
