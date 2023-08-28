@@ -3,6 +3,9 @@ const mongoose = require("mongoose")
 const envfile = require('envfile')
 const fs = require('fs')
 
+const updateEnv = require('../../../../my_modules/updateenv')
+const recaptcha = require('../../../../my_modules/captcha')
+
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/integrations
@@ -21,17 +24,19 @@ router.post("/captcha", async (req, res, next) => {
         if(!/^[\w-]{10,}$/.test(public)) throw "Invalid site key"
 
         // Save changes
-        let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
-
         if(secret !== "****") {
-            parsedEnv.CAPTCHA_APIKEY = secret
-            process.env.CAPTCHA_APIKEY = secret
+            updateEnv({CAPTCHA_APIKEY: secret})
         }
+        updateEnv({CAPTCHA_SITEKEY: public})
 
-        parsedEnv.CAPTCHA_SITEKEY = public
-        process.env.CAPTCHA_SITEKEY = public
-
-        fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
+        //Test is captcha auth is valid
+        await recaptcha.captcha("xxxx", (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+        .catch(e => {
+            if(e['error-codes'].includes('invalid-input-secret')) {
+                updateEnv({CAPTCHA_APIKEY: "", CAPTCHA_SITEKEY: ""})
+                throw "Invalid Cloudflare Turnstile API key or secret"
+            }
+        })
 
         //Log audit
 		new ForumAuditLogs({

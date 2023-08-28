@@ -12,7 +12,19 @@
         <link href="/css/recovery.css?v=22" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+        <% } else { %>
+        <script>
+            //So attempted usage of captcha doesn't error
+            var grecaptcha = {
+                getResponse: () => {},
+                reset: () => {},
+                execute: () => {},
+                render: () => {},
+            }
+        </script>
+        <% } %>
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
@@ -42,7 +54,7 @@
 		<script>
             function RequestRecovery(){
                 var postData = {
-                    grecaptcharesponse: grecaptcha.getResponse(),
+                    grecaptcharesponse: grecaptcha?.getResponse(),
                 }
 
                 let req_Response = document.getElementById('req_Response')
@@ -50,7 +62,7 @@
                 var email = $("#email").val()
 
                 if(username.length > 0 && email.length > 0){
-                    req_Response.innerHTML = "Only 1 fields can be filled"
+                    req_Response.innerHTML = "Only 1 field can be filled"
                     return
                 } else {
                     if(username.length > 0){
@@ -74,7 +86,7 @@
                 .then(res => {
                     if(res.success){
                         req_Response.style.color = "green"
-                        req_Response.innerHTML = 'Email sent.'
+                        req_Response.innerHTML = 'Email sent'
                     } 
                     else {
                         req_Response.innerHTML = res.reason || 'Unknown error occured...'
@@ -85,7 +97,7 @@
                     document.getElementById('req_Response').innerHTML = "Failed to contact the server."
                 })
 
-				grecaptcha.reset();
+				grecaptcha?.reset()
 			}
 		</script>
 	</body>

@@ -12,7 +12,19 @@
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
 
 		<script type="text/javascript" src="/js/timestamp.js?v2=2"></script>   
+		<% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+		<% } else { %>
+		<script>
+			//So attempted usage of captcha doesn't error
+            var grecaptcha = {
+                getResponse: () => {},
+                reset: () => {},
+                execute: () => {},
+                render: () => {},
+            }
+		</script>
+		<% } %>
 		<script type="text/javascript" src="/js/oembed.js?v=22&v2=4"></script>
 	</head>
 	<body class="container">
@@ -168,6 +180,14 @@
 
 		<script type="text/javascript" src="/js/prism.js"></script>
 		<script>
+			//Considers if Captcha is configured and loaded
+            if(typeof grecaptcha === "undefined") var grecaptcha = {
+                getResponse: () => {},
+                reset: () => {},
+                execute: () => {},
+                render: () => {},
+            }
+
 			HTMLToOembed(document.getElementById("signature"), { fileDomainWhitelist: true })
 			//Embed images in thread content
             Array.prototype.forEach.call(document.getElementsByClassName("threadContent"), function(threadReply){

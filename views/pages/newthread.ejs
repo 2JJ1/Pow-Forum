@@ -12,7 +12,19 @@
         <link href="/css/newthread.css?v=22" rel="stylesheet" type="text/css">
         <link href="/css/prism.css" rel="stylesheet" type="text/css">
         
+        <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+        <% } else { %>
+        <script>
+            //So attempted usage of captcha doesn't error
+            var grecaptcha = {
+                getResponse: () => {},
+                reset: () => {},
+                execute: () => {},
+                render: () => {},
+            }
+        </script>
+        <% } %>
         <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
         <script type="text/javascript" src="/js/timestamp.js?v2=2"></script>        
 	</head>

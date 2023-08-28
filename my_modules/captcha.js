@@ -27,7 +27,10 @@ class Captcha {
 				})
 			})
 			.then(res => res.json())
-			.then(res => res.success ? resolve(true) : resolve(false))
+			.then(res => {
+				if(res['error-codes'] && !res['error-codes'].includes('invalid-input-response')) throw res
+				return res.success ? resolve(true) : resolve(false)
+			})
 			.catch(e => reject(e))
 		})
 	}

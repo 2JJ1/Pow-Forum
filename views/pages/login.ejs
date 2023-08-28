@@ -10,7 +10,19 @@
         <link href="/css/login.css?v=22" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
+        <% } else { %>
+        <script>
+            //So attempted usage of captcha doesn't error
+            var grecaptcha = {
+                getResponse: () => {},
+                reset: () => {},
+                execute: () => {},
+                render: () => {},
+            }
+        </script>
+        <% } %>
 	</head>
 	<body class="container">
 		<main style="display: flex; min-height: 100vh;">
