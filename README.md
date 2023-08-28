@@ -26,15 +26,9 @@ Run these commands in your CLI (cmd.exe, terminal)
 `> git clone https://github.com/2JJ1/Pow-Forum`
 2. Install the NPM packages
 `> npm install`
-3. Use the setup PF-CLI command to begin the initial setup.
-`> npm run setup`
-Enter the requested information
-* Initial setup is complete at this point, but you will still need to configure the rest on the website's dashboard
-That said, follow "Running the process" steps below
 
 ## Running the process
-Before running Powrum, make sure you have completed the setup as mentioned in the installation instructions.
-When that is done, simply run the server.js file. 
+Simply run the server.js file. 
 `> node server.js`
 
 It is recommended to use a production manager such as PM2.
@@ -46,9 +40,11 @@ By default: `http://localhost:8087`
 
 If running from your personal computer, you can simply visit that URL on your browser. 
 
-If running from a cloud server like in a production setup, proxy to that URL using an HTTP server(I.e NGINX, Apache). Make sure your DNS is pointing to your server's IP address. Then simply visit your website's domain.
+If running from a cloud server like in a production setup, proxy to that URL using an HTTP server(I.e NGINX, Apache). Make sure your domain's DNS is pointing to your server's IP address. Then simply visit your website's domain.
 
 ## Configuration
+When you first run the server, the website will display an initial configuration setup. Once complete, you will need to restart the website server in order to see the normal forum UI.
+
 Though you may have completed the initial setup, you still need to continue configuring the forum. Such as to add an admin, 
 setup API keys to make the premium subscription work, or to add forum categories.
 

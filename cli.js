@@ -39,15 +39,9 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DATABASE_NAME || "db_p
 	console.log("Welcome to Powrum's admin panel")
 	console.log("Say 'help' for list of commands\n")
 	while (true){
-		if(!process.env.SUPPORT_EMAIL_ADDRESS || !process.env.FORUM_URL || !process.env.MAILGUN_DOMAIN || !process.env.MAILGUN_APIKEY || !process.env.MAILGUN_NOREPLY_ADDRESS) {
-			console.warn("Setup must be completed before you can use any other command...\n")
-			commands.setup.func()
-		}
-		else {
-			let command = readlineSync.question('Enter command: \n> ');
-			await handleCommand(command)
-		}
-	}
+		let command = readlineSync.question('Enter command: \n> ');
+		await handleCommand(command)
+}
 })
 require('./models')
 
@@ -93,97 +87,6 @@ function DisplayCommandsList(compact=true){
 			let command = commandsListArray[index]
 			console.log(`* ${command} : ${commands[command].desc}`)
 		}
-	}
-}
-
-commands.setup = {
-	desc: "Change this Powrum's installation",
-	func: async () => {
-		if(!fs.existsSync('.env')) fs.writeFileSync('.env', '')
-
-		let parsedEnv = envfile.parse(fs.readFileSync('./.env', "utf8"))
-
-		//Configures COOKIE_DOMAIN and FORUM_URL
-		console.log("What is your website's domain? Ex: https://mywebsite.com")
-		console.log("Use 'localhost' if testing without HTTP proxy")
-		if(parsedEnv.FORUM_URL) console.log(`Found existing setting, ${parsedEnv.FORUM_URL}. Leave input empty to skip.`)
-		let parsedURL
-		while (!parsedURL){
-			let domain = readlineSync.question(`> `, {
-				defaultInput: parsedEnv.FORUM_URL
-			})
-			if(domain === "localhost") parsedURL = new URL('http://localhost')
-			else {
-				try {
-					parsedURL = new URL(domain)
-					parsedURL.topLevelDomain = parsedURL.hostname.split(".").splice(-2).join(".")
-				}
-				catch(e) {
-					console.log("Invalid URL")
-				}
-			}
-		}
-		updateEnv({COOKIE_DOMAIN: parsedURL.hostname === 'localhost' ? 'localhost' : `.${parsedURL.topLevelDomain}`})
-		updateEnv({FORUM_URL: parsedURL.hostname !== 'localhost' ? parsedURL.origin : `${parsedURL.protocol}//${parsedURL.hostname}:${process.env.PORT || 8087}`})
-
-		//Configures support email address
-		console.log("\nWhat is your support email address?")
-		if(parsedEnv.SUPPORT_EMAIL_ADDRESS) console.log(`Found existing setting, "${parsedEnv.SUPPORT_EMAIL_ADDRESS}". Leave input empty to skip.`)
-		let SUPPORT_EMAIL_ADDRESS
-		while(!SUPPORT_EMAIL_ADDRESS){
-			SUPPORT_EMAIL_ADDRESS = readlineSync.question(`> `, { defaultInput: parsedEnv.SUPPORT_EMAIL_ADDRESS })
-
-			if(!other.ValidateEmail(SUPPORT_EMAIL_ADDRESS)) {
-				console.log("Invalid email address")
-				SUPPORT_EMAIL_ADDRESS = false
-			}
-		}
-		updateEnv({SUPPORT_EMAIL_ADDRESS})
-		
-		//Configures mailgun API
-		console.log("\nWe use mailgun to send securely send emails. Create an account with them at https://www.mailgun.com/ and setup your domain.")
-		
-		console.log("\nWhat is your mailgun domain?")
-		if(parsedEnv.MAILGUN_DOMAIN) console.log(`Found existing setting, "${parsedEnv.MAILGUN_DOMAIN}". Leave input empty to skip.`)
-		let MAILGUN_DOMAIN
-		while(!MAILGUN_DOMAIN){
-			MAILGUN_DOMAIN = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_DOMAIN })
-
-			if(other.extractHostname(MAILGUN_DOMAIN).length < 5) {
-				console.log("Invalid domain")
-				MAILGUN_DOMAIN = false
-			}
-		}
-		updateEnv({MAILGUN_DOMAIN})
-
-		console.log("\nWhat is your mailgun API key?")
-		if(parsedEnv.MAILGUN_APIKEY) console.log(`Found existing setting, "${parsedEnv.MAILGUN_APIKEY}". Leave input empty to skip.`)
-		let MAILGUN_APIKEY
-		while(!MAILGUN_APIKEY){
-			MAILGUN_APIKEY = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_APIKEY })
-
-			if(!/^[\w-]{10,}$/.test(MAILGUN_APIKEY)) {
-				console.log("Invalid domain")
-				MAILGUN_APIKEY = false
-			}
-		}
-		updateEnv({MAILGUN_APIKEY})
-		
-		
-		console.log("\nWhat is your preferred noreply email address?")
-		if(parsedEnv.MAILGUN_NOREPLY_ADDRESS) console.log(`Found existing setting, "${parsedEnv.MAILGUN_NOREPLY_ADDRESS}". Leave input empty to skip.`)
-		let MAILGUN_NOREPLY_ADDRESS
-		while(!MAILGUN_NOREPLY_ADDRESS){
-			MAILGUN_NOREPLY_ADDRESS = readlineSync.question(`> `, { defaultInput: parsedEnv.MAILGUN_NOREPLY_ADDRESS })
-
-			if(!other.ValidateEmail(MAILGUN_NOREPLY_ADDRESS)) {
-				console.log("Invalid email address")
-				MAILGUN_NOREPLY_ADDRESS = false
-			}
-		}
-		updateEnv({MAILGUN_NOREPLY_ADDRESS})
-		
-		console.log("\nInitial setup complete. Restart the forum process if it's running. Please log into an admin account and continue configuration in the dashboard.")
 	}
 }
 
