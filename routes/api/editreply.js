@@ -33,6 +33,7 @@ router.post('/edit', async (req, res, next) => {
 
 		if(!content) throw "Missing content"
 		if(typeof content !== "string") throw "Invalid request"
+		if(content.length > 20000) throw "Content contains too much HTML data"
 
 		//Get account and its roles
 		let account = await accountAPI.fetchAccount(req.session.uid)

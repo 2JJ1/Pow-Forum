@@ -173,6 +173,8 @@ router.post('/', async (req, res, next) => {
 			let {signature} = req.body
 			if(!signature) Object.assign(keyvalues.$unset, {signature: 1})
 			else {
+				if(signature.length > 1000) throw "Signature contains too much HTML data"
+
 				//Sanitize HTML to prevent unauthorized tags (Like <script> to prevent xss)
 				let sanitizedSignatureHTML = sanitizeHtml(signature, {
 					allowedTags: [ 'p', 'a', 'i', 'em', 'strike', 'hr', 'br', 'div', 'span' ],

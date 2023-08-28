@@ -45,6 +45,7 @@ router.post('/', async (req, res, next) => {
 		let content = req.body.content
 		if(!content) throw "Missing content"
 		if(typeof content !== "string") throw "Invalid content"
+		if(content.length > 20000) throw "Content contains too much HTML data"
 
 		//Check if the user's email is verified.
 		if(!await accountAPI.emailVerified(req.session.uid)) throw "Please verify your email first!"
