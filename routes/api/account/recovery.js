@@ -104,8 +104,9 @@ router.post('/', async (req, res, next) => {
 			await mailgun.SendMail(emaildata)
 			
 			response.success = true
-			res.json(response)
 		}
+
+		res.json(response)
 	} catch(e){
 		next(e)
 	}
