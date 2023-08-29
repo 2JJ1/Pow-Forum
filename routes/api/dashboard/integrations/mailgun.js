@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 
 const {ValidateEmail, extractHostname} = require('../../../../my_modules/other')
 const updateEnv = require('../../../../my_modules/updateenv')
+const {SendBasicEmail} = require('../../../../my_modules/email')
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
@@ -23,12 +24,22 @@ router.post("/mailgun", async (req, res, next) => {
         if(secret !== "****" && !/^[\w-]{10,}$/.test(secret)) throw "Invalid API key"
 
         // Save changes
-
+        let oldAPIKey = process.env.MAILGUN_APIKEY
+        let oldMailgunDomain = process.env.MAILGUN_DOMAIN
         if(secret !== "****") {
             updateEnv({MAILGUN_APIKEY: secret})
         }
-
         updateEnv({MAILGUN_DOMAIN: domain})
+
+        //Validate Mailgun credentials
+        await SendBasicEmail("spam@spam.com", 'Credentials validation', 'Credentials validation')
+        .catch(e => {
+            if(e.statusCode === 401) {
+                updateEnv({MAILGUN_APIKEY: oldAPIKey, MAILGUN_DOMAIN: oldMailgunDomain})
+                throw "Invalid Mailgun API credentials"
+            }
+            else throw e
+        })
 
         //Log audit
 		new ForumAuditLogs({
