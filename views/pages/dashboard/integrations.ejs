@@ -107,12 +107,10 @@
                 //Compile data
                 let domain = document.querySelector('.mailgunDomain').value
                 let secret = document.querySelector('.mailgunSecret').value
-                let senderEmail = document.querySelector('.mailgunSender').value
 
                 //Sanitize & Validate
                 if(!domain) return alert("Missing domain")
                 if(!secret) return alert("Missing API key")
-                if(!senderEmail) return alert("Missing sender email")
                 
                 //Send update request
                 fetch('/api/dashboard/integrations/mailgun', {
@@ -120,11 +118,14 @@
                     headers: {
                         'content-type': 'application/json',
                     },
-                    body: JSON.stringify({domain, secret, senderEmail})
+                    body: JSON.stringify({domain, secret})
                 })
                 .then(res => res.json())
                 .then(res => {
-                    if(res.success) document.location.reload()
+                    if(res.success) {
+                        alert("Success")
+                        document.location.reload()
+                    }
                     else  alert(res.reason || "An unknown server error has occured")
                 })
             }
@@ -140,30 +141,6 @@
                 
                 //Send update request
                 fetch('/api/dashboard/integrations/captcha', {
-                    method: "POST",
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify({secret, public})
-                })
-                .then(res => res.json())
-                .then(res => {
-                    if(res.success) document.location.reload()
-                    else  alert(res.reason || "An unknown server error has occured")
-                })
-            }
-
-            function UpdateGrecaptcha3(){
-                //Compile data
-                let secret = document.querySelector('.grecaptcha3Secret').value
-                let public = document.querySelector('.grecaptcha3Public').value
-
-                //Sanitize & Validate
-                if(!secret) return alert("Missing secret API key")
-                if(!public) return alert("Missing public site key")
-                
-                //Send update request
-                fetch('/api/dashboard/integrations/grecaptcha3', {
                     method: "POST",
                     headers: {
                         'content-type': 'application/json',
