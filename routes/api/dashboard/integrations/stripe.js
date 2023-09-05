@@ -54,6 +54,11 @@ router.post("/stripe", async (req, res, next) => {
 					}
 				}
 			})
+            .catch(e => {
+                let {statusCode} = e?.raw
+
+                if(statusCode === 401) throw "Invalid Stripe API private key or public key"
+            })
 
 			if(product.default_price){
                 parsedEnv.STRIPE_PREMIUM_PLAN_ID = product.default_price
