@@ -10,14 +10,16 @@ const accountAPI = require('../../../my_modules/accountapi')
 const ForumSettings = mongoose.model("ForumSettings")
 const Accounts = mongoose.model("Accounts")
 
-var webhookSecret = process.env.STRIPE_WEBHOOK_PRIVATE_KEY
-var juniorPlanID = process.env.STRIPE_PREMIUM_PLAN_ID
-
 // 	/api/stripe
 
 router.use((req, res, next) => {
 	if(!process.env.STRIPE_PREMIUM_PLAN_ID) return res.render("400", {reason: "Stripe has not been configured"})
-	else next()
+	else {
+		//Important to reload in case the configuration was updated in the dashboard
+		stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY) 
+
+		next()
+	}
 })
 
 //Create subscription for Junior patronage
@@ -76,7 +78,7 @@ router.post('/subscribe', async (req, res, next) => {
 		await stripe.subscriptions.create({
 			customer: customer.id,
 			metadata: {uid: accInfo._id},
-			items: [{plan: juniorPlanID}]
+			items: [{plan: process.env.STRIPE_PREMIUM_PLAN_ID}]
 		})
 		.catch(async err => {
 			//User failed to charge: Such as when card rejected or card expired
@@ -198,7 +200,7 @@ router.post('/webhook', async (req, res) => {
 	let forumTitle = (await ForumSettings.findOne({type: "name"})).value
 
 	try {
-		event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+		event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_PRIVATE_KEY);
 		var base = event.data.object
 
 		//Get the Stripe customer

@@ -39,9 +39,10 @@ router.post("/stripe", async (req, res, next) => {
             process.env.STRIPE_WEBHOOK_PRIVATE_KEY = webhookSecret
         }
 
-        if(!process.env.STRIPE_PREMIUM_PLAN_ID){
-            var stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+        //Always considers new API private key
+		let stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY) 
 
+        if(!process.env.STRIPE_PREMIUM_PLAN_ID){
             const product = await stripe.products.create({
 				name: 'Premium Membership',
 				description: 'Unlock account features as described on the upgrade page',
@@ -57,7 +58,7 @@ router.post("/stripe", async (req, res, next) => {
             .catch(e => {
                 let {statusCode} = e?.raw
 
-                if(statusCode === 401) throw "Invalid Stripe API private key or public key"
+                if(statusCode === 401) throw "Invalid Stripe API private key"
             })
 
 			if(product.default_price){
