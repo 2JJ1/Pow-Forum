@@ -91,8 +91,7 @@ router.use('/login', require('./login'));
 router.use('/register', require('./register'));
 router.use('/recovery', require('./recovery'));
 router.use('/passreset', require('./passreset'));
-router.use('/upgrade', require('./upgrade'));
-router.use('/upgrade/pending', require('./upgrade/pending'))
+router.use('/upgrade', require('./upgrade/router'));
 router.use('/verify', require('./verify'));
 
 router.use('/profile', require('./profile/router'));

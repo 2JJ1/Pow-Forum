@@ -15,6 +15,11 @@ var juniorPlanID = process.env.STRIPE_PREMIUM_PLAN_ID
 
 // 	/api/stripe
 
+router.use((req, res, next) => {
+	if(!process.env.STRIPE_PREMIUM_PLAN_ID) return res.render("400", {reason: "Stripe has not been configured"})
+	else next()
+})
+
 //Create subscription for Junior patronage
 router.use('/subscribe', bodyParser.urlencoded({ extended: false }))
 router.use('/subscribe', bodyParser.json({limit: '5mb'}))

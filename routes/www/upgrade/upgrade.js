@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const accountAPI = require('../../my_modules/accountapi')
+const accountAPI = require('../../../my_modules/accountapi')
 
 // 	/upgrade
 

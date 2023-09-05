@@ -8,6 +8,8 @@ const Accounts = mongoose.model('Accounts')
 
 router.get('/', async (req, res, next) => {
 	try {
+		if(!process.env.STRIPE_PREMIUM_PLAN_ID) throw "Stripe has not been configured"
+
 		let pagedata = {
 			powForum: req.powForum,
 			accInfo: req.account

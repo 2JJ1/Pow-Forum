@@ -2,5 +2,5 @@
     <li class="button"><a href="settings">Settings</a></li>
     <li class="button"><a href="info">Public Info</a></li>
     <li class="button"><a href="security">Security</a></li>
-    <% if(accInfo.isPatron){ %><li class="button"><a href="billing">Billing</a></li> <% } %>
+    <% if(accInfo.isPatron && process.env.STRIPE_PREMIUM_PLAN_ID){ %><li class="button"><a href="billing">Billing</a></li> <% } %>
 </ul>
