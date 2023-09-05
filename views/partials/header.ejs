@@ -10,7 +10,7 @@
         <li class='navItem'>
             <a title="Search for a user" href="/profile/search">Users</a>
         </li>
-        <% if(accInfo._id && process.env.STRIPE_PREMIUM_PLAN_ID){ %>
+        <% if(accInfo._id && (process.env.STRIPE_PREMIUM_PLAN_ID || process.env.COINBASE_API_KEY)){ %>
         <li class='navItem'>
             <a title="Upgrade your experience" href="/upgrade">Upgrade</a>
         </li>

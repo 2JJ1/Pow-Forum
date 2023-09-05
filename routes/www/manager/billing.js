@@ -4,11 +4,11 @@ const mongoose = require('mongoose')
 
 const Accounts = mongoose.model('Accounts')
 
-// /manager/security
+// /manager/billing
 
 router.get('/', async (req, res, next) => {
 	try {
-		if(!process.env.STRIPE_PREMIUM_PLAN_ID) throw "Stripe has not been configured"
+		if(!(process.env.STRIPE_PREMIUM_PLAN_ID || process.env.COINBASE_API_KEY)) throw "This website has not setup a way to bill clients"
 
 		let pagedata = {
 			powForum: req.powForum,

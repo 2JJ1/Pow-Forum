@@ -6,7 +6,7 @@ const router = express.Router();
 //Displays forum list
 
 router.use((req, res, next) => {
-	if(!process.env.STRIPE_PREMIUM_PLAN_ID) next("Stripe has not been configured")
+	if(!(process.env.STRIPE_PREMIUM_PLAN_ID || process.env.COINBASE_API_KEY)) next("This website has not setup a way to bill clients")
 	else next()
 })
 
