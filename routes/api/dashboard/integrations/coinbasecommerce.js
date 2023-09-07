@@ -14,7 +14,7 @@ router.post("/coinbasecommerce", async (req, res, next) => {
         let {secret, webhookSecret} = req.body
 
         //Sanitize and validate
-        if(!secret || (secret === "****" && !process.env.parsedEnv.COINBASE_API_KEY)) throw "Missing API key"
+        if(!secret || (secret === "****" && !process.env.COINBASE_API_KEY)) throw "Missing API key"
         if(secret !== "****" && !/^[\w-]{10,}$/.test(secret)) throw "Invalid API key"
 
         if(!webhookSecret || (webhookSecret === "****" && !process.env.COINBASE_WEBHOOK_SECRET)) throw "Missing webhook secret key"
@@ -31,6 +31,25 @@ router.post("/coinbasecommerce", async (req, res, next) => {
         if(secret !== "****") {
             parsedEnv.COINBASE_API_KEY = secret
             process.env.COINBASE_API_KEY = secret
+
+            //Validate API key
+            await fetch("https://api.commerce.coinbase.com/charges", {
+                method: "POST",
+                headers: { 
+                    'X-CC-Api-Key': process.env.COINBASE_API_KEY,
+                    'X-CC-Version': '2018-03-22',
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res?.error?.type === "authentication_error") throw "Invalid API key"
+            })
+            .catch(e => {
+                throw e
+            })
         }
 
         if(!process.env.COINBASE_WEBHOOK_SECRET || !process.env.COINBASE_API_KEY) throw "Both a webhook secret and API key must be set"
