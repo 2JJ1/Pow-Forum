@@ -22,8 +22,12 @@
                 <p>Help <%- powForum.name %> push more content by becoming a premium member!</p>
                 <div>
                     <div class="shopButtons">
+                        <% if(process.env.STRIPE_PREMIUM_PLAN_ID){ %>
                         <button id="buybutton" class="border1 round"><span class="icon creditcard"></span> Pay with credit or debit</button>
+                        <% } %>
+                        <% if(process.env.COINBASE_API_KEY){ %>
                         <button class="border1 round" onclick="createCoinbaseCharge()"><span class="icon cryptocoin"></span>Pay with Crypto</button>
+                        <% } %>
                     </div>
                     <p id="stripe_status"></p>
                 </div>
@@ -90,6 +94,7 @@
         </main>
         <% include ../partials/footer %>
 		
+        <% if(process.env.COINBASE_API_KEY){ %>
 		<script>
             <% if(!accInfo._id){ %>
             $('#buybutton').click(()=>{
@@ -112,8 +117,9 @@
                 })
             }
         </script>
+        <% } %>
         
-        <% if(accInfo._id && stripecustomerid !== "pending" && accInfo.isPatron !== true && accInfo.isVerifiedEmail){ %>
+        <% if(process.env.STRIPE_PREMIUM_PLAN_ID && accInfo._id && stripecustomerid !== "pending" && accInfo.isPatron !== true && accInfo.isVerifiedEmail){ %>
         <script src="https://checkout.stripe.com/checkout.js"></script>
         <script>
             $('#buybutton').click(()=>{
