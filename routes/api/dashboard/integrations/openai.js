@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
-const envfile = require('envfile')
-const fs = require('fs')
+const { Configuration, OpenAIApi } = require("openai")
+
+const updateENV = require('../../../../my_modules/updateenv')
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
@@ -18,14 +19,36 @@ router.post("/openai", async (req, res, next) => {
         if(secret !== "****" && !/^[\w-]{10,}$/.test(secret)) throw "Invalid API key"
 
         // Save changes
-        let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
+        if(secret === "****") throw "No change detected"
 
-        if(secret !== "****") {
-            parsedEnv.OPENAI_API_KEY = secret
-            process.env.OPENAI_API_KEY = secret
-        }
+        //Validate OpenAI auth
+        let configuration = new Configuration({
+            apiKey: secret,
+        })
+        let openai = new OpenAIApi(configuration)
+        await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {role: "user", content: "Hello world!"}
+            ],
+            temperature: 0.5,
+            max_tokens: 100,
+            top_p: 1.0,
+            frequency_penalty: 0.5,
+            presence_penalty: 0.0,
+            user: "0",
+        })
+        .catch(e => {
+            if(e?.response?.status === 401) throw "Invalid OpenAI API key"
+            else if (e?.response?.status === 429) throw "Failed to test OpenAI API key due to rate limit..."
+            else {
+                console.error(e)
+                throw "Unhandled error occured"
+            }
+        })
 
-        fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
+        //Save new OpenAI auth
+        updateENV({OPENAI_API_KEY: secret})
 
         //Log audit
 		new ForumAuditLogs({

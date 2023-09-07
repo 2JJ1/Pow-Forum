@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 const phraseblacklist = require('phrase-blacklist')
 const stripCombiningMarks = require('strip-combining-marks')
 const { RateLimiter } = require('limiter')
-const { Configuration, OpenAIApi } = require("openai");
+const { Configuration, OpenAIApi } = require("openai")
 
 const io = require('../server').io
 const accountAPI = require('./accountapi');
@@ -11,17 +11,21 @@ const rolesAPI = require('./rolesapi');
 const notificationsAPI = require('./notifications')
 const HandleCommand = require('./chatcommands')
 const { ProcessMentions } = require('./pfapi');
-const { find } = require('./chatcommands/flatdbs/eightball');
 
 const Messages = mongoose.model("Messages")
 const Notifications = mongoose.model("Notifications")
 const GeneralSettings = mongoose.model("GeneralSettings")
-const Sessions = mongoose.model("Sessions")
 
-const configuration = new Configuration({
-	apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+var configuration, openai = undefined
+var lastOpenAIKey = process.env.OPENAI_API_KEY
+function reloadOpenAI(){
+	configuration = new Configuration({
+		apiKey: process.env.OPENAI_API_KEY,
+	})
+	openai = new OpenAIApi(configuration)
+	lastOpenAIKey = process.env.OPENAI_API_KEY
+}
+reloadOpenAI()
 
 const rateLimitedChats = new RateLimiter({ tokensPerInterval: 10, interval: 5000, fireImmediately: true })
 
@@ -198,45 +202,50 @@ module.exports = async (socket) => {
 					})
 				}
 				//Respond with AI (Designed with global chat in mind only. Not DM)
-				//Premium accounts only
 				else if (ogMsg.toLowerCase().startsWith("@bot ")) {
-					if (await rolesAPI.isPatron(sender.roles) || await rolesAPI.isModerator(sender.roles)) {
-						//Grabs AI chat history from the past 15 minutes
-						let aiChatHistory = await Messages.find({$or: [{from: socket.uid}, {from: 1, to: 0}], content: new RegExp(`^@(bot|${sender.username}) `, "i"), time: {$gte: new Date() - 1000*60*5}}).limit(6).sort({_id: -1}).lean()
-						aiChatHistory = aiChatHistory.map(chat => {
-							return {
-								role: chat.from === 1 ? "assistant" : "user",
-								//Slice removes the "@username "
-								content: chat.from === 1 ? chat.content.slice(sender.username.length) : chat.content.slice(5)
-							}
-						})
+					if(!process.env.OPENAI_API_KEY) throw "AI chat bot is not configured"
 
-						let aiResponse = await openai.createChatCompletion({
-							model: "gpt-3.5-turbo",
-							messages: [
-								...aiChatHistory,
-								{role: "user", content: ogMsg.slice(5)}
-							],
-							temperature: 0.5,
-							max_tokens: 100,
-							top_p: 1.0,
-							frequency_penalty: 0.5,
-							presence_penalty: 0.0,
-							user: socket.uid.toString(),
-						})
-						.catch(e => {
-							e = e.toString()
+					//Handles when OpenAI auth changed
+					if(process.env.OPENAI_API_KEY !== lastOpenAIKey) reloadOpenAI()
 
-							if (e == "Request failed with status code 429") throw "Rate limited..."
-							else {
-								console.error(e)
-								throw "Unhandled error occured"
-							}
-						})
+					//Premium and moderator accounts only to prevent excessive billing
+					if (!await rolesAPI.isPatron(sender.roles) && !await rolesAPI.isModerator(sender.roles)) 
+						throw `Only <a href="/upgrade">premium members</a> can use AI chat`
 
-						if (aiResponse) autoResponse = `@${sender.username} ${escape(aiResponse.data.choices[0].message.content)}`
-					}
-					else throw `Only <a href="/upgrade">premium members</a> can use AI chat`
+					//Grabs AI chat history from the past 15 minutes
+					let aiChatHistory = await Messages.find({$or: [{from: socket.uid}, {from: 1, to: 0}], content: new RegExp(`^@(bot|${sender.username}) `, "i"), time: {$gte: new Date() - 1000*60*5}}).limit(6).sort({_id: -1}).lean()
+					aiChatHistory = aiChatHistory.map(chat => {
+						return {
+							role: chat.from === 1 ? "assistant" : "user",
+							//Slice removes the "@username "
+							content: chat.from === 1 ? chat.content.slice(sender.username.length) : chat.content.slice(5)
+						}
+					})
+
+					let aiResponse = await openai.createChatCompletion({
+						model: "gpt-3.5-turbo",
+						messages: [
+							...aiChatHistory,
+							{role: "user", content: ogMsg.slice(5)}
+						],
+						temperature: 0.5,
+						max_tokens: 100,
+						top_p: 1.0,
+						frequency_penalty: 0.5,
+						presence_penalty: 0.0,
+						user: socket.uid.toString(),
+					})
+					.catch(e => {
+						e = e.toString()
+
+						if (e == "Request failed with status code 429") throw "Rate limited..."
+						else {
+							console.error(e)
+							throw "Unhandled error occured"
+						}
+					})
+
+					if (aiResponse) autoResponse = `@${sender.username} ${escape(aiResponse.data.choices[0].message.content)}`
 				}
 			}
 
