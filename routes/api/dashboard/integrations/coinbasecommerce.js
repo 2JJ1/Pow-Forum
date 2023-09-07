@@ -23,16 +23,19 @@ router.post("/coinbasecommerce", async (req, res, next) => {
         // Save changes
         let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
 
-        if(secret !== "****") {
-            parsedEnv.COINBASE_API_KEY = secret
-            process.env.COINBASE_API_KEY = secret
-        }
-
         if(webhookSecret !== "****") {
             parsedEnv.COINBASE_WEBHOOK_SECRET = webhookSecret
             process.env.COINBASE_WEBHOOK_SECRET = webhookSecret
         }
 
+        if(secret !== "****") {
+            parsedEnv.COINBASE_API_KEY = secret
+            process.env.COINBASE_API_KEY = secret
+        }
+
+        if(!process.env.COINBASE_WEBHOOK_SECRET || !process.env.COINBASE_API_KEY) throw "Both a webhook secret and API key must be set"
+
+        //Only update ENV if no validation error occured
         fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
 
         //Log audit

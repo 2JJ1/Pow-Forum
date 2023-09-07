@@ -39,6 +39,9 @@ router.post("/stripe", async (req, res, next) => {
             process.env.STRIPE_WEBHOOK_PRIVATE_KEY = webhookSecret
         }
 
+        if(!process.env.STRIPE_PRIVATE_KEY || !process.env.STRIPE_PUBLIC_KEY || !process.env.STRIPE_WEBHOOK_PRIVATE_KEY)
+            throw "A Stripe api private key, api public key, and webhook private key must be set"
+
         //Always considers new API private key
 		let stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY) 
 
@@ -67,6 +70,7 @@ router.post("/stripe", async (req, res, next) => {
 			}
         }
 
+        //Only update ENV if no validation errors occured
         fs.writeFileSync('.env', envfile.stringify(parsedEnv)) 
 
         //Log audit
