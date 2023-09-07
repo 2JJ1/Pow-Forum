@@ -34,6 +34,7 @@ router.post("/stripe", async (req, res, next) => {
         parsedEnv.STRIPE_PUBLIC_KEY = public
         process.env.STRIPE_PUBLIC_KEY = public
 
+        //Note: Idk how to validate if webhook secret key is valid
         if(webhookSecret !== "****") {
             parsedEnv.STRIPE_WEBHOOK_PRIVATE_KEY = webhookSecret
             process.env.STRIPE_WEBHOOK_PRIVATE_KEY = webhookSecret

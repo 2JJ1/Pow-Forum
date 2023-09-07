@@ -23,6 +23,7 @@ router.post("/coinbasecommerce", async (req, res, next) => {
         // Save changes
         let parsedEnv = envfile.parse(fs.readFileSync('.env', "utf8"))
 
+        //Note: Idk how to validate if webhook secret key is valid
         if(webhookSecret !== "****") {
             parsedEnv.COINBASE_WEBHOOK_SECRET = webhookSecret
             process.env.COINBASE_WEBHOOK_SECRET = webhookSecret
