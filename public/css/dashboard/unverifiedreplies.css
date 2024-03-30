@@ -1,0 +1,59 @@
+body{
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    max-width: 1100px;
+    margin: auto;
+    padding: 12px;
+    flex: 1;
+}
+
+.reply > div:first-of-type > *{
+    display: inline-block;
+}
+
+.good{
+    color: var(--green);
+}
+
+.bad{
+    color: var(--red);
+}
+
+.content{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.content img{
+    max-width: 100%;
+}
+
+.content video{
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+}
+
+.pagination{
+    display: flex;
+    justify-content: right;
+}
+
+.pagination button{
+    margin-left: 12px;
+}
+
+.topicprefix{
+    margin-right: 5px;
+}
+
+.topic{
+    word-break: break-word;
+}
+
+a:visited.topic{
+    color: darkgray;
+}
