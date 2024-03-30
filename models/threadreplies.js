@@ -23,6 +23,7 @@ let schema = mongoose.Schema({
     date: Date,
     content: String,
     hidden: Boolean,
+    verified: false,
 })
 
 schema.plugin(AutoIncrement, {id: 'ThreadReplies'})

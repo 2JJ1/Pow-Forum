@@ -85,7 +85,9 @@ router.post('/', async (req, res, next) => {
 
 		//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots.
 		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
+		let anchorTagFound = false
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
+			anchorTagFound = true
 			let href = a.getAttribute("href")
 			let hostname
 			try {
@@ -130,6 +132,20 @@ router.post('/', async (req, res, next) => {
 		let lastEverReply = await ThreadReplies.findOne({uid: req.session.uid}).sort({_id: -1})
 		if(!await rolesAPI.isModerator(account.roles) && lastEverReply && (new Date() < new Date(lastEverReply.date).getTime()+15000)) throw "Please wait longer between replies"
 		
+		// Automod- Determine if reply requires verification
+		let verified = true
+		//Accounts with negative reputation are untrusted
+		if(verified && account.reputation < 0) verified = false
+		//Accounts younger than 24 hours are untrusted
+		if(verified && account.creationdate > Date.now() - 1000*60*60*24) verified = false
+		//Accounts with low reputation need verification for links
+		if(verified && reputation <=2){
+			//Checks if there is a clickable link
+			if(anchorTagFound) verified = false
+			//Check if text content contains a possible link
+			if(verified && /(https?:\/\/)?.+\.(com|net)/.test(textContent.toLowerCase())) verified = false
+		}
+
 		//Finally registers the reply in the database
 		let replyData = {
 			uid: req.session.uid,
@@ -138,6 +154,8 @@ router.post('/', async (req, res, next) => {
 			date: currentDate,
 			content: safeContent,
 		}
+		//Only set if not verified
+		if(!verified) replyData.verified = false
 		//Marks this reply as a comment for said thread reply id
 		if(trid) replyData.trid = trid
 		const newReply = await new ThreadReplies(replyData)
