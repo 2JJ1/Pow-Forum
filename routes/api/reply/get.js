@@ -17,7 +17,6 @@ router.get("/", async (req, res, next) => {
 		if(!trid) throw "Thread reply id not specified"
 		if(!Number.isInteger(trid)) throw "Invalid thread reply id"
 
-		//Adds the active forumer role if they have over 150 replies (Excluding OPs)
 		let reply = await ThreadReplies.findById(trid)
 		if(!reply) throw "Reply does not exist"
 

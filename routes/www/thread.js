@@ -49,7 +49,7 @@ router.get('/:tid', async (req, res, next) => {
         //Paginates by resultsPerPage rows. Multiply by specified page - 1 because database indexing starts at 0, not 1.
         let startingRow = resultsPerPage * (result.currentPage - 1)
 
-        var totalReplies = await ThreadReplies.countDocuments({tid, trid: {$exists: false}})
+        var totalReplies = await ThreadReplies.countDocuments({tid, trid: {$exists: false}, verified: {$ne: false}})
 
         result.totalPages = Math.ceil(totalReplies/resultsPerPage)
 
@@ -70,7 +70,7 @@ router.get('/:tid', async (req, res, next) => {
             //Instructs page to scroll to the reply
             result.scrollToTrid = skipToReply
             //Auto page change to where reply can be found
-            let replies = await ThreadReplies.find({tid, trid: {$exists: false}}).sort({_id: 1})
+            let replies = await ThreadReplies.find({tid, trid: {$exists: false}, verified: {$ne: false}}).sort({_id: 1})
             replies = replies.map(row => row._id)
             let replyIndex = replies.indexOf(skipToReply)
             if(replyIndex > resultsPerPage){
@@ -117,7 +117,7 @@ router.get('/:tid', async (req, res, next) => {
         }
         
         // Get replies
-        result.replies = await ThreadReplies.find({tid, trid: {$exists: false}}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
+        result.replies = await ThreadReplies.find({tid, trid: {$exists: false}, verified: {$ne: false}}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
 
         async function AppendReplyMetadata(replies){
             //Append replier data to each reply
@@ -131,7 +131,7 @@ router.get('/:tid', async (req, res, next) => {
                     if(accountRow._id == 0) return accountRow
         
                     //How many posts they've made, aka thread replies
-                    accountRow.totalposts = await ThreadReplies.countDocuments({uid: replyRow.uid})
+                    accountRow.totalposts = await ThreadReplies.countDocuments({uid: replyRow.uid, verified: {$ne: false}})
         
                     //How many threads they've made
                     accountRow.totalthreads = await Threads.countDocuments({uid: replyRow.uid})
@@ -160,7 +160,7 @@ router.get('/:tid', async (req, res, next) => {
                 replyRow.deletable = (req.session.uid === replyRow.uid) || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
 
                 //Fetch comments
-                replyRow.comments = await ThreadReplies.find({trid: replyRow._id}).sort({_id: 1}).limit(6).lean()
+                replyRow.comments = await ThreadReplies.find({trid: replyRow._id, verified: {$ne: false}}).sort({_id: 1}).limit(6).lean()
                 replyRow.moreCommentsAvailable = replyRow.comments.length > 5
                 replyRow.comments = await AppendReplyMetadata(replyRow.comments.slice(0,5))
             }

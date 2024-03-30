@@ -23,7 +23,8 @@ router.get("/", async (req, res, next) => {
         let filter = {
             _id: { 
                 $lt: fromTRID 
-            },
+            }, 
+            verified: {$ne: false},
         }
         
         if(byUID !== 0) filter.uid = byUID

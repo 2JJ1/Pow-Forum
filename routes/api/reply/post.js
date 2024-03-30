@@ -214,22 +214,25 @@ router.post('/', async (req, res, next) => {
 			}
 		}
 
+		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS
 		//Adds the active forumer role if they have over 150 replies (Excluding OPs)
-		var threadCount = await Threads.countDocuments({uid: req.session.uid})
-		var replyCount = await ThreadReplies.countDocuments({uid: req.session.uid}) - threadCount
-		if(replyCount > 150){
-			if(!await rolesAPI.RolesHasRole(account.roles, "active forumer")){
-				account.roles.push("active forumer")
-				await Accounts.updateOne({_id: req.session.uid}, {roles: JSON.stringify(account.roles)})
+		if(verified){
+			var threadCount = await Threads.countDocuments({uid: req.session.uid})
+			var replyCount = await ThreadReplies.countDocuments({uid: req.session.uid}) - threadCount
+			if(replyCount > 150){
+				if(!await rolesAPI.RolesHasRole(account.roles, "active forumer")){
+					account.roles.push("active forumer")
+					await Accounts.updateOne({_id: req.session.uid}, {roles: JSON.stringify(account.roles)})
 
-				await notificationsAPI.SendNotification({
-					//webpushsub: req.session.webpushsub,
-					recipientid: req.session.uid,
-					type: "newbadge",
-					badgeName: "Active Forumer"
-				})
+					await notificationsAPI.SendNotification({
+						//webpushsub: req.session.webpushsub,
+						recipientid: req.session.uid,
+						type: "newbadge",
+						badgeName: "Active Forumer"
+					})
+				}
 			}
-		}
+		} 
 			
 		//Code hasn't exited, so assume success
 		response.replyId = newReply._id

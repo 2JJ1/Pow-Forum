@@ -40,7 +40,7 @@ router.get('/', async (req, res, next) => {
 		for (let thread of threads){
 			//amount of replies on thread
 			//OP is not a reply, so subtract 1
-			thread.replies = await ThreadReplies.countDocuments({tid: thread._id}) - 1
+			thread.replies = await ThreadReplies.countDocuments({tid: thread._id, verified: {$ne: false}}) - 1
             thread.category = await forumAPI.GetSubcategory(thread.category)
 		}
 

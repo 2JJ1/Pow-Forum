@@ -20,7 +20,8 @@ router.get("/comments", async (req, res, next) => {
 
 		let query = { 
 			tid,
-			trid: { $exists: 1 }
+			trid: { $exists: 1 }, 
+			verified: {$ne: false}
 		 }
 		let {fromId} = req.query
 		fromId = parseInt(fromId)

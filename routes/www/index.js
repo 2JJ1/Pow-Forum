@@ -37,7 +37,7 @@ router.get('/', async (req, res, next) => {
 				category.threadcount = await Threads.countDocuments({category: category._id})
 
 				//Checks how many replies are in x category name
-				let replyCount = await ThreadReplies.countDocuments({category: category._id})
+				let replyCount = await ThreadReplies.countDocuments({category: category._id, verified: {$ne: false}})
 				//Each thread has at least 1 post(The original post), so decrement that as OP is not a reply
 				category.replies = replyCount - category.threadcount
 

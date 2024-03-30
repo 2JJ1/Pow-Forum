@@ -165,7 +165,7 @@ router.get('/:forum', async (req, res, next) => {
 			}
 
 			//amount of replies on thread
-			thread.replies = await ThreadReplies.countDocuments({tid: thread._id, trid: {$exists: false}})
+			thread.replies = await ThreadReplies.countDocuments({tid: thread._id, trid: {$exists: false}, verified: {$ne: false}})
 			//OP is not a reply, so subtract 1
 			thread.replies--
 

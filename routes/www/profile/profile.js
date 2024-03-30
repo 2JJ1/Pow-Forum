@@ -61,7 +61,7 @@ router.get('/', async (req, res, next) => {
             else throw "Account doesn't exist"
         })
 
-        var replies = await ThreadReplies.find({uid: queryFor}).sort({_id: -1}).limit(16).lean()
+        var replies = await ThreadReplies.find({uid: queryFor, verified: {$ne: false}}).sort({_id: -1}).limit(16).lean()
         for(let replyRow of replies){
             //Grabs the first reply assigned to that thread
             var OP = await ThreadReplies.findOne({tid: replyRow.tid}).sort({_id: 1})

@@ -27,7 +27,7 @@ router.get("/", async (req, res, next) => {
 				name: category.name,
 				name2: category._id,
 			}
-			thread.replies = await ThreadReplies.count({tid: thread._id}) - 1
+			thread.replies = await ThreadReplies.count({tid: thread._id, verified: {$ne: false}}) - 1
         }
 
         response.moreAvailable = threads.length > 15
