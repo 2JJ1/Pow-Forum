@@ -31,7 +31,7 @@ router.delete("/", async (req, res, next) => {
         let response = {success: false}
 
         let {uid, grecaptcharesponse, password, reason, keepForumContent} = req.body
-        if(!uid || !grecaptcharesponse || !password) throw "Invalid request"
+        if(!uid || !password) throw "Invalid request"
 
         //Prevent bots/spam with Google captcha
 		let captchaResult = await recaptcha.captcha(grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))

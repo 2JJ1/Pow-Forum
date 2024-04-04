@@ -180,14 +180,6 @@
 
 		<script type="text/javascript" src="/js/prism.js"></script>
 		<script>
-			//Considers if Captcha is configured and loaded
-            if(typeof grecaptcha === "undefined") var grecaptcha = {
-                getResponse: () => {},
-                reset: () => {},
-                execute: () => {},
-                render: () => {},
-            }
-
 			HTMLToOembed(document.getElementById("signature"), { fileDomainWhitelist: true })
 			//Embed images in thread content
             Array.prototype.forEach.call(document.getElementsByClassName("threadContent"), function(threadReply){
@@ -334,7 +326,7 @@
                     },
 					body: JSON.stringify({
 						uid: <%= profileInfo._id %>,
-                        grecaptcharesponse: grecaptcha.getResponse(),
+                        grecaptcharesponse: grecaptcha?.getResponse(),
 						password,
 						reason,
 						keepForumContent,
@@ -347,15 +339,8 @@
                 })
 				.catch(()=>alert("Failed to contact the server."))
 
-				grecaptcha.reset();
+				grecaptcha?.reset();
 			}
-            
-            function deleteAccountErrorCallback() {
-                // Re-initialize reCaptcha
-                grecaptcha.reset();
-                // Fire reCaptcha
-                grecaptcha.execute();
-            }
 			<% } %>
 		</script>
 	</body>

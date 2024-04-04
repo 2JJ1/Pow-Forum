@@ -1,4 +1,3 @@
-const https = require("https");
 const fetch = require('node-fetch')
 
 //Google Captcha Wrapper
@@ -28,10 +27,9 @@ class Captcha {
 			})
 			.then(res => res.json())
 			.then(res => {
-				if(res['error-codes'] && !res['error-codes'].includes('invalid-input-response')) throw res
-				return res.success ? resolve(true) : resolve(false)
+				if(res['error-codes']?.length > 0 && !res['error-codes'].includes('invalid-input-response')) reject(res)
+				res.success ? resolve(true) : resolve(false)
 			})
-			.catch(e => reject(e))
 		})
 	}
 }
