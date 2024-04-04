@@ -22,7 +22,7 @@
             <div class="threads">
                 <% for(var i=0; i<replies.length; i++){ %>
                 <% let reply = replies[i] %>
-                <div class="reply theme1 border1 round padding">
+                <div class="reply theme1 border1 round padding" data-trid="<%- reply._id %>">
                     <div>
                         <p><script>document.write(TimeStamp.Beautify('<%= reply.date %>'))</script> | </p>
                         <p>By <a href="/profile?uid=<%= replies[i].uid %>" class="<%- reply.user.highestRole %>"><%- replies[i].user.username %></a>(<span class="<% if(reply.user.reputation>0){ %>good<% } %><% if(reply.user.reputation<0){ %>bad<% } %>"><%= reply.user.reputation %></span>) | </p>
@@ -33,9 +33,9 @@
                     <br>
                     <div class="verticalCenter gapchildrenx">
                         <% if(reply.deletable){ %>
-                        <button class="theme2 button border1 round btnDeleteReply bad" data-trid="<%- reply._id %>">Delete</button>
+                        <button class="theme2 button border1 round bad btnDeleteReply">Delete</button>
                         <% } %>
-                        <button class="theme2 button border1 round">Verify</button>
+                        <button class="theme2 button border1 round btnVerifyReply">Verify</button>
                     </div>
                 </div>
                 <br>
@@ -73,7 +73,7 @@
                 else if (event.target.matches('.btnDeleteReply')){
                     if(!confirm("You are about to delete a reply.")) return
 
-                    let trid = event.target.getAttribute("data-trid")
+                    let trid = event.target.parentElement.parentElement.getAttribute("data-trid")
 
                     fetch('/api/thread/reply', {
                         method: "DELETE",
@@ -85,6 +85,28 @@
                     .then(res => res.json())
                     .then(res => {
                         if(res.success) event.target.parentElement.parentElement.remove()
+                        else alert(res.reason || 'Unknown error occured...')
+                    })
+                    .catch(()=> alert("Failed to contact the server."))
+                }
+                else if (event.target.matches('.btnVerifyReply')){
+                    if(!confirm("You are about to verify a reply.")) return
+
+                    let trid = event.target.parentElement.parentElement.getAttribute("data-trid")
+
+                    fetch('/api/thread/reply/verify', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({trid}),
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        if(res.success) {
+                            alert("verified")
+                            event.target.parentElement.parentElement.remove()
+                        }
                         else alert(res.reason || 'Unknown error occured...')
                     })
                     .catch(()=> alert("Failed to contact the server."))
