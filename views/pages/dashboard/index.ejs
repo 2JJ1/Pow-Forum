@@ -12,6 +12,9 @@
 
         <script type="text/javascript" src="/js/timestamp.js?v2=2"></script>   
         <script type="text/javascript" src="/js/oembed.js?v=22&v2=4"></script>
+        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
@@ -92,33 +95,8 @@
                 </div>
                 <div class="gapchildren globalactivitycontainer">
                     <h2>Global Activity Feed</h2>
-                    <div class="activitycards">
-						<% for (var i=0; i<activityFeed.length; i++){ %>
-						<div class="theme1 activitycard round border1 padding">
-							<% if(activityFeed[i].isLowerRanked){ %><p class="delete" data-trid="<%= activityFeed[i]._id %>">x</p><% } %>
-							<p class="activityHeader">
-                                <img class="pfp" src="<%= activityFeed[i].account.profilepicture %>"/>
-                                <a href="/profile?uid=<%= activityFeed[i].account._id %>"><%= activityFeed[i].account.username %></a>
-								<% if(activityFeed[i].isOP){ %>
-								Created a new thread
-								<% } else { %>
-								<a href="/t/<%= activityFeed[i].tid %>?r=<%= activityFeed[i]._id %>">
-								<% if("trid" in activityFeed[i]){ %>
-								Commented
-								<% } else { %>
-								Replied
-								<% } %>
-								</a>
-								to thread
-								<% } %> 
-								: <a href="/t/<%= activityFeed[i].tid %>"><span class="threadTitle"><%- activityFeed[i].threadTitle %></span></a>
-							</p>
-							<div class="threadContent"><%- activityFeed[i].content %></div>
-						</div>
-						<% } %>
-						<% if(activityFeed.length<=0){ %><p style="text-align: center;">This user has no activity on the forum...</p><% } %>
-					</div>
-					<% if(moreFeedAvailable){ %><button class="theme1 border1 button btnLoadMore">Load More</button><% } %>
+                    <div class="activitycards"></div>
+					<button class="theme1 border1 button btnLoadMore">Load More</button>
                 </div>
             </div>
 		</main>
@@ -152,9 +130,9 @@
 				}
 			});
 
-            <% if(moreFeedAvailable){ %>
-			var oldestTrid = "<%= activityFeed[activityFeed.length-1]._id %>";
-			document.getElementsByClassName("btnLoadMore")[0].onclick = function(){
+            var oldestTrid = undefined
+
+            function loadActivityFeed(){
 				fetch('/api/account/activity?uid=0&trid='+oldestTrid, {
 					method: "GET",
 					headers: {
@@ -198,13 +176,11 @@
 					if(!moreFeedAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
 				})
 			}
-			<% } %>
+
+			document.getElementsByClassName("btnLoadMore")[0].onclick = loadActivityFeed
 
             document.querySelector("body").onload = function(){
-                //Embed images in thread and signature content
-                Array.prototype.forEach.call([...document.getElementsByClassName("threadContent")], function(threadReply){
-                    HTMLToOembed(threadReply, { fileDomainWhitelist: true })
-                })
+                loadActivityFeed()
             }
         </script>
     </body>

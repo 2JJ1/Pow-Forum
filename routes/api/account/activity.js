@@ -14,18 +14,15 @@ router.get("/", async (req, res, next) => {
 	try {
         let response = {success: false}
 
-        var fromTRID = parseInt(req.query.trid)
-        if(!Number.isInteger(fromTRID)) throw "Invalid request"
-
         var byUID = parseInt(req.query.uid)
         if(!Number.isInteger(byUID)) throw "Invalid request"
 
         let filter = {
-            _id: { 
-                $lt: fromTRID 
-            }, 
             verified: {$ne: false},
         }
+
+        let fromTRID = parseInt(req.query.trid)
+        if(Number.isInteger(fromTRID)) filter._id = {$lt: fromTRID}
         
         if(byUID !== 0) filter.uid = byUID
 
