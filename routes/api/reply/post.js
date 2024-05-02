@@ -85,18 +85,20 @@ router.post('/', async (req, res, next) => {
 		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
 		let untrustedAnchorTagFound = false
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
+			//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots
 			let href = a.getAttribute("href")
 			let hostname
 			try {
 				hostname = new URL(href).hostname
 			} catch(e){}
 			//No hostname? Probably a / route to redirect on the same site
-			if(!hostname) return
 			//Adds nofollow
-			if(allowedFollowDomains.indexOf(hostname) === -1) {
+			if(hostname && allowedFollowDomains.indexOf(hostname) === -1) {
 				a.setAttribute("rel", "noreferrer nofollow")
 				untrustedAnchorTagFound = true
 			}
+			//Ensures links open in a new tab 
+			a.setAttribute("target", "_blank")
 		})
 		safeContent = dom.serialize()
 
