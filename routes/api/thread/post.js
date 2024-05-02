@@ -142,6 +142,9 @@ router.post('/', async (req, res, next) => {
 			//Check if text content contains a possible link
 			else if(/(https?:\/\/)?.+\.(com|net)/i.test(textContent.toLowerCase())) verified = false
 		}
+
+		/** TEMPORARY UNTIL I CAN GET THIS TO STOP CAUSING ERRORS ON VIEWING CATEGORIES WITH A HIDDEN POST */
+		verified=true
 			
 		//Creates the thread
 		let newThread = await new Threads({
