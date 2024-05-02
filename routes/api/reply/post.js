@@ -238,6 +238,7 @@ router.post('/', async (req, res, next) => {
 			
 		//Code hasn't exited, so assume success
 		response.replyId = newReply._id
+		if(!verified) response.verificationRequired = true
 		response.success = true
 		res.json(response)
 	} 

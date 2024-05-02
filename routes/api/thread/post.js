@@ -164,6 +164,7 @@ router.post('/', async (req, res, next) => {
 		//No errors at this point? Successful thread creation
 		response.success = true
 		response.tid = newThread._id
+		if(!verified) response.verificationRequired = true
 		res.json(response)
 
 		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS

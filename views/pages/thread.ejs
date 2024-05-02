@@ -532,8 +532,9 @@
                 .then(res => {
                     if(res.success){
                         saveDraft = false
-                        localStorage.removeItem('reply-draft');
-                        document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
+                        localStorage.removeItem('reply-draft')
+                        if(res.verificationRequired) document.getElementById('errormessage').innerHTML = "Reply submitted and will be posted when a moderator reviews it"
+                        else document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
                     } else {
                         document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
                     }
@@ -633,7 +634,8 @@
                     .then(res => res.json())
                     .then(res => {
                         if(res.success){
-                            document.location.reload()
+                            if(res.verificationRequired) document.getElementById('errormessage').innerHTML =  "Reply edit submitted and will be posted when a moderator reviews it"
+                            else document.location.reload()
                         } 
                         else {
                             alert(res.reason || 'Unknown error occured...')
@@ -687,8 +689,13 @@
                     })
                     .then(res => res.json())
                     .then(res => {
-                        if(!res.success) return alert(res.reason || 'Unknown error occured...')
-                        document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
+                        if(res.success){
+                            if(res.verificationRequired) alert("Comment submitted and will be posted when a moderator reviews it")
+                            else document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
+                        } 
+                        else {
+                            alert(res.reason || 'Unknown error occured...')
+                        }
                     })
                     .catch(() => alert("Failed to contact the server."))
 
