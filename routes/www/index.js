@@ -42,7 +42,7 @@ router.get('/', async (req, res, next) => {
 				category.replies = replyCount - category.threadcount
 
 				//Gets the latest reply in this category
-				category.latestReply = await ThreadReplies.findOne({category: category._id}).sort({_id: -1}).lean()
+				category.latestReply = await ThreadReplies.findOne({category: category._id, verified: {$ne: false}}).sort({_id: -1}).lean()
 				.then(async reply => {
 					if(!reply) return
 

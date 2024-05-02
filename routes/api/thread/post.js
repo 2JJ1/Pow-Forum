@@ -143,9 +143,6 @@ router.post('/', async (req, res, next) => {
 			else if(/(https?:\/\/)?.+\.(com|net)/i.test(textContent.toLowerCase())) verified = false
 		}
 
-		/** TEMPORARY UNTIL I CAN GET THIS TO STOP CAUSING ERRORS ON VIEWING CATEGORIES WITH A HIDDEN POST */
-		verified=true
-			
 		//Creates the thread
 		let newThread = await new Threads({
 			category: req.body.forum,

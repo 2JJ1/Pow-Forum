@@ -43,6 +43,11 @@ router.get('/:tid', async (req, res, next) => {
 
         result.category = await forumapi.GetSubcategory(result.category)
 
+        //Get original post
+        var OP = await ThreadReplies.findOne({tid}).sort({_id: 1})
+
+        if(OP.verified === false) throw "This thread is pending moderator verification"
+
         // Pagination
         let resultsPerPage = 15
         result.currentPage = parseInt(req.query.page) || 1 //Default to page 1
@@ -88,9 +93,6 @@ router.get('/:tid', async (req, res, next) => {
         var reputation = await accountAPI.SumReputation(req.session.uid)
         //Reputation must be greater than -20
         if(reputation<=-20) result.canReply = false
-        
-        //Get original post
-        var OP = await ThreadReplies.findOne({tid}).sort({_id: 1})
 
         //Can't reply to 3 month old threads (Prevent necro posting)
         //Add 90 days to the thread start date to determine reply expiration

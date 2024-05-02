@@ -102,6 +102,11 @@ router.get('/:forum', async (req, res, next) => {
 		else { 
 			let aggregateQuery = [
 				{
+					$match: {
+						verified: {$ne: false},
+					}
+				},
+				{
 					$sort: {
 						_id: -1,
 					}
@@ -171,8 +176,7 @@ router.get('/:forum', async (req, res, next) => {
 
 			//Threads don't normally have 0 replies, but jic if someone manhandled the database
 			if(thread.replies === -1) {
-				forumData.threads.splice(i, 1) //So we don't display it in the threads list
-				i-- //So the delete doesn't interrupt the loop
+				delete thread
 				continue //Move to the next loop
 			}
 			
