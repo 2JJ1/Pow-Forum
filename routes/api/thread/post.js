@@ -166,18 +166,21 @@ router.post('/', async (req, res, next) => {
 		response.tid = newThread._id
 		res.json(response)
 
-		//Adds the convo starter role if they have over 50 threads
-		var threadCount = await Threads.countDocuments({uid: req.session.uid})
-		if(threadCount > 50){
-			if(!await rolesAPI.RolesHasRole(account.roles, "convo starter")){
-				account.roles.push("convo starter")
-				await Accounts.updateOne({_id: req.session.uid}, {roles: JSON.stringify(account.roles)})
-				await notificationsAPI.SendNotification({
-					//webpushsub: req.session.webpushsub,
-					recipientid: req.session.uid,
-					type: "newbadge",
-					badgeName: "Convo Starter"
-				})
+		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS
+		if(verified){
+			//Adds the convo starter role if they have over 50 threads
+			var threadCount = await Threads.countDocuments({uid: req.session.uid})
+			if(threadCount > 50){
+				if(!await rolesAPI.RolesHasRole(account.roles, "convo starter")){
+					account.roles.push("convo starter")
+					await Accounts.updateOne({_id: req.session.uid}, {roles: JSON.stringify(account.roles)})
+					await notificationsAPI.SendNotification({
+						//webpushsub: req.session.webpushsub,
+						recipientid: req.session.uid,
+						type: "newbadge",
+						badgeName: "Convo Starter"
+					})
+				}
 			}
 		}
 	}

@@ -217,8 +217,8 @@ router.post('/', async (req, res, next) => {
 		}
 
 		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS
-		//Adds the active forumer role if they have over 150 replies (Excluding OPs)
 		if(verified){
+			//Adds the active forumer role if they have over 150 replies (Excluding OPs)
 			var threadCount = await Threads.countDocuments({uid: req.session.uid})
 			var replyCount = await ThreadReplies.countDocuments({uid: req.session.uid}) - threadCount
 			if(replyCount > 150){
