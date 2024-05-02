@@ -26,7 +26,7 @@ class ActivityCard extends React.Component {
                         </React.Fragment>
                     }
                     {":"} 
-                    <a href={`/t/${this.props.feed.tid}`}><span className="threadTitle">{this.props.feed.threadTitle}</span></a>
+                    <a href={`/t/${this.props.feed.tid}`}> <span className="threadTitle">{this.props.feed.threadTitle}</span></a>
                 </p>
                 <div className="threadContent" dangerouslySetInnerHTML={{__html: this.state.content}}></div>
             </div>
@@ -44,7 +44,7 @@ class GlobalActivityFeed extends React.Component {
     }
 
     loadActivityFeed() {
-        fetch('/api/account/activity?uid=0', {
+        fetch(this.props.url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -64,7 +64,8 @@ class GlobalActivityFeed extends React.Component {
     render() {
         return (
             <div className="gapchildren globalactivitycontainer">
-                <h2>Global Activity Feed v2</h2>
+                <h2>{this.props.title}</h2>
+                {this.props.description && <p>{this.props.description}</p>}
                 <div>
                     { 
                     this.state.feed.length <= 0 ? <p style={{textAlign: 'center'}}>This forum has no activity...</p> :
@@ -76,8 +77,25 @@ class GlobalActivityFeed extends React.Component {
     }
 }
 
+class ActivityFeeds extends React.Component {
+    render() {
+        return (
+            <React.Fragment>
+                <GlobalActivityFeed 
+                title="Unverified Activity Feed" 
+                description="These posts may have been made by a bot and require verification before they're publicly displayed" 
+                url='/api/account/activity?uid=0&unverified=true'/>
+                <GlobalActivityFeed 
+                title="Global Activity Feed" 
+                description="Unfiltered list of all created threads and replies on the forum"
+                url='/api/account/activity?uid=0'/>
+            </React.Fragment>
+        )
+    }
+}
+
 // Render the React component inside the #root div
 ReactDOM.render(
-    <GlobalActivityFeed />,
+    <ActivityFeeds/>,
     document.getElementById('root')
 );

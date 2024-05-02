@@ -26,6 +26,12 @@ router.get("/", async (req, res, next) => {
         
         if(byUID !== 0) filter.uid = byUID
 
+        let {unverified} = req.query
+        if(unverified && unverified === "true"){
+            if(!await rolesAPI.isModerator(req.session.uid)) throw "Only moderators may make this request"
+            filter.verified = false
+        }
+
         var replies = await ThreadReplies.find(filter).sort({_id: -1}).limit(16).lean()
         for(let reply of replies){
             //Grabs the first reply assigned to that thread
