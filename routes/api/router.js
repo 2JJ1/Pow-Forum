@@ -31,9 +31,6 @@ router.options('*', cors)
 
 router.use('/thread', require('./thread/router'))
 
-//Create new threads
-router.use('/thread', require('./newthread'))
-
 //Add/delete reply on a thread
 router.use('/thread/reply', require('./reply/router'))
 
