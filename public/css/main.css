@@ -210,6 +210,10 @@ pre code *{
     margin-right: 0;
 }
 
+.green{
+    color: var(--green);
+}
+
 .red{
     color: var(--red);
 }

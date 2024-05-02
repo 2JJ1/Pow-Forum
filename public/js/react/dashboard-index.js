@@ -6,7 +6,53 @@ class ActivityCard extends React.Component {
         }
     }
 
-    async componentDidMount(){
+    delete() {
+        if(!confirm("You are about to delete a reply.")) return
+
+        fetch('/api/thread/reply', {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                trid: this.props.feed._id
+            }),
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.success) this.props.deleteActivityCard(this.props.feed._id)
+            else alert(res.reason || 'Unknown error occured...')
+        })
+        .catch(e => {
+            alert("Error occured")
+            throw e
+        })
+    }
+
+    verify() {
+        if(!confirm("You are about to verify a reply.")) return
+
+        fetch('/api/thread/reply/verify', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                trid: this.props.feed._id
+            }),
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.success) this.props.deleteActivityCard(this.props.feed._id)
+            else alert(res.reason || 'Unknown error occured...')
+        })
+        .catch(e => {
+            alert("Error occured")
+            throw e
+        })
+    }
+
+    async componentDidMount() {
         let content = await HTMLToOembed(this.props.feed.content, { fileDomainWhitelist: true })
         this.setState({content})
     }
@@ -14,7 +60,10 @@ class ActivityCard extends React.Component {
     render(){
         return (
             <div className="theme1 activitycard round border1 padding">
-                { this.props.feed.isLowerRanked && <p className="delete" data-trid={this.props.feed._id}>x</p> }
+                <div className="controls verticalCenter gapchildrenx" style={{float: "right"}}>
+                    { this.props.feed.verified === false && <p className="green" onClick={this.verify.bind(this)} title="Verify">✅</p>}
+                    { this.props.feed.isLowerRanked && <p className="red" onClick={this.delete.bind(this)} title="Delete">🗑️</p> }
+                </div>
                 <p className="activityHeader">
                     <img className="pfp" src={this.props.feed.account.profilepicture}/>
                     <a href={`/profile?uid=${this.props.feed.account._id}`}>{this.props.feed.account.username} </a>
@@ -63,6 +112,12 @@ class ActivityFeed extends React.Component {
         })
     }
 
+    deleteActivityCard(trid) {
+        this.setState({
+            feed: this.state.feed.filter(obj => obj._id !== trid)
+        })
+    }
+
     componentDidMount() {
         this.loadActivityFeed()
     }
@@ -74,8 +129,8 @@ class ActivityFeed extends React.Component {
                 {this.props.description && <p>{this.props.description}</p>}
                 <div>
                     { 
-                    this.state.feed.length <= 0 ? <p style={{textAlign: 'center'}}>This forum has no activity...</p> :
-                    this.state.feed.map((feed) => <ActivityCard key={feed._id} feed={feed}/> )
+                    this.state.feed.length <= 0 ? <p>No activity found...</p> :
+                    this.state.feed.map((feed) => <ActivityCard key={feed._id} feed={feed} deleteActivityCard={this.deleteActivityCard.bind(this)}/> )
                     }
                 </div>
                 {this.state.moreFeedAvailable && <button className="theme1 border1 button btnLoadMore" onClick={this.loadActivityFeed.bind(this)}>Load More</button>}

@@ -85,35 +85,6 @@
             </div>
 		</main>
         <% include ../../partials/footer %>
-        <script>
-            document.addEventListener("click", function(event) {
-				var target = event.target;
-				if (target.matches(".delete")) {
-					if(!confirm("Confirm delete.")) return
-					fetch("/api/thread/reply", {
-						method: "DELETE",
-						headers: {
-							"Content-Type": "application/json"
-						},
-						body: JSON.stringify({
-							trid: target.getAttribute("data-trid"),
-						})
-					})
-					.then(res => res.json())
-					.then(res => {
-						if(res.success) target.parentElement.remove()
-						else {
-							if(res.reason) alert("Error: " + res.reason)
-							else alert("An unexpected error occured...")
-						}
-					})
-					.catch((e)=>{
-						console.log(e)
-						alert("Failed to contact the server or an unexpected response was received...")
-					})
-				}
-			});
-        </script>
         <script type="text/babel" src="/js/react/dashboard-index.js"></script>
     </body>
 </html>

@@ -98,3 +98,7 @@ main{
     float: right;
     cursor: pointer;
 }
+
+.activitycard .controls p{
+    cursor: pointer;
+}
