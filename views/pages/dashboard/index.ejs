@@ -94,11 +94,6 @@
                     </div>
                 </div>
                 <div id="root" class="gapchildren globalactivitycontainer"></div>
-                <div class="gapchildren globalactivitycontainer">
-                    <h2>Global Activity Feed</h2>
-                    <div class="activitycards"></div>
-					<button class="theme1 border1 button btnLoadMore">Load More</button>
-                </div>
             </div>
 		</main>
         <% include ../../partials/footer %>
@@ -130,59 +125,6 @@
 					})
 				}
 			});
-
-            var oldestTrid = undefined
-
-            function loadActivityFeed(){
-				fetch('/api/account/activity?uid=0&trid='+oldestTrid, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json"
-					}
-				})
-				.then(res => res.json())
-				.then(async res => {
-					var {feed, moreFeedAvailable} = res
-					if(!feed) return
-					oldestTrid = feed[feed.length-1]._id
-
-					for(var i=0; i<feed.length; i++){
-                        feed[i].content = await HTMLToOembed(feed[i].content, { fileDomainWhitelist: true })
-
-                        let html = 
-                        `<div class="theme1 activitycard round border1 padding">`
-							if(feed[i].isLowerRanked) html += `<p class="delete" data-trid="${feed[i]._id}">x</p>`
-							html += 
-                            `<p class="activityHeader">
-                                <img class="pfp" src="${feed[i].account.profilepicture}"/>
-                                <a href="/profile?uid=${feed[i].account._id}">${feed[i].account.username}</a>
-                            `
-                            if(feed[i].isOP) html += "Created a new thread"
-                            else {
-                                html += `<a href="/t/${feed[i].tid}?r=${feed[i]._id}">`
-                                    if("trid" in feed[i]) html += "Commented"
-                                    else html += "Replied"
-                                html += `</a> to thread`
-                            }
-
-                            html += `
-								: <a href="/t/${feed[i].tid}"><span class="threadTitle">${feed[i].threadTitle}</span></a>
-							</p>
-							<div class="threadContent">${feed[i].content}</div>
-						</div>`
-
-                        document.getElementsByClassName("activitycards")[0].innerHTML += html
-					}
-
-					if(!moreFeedAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
-				})
-			}
-
-			document.getElementsByClassName("btnLoadMore")[0].onclick = loadActivityFeed
-
-            document.querySelector("body").onload = function(){
-                loadActivityFeed()
-            }
         </script>
         <script type="text/babel" src="/js/temp.js"></script>
     </body>
