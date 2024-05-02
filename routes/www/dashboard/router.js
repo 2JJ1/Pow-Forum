@@ -30,7 +30,5 @@ router.use("/moderators", AdminRequirement, require('./moderators'))
 
 //Moderators
 router.use('/auditlog', require('./auditlog'));
-router.use('/allreplies', require('./allreplies'));
-router.use('/unverifiedreplies', require('./unverifiedreplies'));
 
 module.exports = router;
