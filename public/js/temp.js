@@ -44,7 +44,10 @@ class GlobalActivityFeed extends React.Component {
     }
 
     loadActivityFeed() {
-        fetch(this.props.url, {
+        let urlParams = new URLSearchParams(this.props.url.substring(this.props.url.indexOf("?")))
+        if(this.state.feed.length > 0) urlParams.append("trid", this.state.feed[this.state.feed.length - 1]._id)
+
+        fetch(`${this.props.url.substring(0,this.props.url.indexOf("?"))}?${urlParams}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -52,8 +55,11 @@ class GlobalActivityFeed extends React.Component {
         })
         .then(res => res.json())
         .then(res => {
-            console.log({res})
-            this.setState({...res})
+            this.setState({
+                //Feed appends
+                feed: [...this.state.feed, ...res.feed],
+                moreFeedAvailable: res.moreFeedAvailable
+            })
         })
     }
 
@@ -72,6 +78,7 @@ class GlobalActivityFeed extends React.Component {
                     this.state.feed.map((feed) => <ActivityCard key={feed._id} feed={feed}/> )
                     }
                 </div>
+                {this.state.moreFeedAvailable && <button className="theme1 border1 button btnLoadMore" onClick={this.loadActivityFeed.bind(this)}>Load More</button>}
             </div>
         );
     }
