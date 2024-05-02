@@ -34,7 +34,7 @@ class ActivityCard extends React.Component {
     }
 }
 
-class GlobalActivityFeed extends React.Component {
+class ActivityFeed extends React.Component {
     constructor(props){
         super(props)
         this.state = {
@@ -84,25 +84,17 @@ class GlobalActivityFeed extends React.Component {
     }
 }
 
-class ActivityFeeds extends React.Component {
-    render() {
-        return (
-            <React.Fragment>
-                <GlobalActivityFeed 
-                title="Unverified Activity Feed" 
-                description="These posts may have been made by a bot and require verification before they're publicly displayed" 
-                url='/api/account/activity?uid=0&unverified=true'/>
-                <GlobalActivityFeed 
-                title="Global Activity Feed" 
-                description="Unfiltered list of all created threads and replies on the forum"
-                url='/api/account/activity?uid=0'/>
-            </React.Fragment>
-        )
-    }
-}
-
 // Render the React component inside the #root div
 ReactDOM.render(
-    <ActivityFeeds/>,
+    <React.Fragment>
+        <ActivityFeed 
+        title="Unverified Activity Feed" 
+        description="These posts may have been made by a bot and require verification before they're publicly displayed" 
+        url='/api/account/activity?uid=0&unverified=true'/>
+        <ActivityFeed 
+        title="Global Activity Feed" 
+        description="Unfiltered list of all created threads and replies on the forum"
+        url='/api/account/activity?uid=0'/>
+    </React.Fragment>,
     document.getElementById('root')
 );
