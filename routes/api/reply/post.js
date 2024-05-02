@@ -66,16 +66,14 @@ router.post('/', async (req, res, next) => {
 		if(!await accountAPI.emailVerified(req.session.uid)) throw "Please verify your email first!"
 
 		//Fetch the client's account
-		let account = await accountAPI.fetchAccount(req.session.uid)
+		let account = await accountAPI.fetchAccount(req.session.uid, {reputation: true})
 
 		//Does this category require a specific role?
 		let category = await forumAPI.GetSubcategory(thread.category)
 		if(!forumAPI.permissionsCheck(category.requiredRoles, account.roles)) throw "You lack permissions to post here"
 
 		// Reputation must be greater than -20
-		//Sum of reputation
-		var reputation = await accountAPI.SumReputation(req.session.uid)
-		if(reputation<=-20) throw "Your reputation is too low"
+		if(account.reputation<=-20) throw "Your reputation is too low"
 
 		//Only grab whitelisted HTML
 		let safeContent = ThreadSanitizeHTML(content)
@@ -85,9 +83,8 @@ router.post('/', async (req, res, next) => {
 
 		//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots.
 		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
-		let anchorTagFound = false
+		let untrustedAnchorTagFound = false
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
-			anchorTagFound = true
 			let href = a.getAttribute("href")
 			let hostname
 			try {
@@ -96,7 +93,10 @@ router.post('/', async (req, res, next) => {
 			//No hostname? Probably a / route to redirect on the same site
 			if(!hostname) return
 			//Adds nofollow
-			if(allowedFollowDomains.indexOf(hostname) === -1) a.setAttribute("rel", "noreferrer nofollow")
+			if(allowedFollowDomains.indexOf(hostname) === -1) {
+				a.setAttribute("rel", "noreferrer nofollow")
+				untrustedAnchorTagFound = true
+			}
 		})
 		safeContent = dom.serialize()
 
@@ -135,15 +135,15 @@ router.post('/', async (req, res, next) => {
 		// Automod- Determine if reply requires verification
 		let verified = true
 		//Accounts with negative reputation are untrusted
-		if(verified && account.reputation < 0) verified = false
+		if(account.reputation < 0) verified = false
 		//Accounts younger than 24 hours are untrusted
-		if(verified && account.creationdate > Date.now() - 1000*60*60*24) verified = false
+		else if(account.creationdate > Date.now() - 1000*60*60*24) verified = false
 		//Accounts with low reputation need verification for links
-		if(verified && reputation <=2){
-			//Checks if there is a clickable link
-			if(anchorTagFound) verified = false
+		else if(account.reputation <=2){
+			//Checks if there is an untrusted clickable link
+			if(untrustedAnchorTagFound) verified = false
 			//Check if text content contains a possible link
-			if(verified && /(https?:\/\/)?.+\.(com|net)/.test(textContent.toLowerCase())) verified = false
+			else if(/(https?:\/\/)?.+\.(com|net)/i.test(textContent.toLowerCase())) verified = false
 		}
 
 		//Finally registers the reply in the database
