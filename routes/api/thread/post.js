@@ -50,20 +50,19 @@ router.post('/', async (req, res, next) => {
 		//Check if the user's email is verified.
 		if(!await accountAPI.emailVerified(req.session.uid)) throw "Please verify your email first!"
 
-		//Sum of reputation
-		var reputation = await accountAPI.SumReputation(req.session.uid)
-		//Reputation must be greater than -10
-		if(reputation<=-10) throw "Your reputation is too low"
-
 		//Get category
 		let category = await forumapi.GetSubcategory(subcategory)
 
         //Check if the forum exists
 		if(!category) throw "Invalid category"
 		
-		//Check if client can create a new thread on the forum
-		let account = await accountAPI.fetchAccount(req.session.uid)
+		let account = await accountAPI.fetchAccount(req.session.uid, {reputation: true})
+
+		//Check if client has permission to post in this category
 		if(!await forumapi.permissionsCheck(category.requiredRoles, account.roles)) throw 'No permission to post here'
+
+		//Reputation must be greater than -10
+		if(account.reputation <= -10) throw "Your reputation is too low"
 			
 		let currentDate = new Date();
 		let safeContent = ThreadSanitizeHTML(content)
@@ -73,6 +72,7 @@ router.post('/', async (req, res, next) => {
 
 		//Handle links
 		let allowedFollowDomains = (await ForumSettings.findOne({type: "allowedFollowDomains"}) ?? {value: []}).value
+		let untrustedAnchorTagFound = false
 		Array.from(dom.window.document.getElementsByTagName("a")).forEach(a => {
 			//Adds nofollow to unwhitelisted links. Hopefully will discourage advertisement bots
 			let href = a.getAttribute("href")
@@ -81,8 +81,11 @@ router.post('/', async (req, res, next) => {
 				hostname = new URL(href).hostname
 			} catch(e){}
 			//No hostname? Probably a / route to redirect on the same site
-			if(hostname && allowedFollowDomains.indexOf(hostname) === -1) a.setAttribute("rel", "noreferrer nofollow")
-
+			//Adds nofollow
+			if(hostname && allowedFollowDomains.indexOf(hostname) === -1) {
+				a.setAttribute("rel", "noreferrer nofollow")
+				untrustedAnchorTagFound = true
+			}
 			//Ensures links open in a new tab 
 			a.setAttribute("target", "_blank")
 		})
@@ -91,7 +94,7 @@ router.post('/', async (req, res, next) => {
 		let textContent = dom.window.document.body.textContent
 
 		//Patrons, VIPs, and users with 10+ rep get an increased character limit
-		var characterLimit = await rolesAPI.isSupporter(account.roles) || reputation > 10 ? 15000 : 8000;
+		var characterLimit = await rolesAPI.isSupporter(account.roles) || account.reputation > 10 ? 15000 : 8000;
 
 		//Set character count bounds
 		if((textContent.match(/\w/g)||"").length < 20 || textContent.length > characterLimit) throw `Content must be 20-${characterLimit} characters long`
@@ -109,7 +112,7 @@ router.post('/', async (req, res, next) => {
 		var latestThreads = await Threads.find({uid: req.session.uid}).sort({_id: -1}).limit(3)
 		if(latestThreads.length > 0){
 			//People with a rep of 5+ can post 3 times per 30 minutes
-			if(reputation >= 5){
+			if(account.reputation >= 5){
 				if(latestThreads.length >= 3){
 					//Find their original reply on their 3rd youngest thread
 					let firstReply = await ThreadReplies.findOne({tid: latestThreads[2]._id}).sort({_id: 1})
@@ -125,6 +128,20 @@ router.post('/', async (req, res, next) => {
 				if(currentDate < new Date(firstReply.date).getTime() + 1000*60*30) throw "You can only post 1 thread per 30 minutes."
 			}
 		}
+
+		// Automod- Determine if reply requires verification
+		let verified = true
+		//Accounts with negative reputation are untrusted
+		if(account.reputation < 0) verified = false
+		//Accounts younger than 24 hours are untrusted
+		else if(account.creationdate > Date.now() - 1000*60*60*24) verified = false
+		//Accounts with low reputation need verification for links
+		else if(account.reputation <=2){
+			//Checks if there is an untrusted clickable link
+			if(untrustedAnchorTagFound) verified = false
+			//Check if text content contains a possible link
+			else if(/(https?:\/\/)?.+\.(com|net)/i.test(textContent.toLowerCase())) verified = false
+		}
 			
 		//Creates the thread
 		let newThread = await new Threads({
@@ -134,13 +151,15 @@ router.post('/', async (req, res, next) => {
 		}).save()
 
 		//Creates original reply
-		await new ThreadReplies({
+		let replyData = {
 			uid: req.session.uid,
 			tid: newThread._id,
 			category: req.body.forum,
 			date: currentDate,
 			content: safeContent,
-		}).save()
+		}
+		if(!verified) replyData.verified = false
+		await new ThreadReplies(replyData).save()
 
 		//No errors at this point? Successful thread creation
 		response.success = true
