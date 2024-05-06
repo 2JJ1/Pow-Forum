@@ -2,7 +2,8 @@ class ActivityCard extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            content: ""
+            content: "",
+            repColor: "inherit"
         }
     }
 
@@ -55,6 +56,11 @@ class ActivityCard extends React.Component {
     async componentDidMount() {
         let content = await HTMLToOembed(this.props.feed.content, { fileDomainWhitelist: true })
         this.setState({content})
+
+        if(this.props.feed.account.reputation > 0) this.setState({repColor: "var(--green)"})
+        else if(this.props.feed.account.reputation < 0) this.setState({repColor: "var(--red)"})
+
+        this.setState({postTime: TimeStamp.Beautify(this.props.feed.date)})
     }
 
     render(){
@@ -66,7 +72,11 @@ class ActivityCard extends React.Component {
                 </div>
                 <p className="activityHeader">
                     <img className="pfp" src={this.props.feed.account.profilepicture}/>
-                    <a href={`/profile?uid=${this.props.feed.account._id}`}>{this.props.feed.account.username} </a>
+                    <div>
+                        <a href={`/profile?uid=${this.props.feed.account._id}`} className={this.props.feed.account.highestRole}>{this.props.feed.account.username} </a>
+                        | <a href={`/profile/reputation?uid=${this.props.feed.account._id}`} style={{color: this.state.repColor}}>{this.props.feed.account.reputation} </a>
+                        <span>| {this.state.postTime}</span>
+                    </div>
                     {this.props.feed.isOP ? "Created a new thread" :
                         <React.Fragment>
                         <a href={`/t/${this.props.feed.tid}?r=${this.props.feed._id}`}>

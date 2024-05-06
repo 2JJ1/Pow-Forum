@@ -45,7 +45,7 @@ router.get("/", async (req, res, next) => {
             
             if(byUID == 0){
                 reply.isLowerRanked = await rolesAPI.isClientOverpowerTarget(req.session.uid, reply.uid)
-                reply.account = await accountAPI.fetchAccount(reply.uid)
+                reply.account = await accountAPI.fetchAccount(reply.uid, {reputation: true})
             }
         }
 
