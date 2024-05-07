@@ -18,11 +18,22 @@ router.get("/comments", async (req, res, next) => {
 
 		let rowsPerPage = 5
 
+		// Unverified replies handling
+        //Filters out unverified replies by other users
+        let verifiedFilter = {
+            $or: [
+                {uid: req.session.uid, verified: false}, 
+                {verified: {$ne: false}
+            }]
+        }
+        //Moderators can see all unverified replies
+        if(await rolesAPI.isModerator(req.session.uid)) verifiedFilter = {}
+
 		let query = { 
 			tid,
 			trid: { $exists: 1 }, 
-			verified: {$ne: false}
-		 }
+			...verifiedFilter
+		}
 		let {fromId} = req.query
 		fromId = parseInt(fromId)
 		if(!Number.isInteger(fromId)) throw "Invalid request"

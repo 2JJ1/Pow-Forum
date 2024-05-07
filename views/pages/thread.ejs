@@ -175,6 +175,9 @@
                                                 <!--When this reply was made-->
                                                 <script>document.write(TimeStamp.Beautify('<%= comment.date %>'))</script>
                                             </p>
+                                            <% if(comment.verified === false){ %>
+                                            <p class="note" style="color: var(--red)">Unverified Post - Will not display publicly until a moderator reviews it</p>
+                                            <% } %>
                                         </div>
                                         <!--Reply Content-->
                                         <div class="replyEditor"></div>
@@ -759,6 +762,7 @@
                                             ${lastCommenter == comment.uid ? "Added" : "Commented"}
                                             ${TimeStamp.Beautify(comment.date)}
                                         </p>
+                                        ${comment.verified === false && '<p class="note" style="color: var(--red)">Unverified Post - Will not display publicly until a moderator reviews it</p>'}
                                     </div>
                                     <!--Reply Content-->
                                     <div class="replyEditor"></div>

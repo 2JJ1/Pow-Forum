@@ -175,7 +175,7 @@ router.get('/:tid', async (req, res, next) => {
                 replyRow.deletable = (req.session.uid === replyRow.uid) || await rolesapi.isClientOverpowerTarget(req.account._id, replyRow.uid)
 
                 //Fetch comments
-                replyRow.comments = await ThreadReplies.find({trid: replyRow._id, verified: {$ne: false}}).sort({_id: 1}).limit(6).lean()
+                replyRow.comments = await ThreadReplies.find({trid: replyRow._id, ...verifiedFilter}).sort({_id: 1}).limit(6).lean()
                 replyRow.moreCommentsAvailable = replyRow.comments.length > 5
                 replyRow.comments = await AppendReplyMetadata(replyRow.comments.slice(0,5))
             }
