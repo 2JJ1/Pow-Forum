@@ -46,7 +46,20 @@ router.get('/:tid', async (req, res, next) => {
         //Get original post
         var OP = await ThreadReplies.findOne({tid}).sort({_id: 1})
 
-        if(OP.verified === false) throw "This thread is pending moderator verification"
+        // Unverified replies handling
+
+        //Is the thread itself pending review? Hide from general public
+        if(OP.verified === false && !(req.account.isModerator || req.account._id === OP.uid)) throw "This thread is pending moderator verification"
+
+        //Filters out unverified replies by other users
+        let verifiedFilter = {
+            $or: [
+                {uid: req.account._id, verified: false}, 
+                {verified: {$ne: false}
+            }]
+        }
+        //Moderators can see all unverified replies
+        if(req.account.isModerator) verifiedFilter = {}
 
         // Pagination
         let resultsPerPage = 15
@@ -54,7 +67,7 @@ router.get('/:tid', async (req, res, next) => {
         //Paginates by resultsPerPage rows. Multiply by specified page - 1 because database indexing starts at 0, not 1.
         let startingRow = resultsPerPage * (result.currentPage - 1)
 
-        var totalReplies = await ThreadReplies.countDocuments({tid, trid: {$exists: false}, verified: {$ne: false}})
+        var totalReplies = await ThreadReplies.countDocuments({tid, trid: {$exists: false}, ...verifiedFilter})
 
         result.totalPages = Math.ceil(totalReplies/resultsPerPage)
 
@@ -119,7 +132,7 @@ router.get('/:tid', async (req, res, next) => {
         }
         
         // Get replies
-        result.replies = await ThreadReplies.find({tid, trid: {$exists: false}, verified: {$ne: false}}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
+        result.replies = await ThreadReplies.find({tid, trid: {$exists: false}, ...verifiedFilter}).sort({_id: 1}).skip(startingRow).limit(resultsPerPage).lean()
 
         async function AppendReplyMetadata(replies){
             //Append replier data to each reply
@@ -159,7 +172,7 @@ router.get('/:tid', async (req, res, next) => {
                 replyRow.likes = await ThreadReplyReacts.countDocuments({trid: replyRow._id})
                 replyRow.liked = await ThreadReplyReacts.exists({trid: replyRow._id, uid: req.session.uid})
                 
-                replyRow.deletable = (req.session.uid === replyRow.uid) || await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, replyRow.uid)
+                replyRow.deletable = (req.session.uid === replyRow.uid) || await rolesapi.isClientOverpowerTarget(req.account._id, replyRow.uid)
 
                 //Fetch comments
                 replyRow.comments = await ThreadReplies.find({trid: replyRow._id, verified: {$ne: false}}).sort({_id: 1}).limit(6).lean()
@@ -176,9 +189,9 @@ router.get('/:tid', async (req, res, next) => {
 
         //ex: Move a thread from suggestions forum to the complaints forum
         //result[0] = first reply = thread creator, so compare to that uid
-        result.canChangeForum = await rolesapi.isClientOverpowerTarget(pagedata.accInfo._id, result.replies[0].uid)
+        result.canChangeForum = await rolesapi.isClientOverpowerTarget(req.account._id, result.replies[0].uid)
 
-        pagedata.clientIsMod = await rolesapi.isModerator(pagedata.accInfo.roles)
+        pagedata.clientIsMod = req.account.isModerator
 
         pagedata.ogTRID = OP._id
 
