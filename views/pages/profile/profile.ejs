@@ -190,7 +190,7 @@
 				var target = event.target;
 				if (target.matches(".delete")) {
 					if(!confirm("Confirm delete.")) return
-					fetch("/api/thread/reply", {
+					fetch("/api/reply", {
 						method: "DELETE",
 						headers: {
 							"Content-Type": "application/json"

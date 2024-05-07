@@ -10,7 +10,7 @@ const ThreadReplies = mongoose.model("ThreadReplies")
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 const PinnedThreads = mongoose.model("PinnedThreads")
 
-// /api/thread/reply
+// /api/reply
 
 //Delete reply
 router.delete('/', async (req, res, next) => {

@@ -4,9 +4,9 @@ const mongoose = require("mongoose")
 const jsdiff = require("diff")
 const jsdom = require("jsdom")
 
-const rolesAPI = require('../../my_modules/rolesapi')
-const accountAPI = require('../../my_modules/accountapi')
-const { ThreadSanitizeHTML } = require('../../my_modules/other')
+const rolesAPI = require('../../../my_modules/rolesapi')
+const accountAPI = require('../../../my_modules/accountapi')
+const { ThreadSanitizeHTML } = require('../../../my_modules/other')
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 const ForumSettings = mongoose.model("ForumSettings")
@@ -14,10 +14,10 @@ const ThreadReplies = mongoose.model("ThreadReplies")
 
 const { JSDOM } = jsdom;
  
-// 	/api/r
+// 	/api/reply
 
 // Post to client's wall
-router.post('/edit', async (req, res, next) => {
+router.patch('/', async (req, res, next) => {
 	try{
 		let response = {success: false}
 

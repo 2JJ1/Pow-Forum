@@ -75,7 +75,7 @@
 
                     let trid = event.target.parentElement.parentElement.getAttribute("data-trid")
 
-                    fetch('/api/thread/reply', {
+                    fetch('/api/reply', {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
@@ -94,7 +94,7 @@
 
                     let trid = event.target.parentElement.parentElement.getAttribute("data-trid")
 
-                    fetch('/api/thread/reply/verify', {
+                    fetch('/api/reply/verify', {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"

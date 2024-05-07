@@ -1,14 +1,14 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
-const accountAPI = require('../../my_modules/accountapi')
+const accountAPI = require('../../../my_modules/accountapi')
 
 const ThreadReplies = mongoose.model("ThreadReplies")
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 
-// 	/v1/forum/togglelike
+// 	/api/reply
 
 // Likes or unlikes a thread
-router.post('/', async (req, res, next) => {
+router.post('/togglelike', async (req, res, next) => {
 	try{
 	    let response = {success: false}
 

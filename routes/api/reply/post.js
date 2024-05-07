@@ -18,7 +18,7 @@ const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
 const Accounts = mongoose.model("Accounts")
 
-// /api/thread/reply
+// /api/reply
 
 // Post a reply to forum thread
 router.post('/', async (req, res, next) => {

@@ -1,17 +1,17 @@
 const router = require('express').Router()
 const mongoose = require('mongoose')
 
-const rolesapi = require('../../my_modules/rolesapi')
-const forumapi = require('../../my_modules/forumapi')
-const accountAPI = require('../../my_modules/accountapi')
+const rolesapi = require('../../../my_modules/rolesapi')
+const forumapi = require('../../../my_modules/forumapi')
+const accountAPI = require('../../../my_modules/accountapi')
 
 const Threads = mongoose.model('Threads')
 const ThreadReplies = mongoose.model('ThreadReplies')
 
-// 	/v1/forum/changethreadforum
+// 	/api/thread
 
 // Post a reply to forum thread
-router.post('/', async (req, res, next) => {
+router.post('/changeforum', async (req, res, next) => {
 	try{
 		let response = {success: false}
 

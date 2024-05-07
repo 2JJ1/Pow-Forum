@@ -298,7 +298,7 @@
 
             <% if(threadData.canChangeForum){ %>
             function ToggleThreadLock(toggle){
-                fetch("/api/togglethreadlock", {
+                fetch("/api/thread/togglelock", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -322,7 +322,7 @@
 
             <% if(clientIsMod){ %>
             function ToggleThreadPin(toggle){
-                fetch("/api/togglethreadpin", {
+                fetch("/api/thread/togglepin", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -347,7 +347,7 @@
             document.addEventListener('click', function (event) {
                 if (event.target.classList.contains('btnLikeReply')){
                     let trid = event.target.getAttribute("data-trid")
-                    fetch("/api/togglelike", {
+                    fetch("/api/reply/togglelike", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -378,7 +378,7 @@
                         return
                     }
 
-                    fetch("/api/changethreadforum", {
+                    fetch("/api/thread/changeforum", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -403,7 +403,7 @@
                     var replyCard = $(this).closest(".replycard")
                     var replyGroup = $(this).closest(".replygroup")
                     
-                    fetch("/api/thread/reply", {
+                    fetch("/api/reply", {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json",
@@ -523,7 +523,7 @@
             })
 
             function PostReply(){
-                fetch('/api/thread/reply', {
+                fetch('/api/reply', {
 					method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
@@ -581,7 +581,7 @@
                 let replyEditorControls = replyCard.querySelector('.replyEditorControls')
                 let replyId = replyCard.getAttribute('data-trid')
 
-                let dbReplyHTML = await fetch(`/api/thread/reply?trid=${replyId}`, {
+                let dbReplyHTML = await fetch(`/api/reply?trid=${replyId}`, {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json'
@@ -626,8 +626,8 @@
                 replyEditorControls.querySelector('button[name="save"]').onclick = () => {
                     let content = editor.getContent()
 
-                    fetch('/api/r/edit', {
-                        method: "POST",
+                    fetch('/api/reply', {
+                        method: "PATCH",
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -681,7 +681,7 @@
 
                 let btnPost = replyCard.querySelector('.commentControls [name="post"]')
                 btnPost.onclick = function(){
-                    fetch('/api/thread/reply', {
+                    fetch('/api/reply', {
                         method: "POST",
                         headers: {
                             'Content-Type': 'application/json'

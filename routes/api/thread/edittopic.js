@@ -1,17 +1,17 @@
 const router = require('express').Router()
 const mongoose = require('mongoose')
 
-const pfAPI = require('../../my_modules/pfapi')
+const pfAPI = require('../../../my_modules/pfapi')
 
 const ThreadReplies = mongoose.model('ThreadReplies')
 const Threads = mongoose.model('Threads')
 
 /* 
-Route: /v1/forum/thread/topic
+Route: /api/thread/topic
 Desc: Edits the thread topic
 */
 
-router.patch('/', async (req, res, next) => {
+router.patch('/topic', async (req, res, next) => {
 	try {
 		let response = {success: false}
 

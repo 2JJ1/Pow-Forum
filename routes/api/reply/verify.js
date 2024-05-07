@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 
 const ThreadReplies = mongoose.model("ThreadReplies")
 
-// /api/thread/reply/verify
+// /api/reply/verify
 
 router.post("/", async (req, res, next) => {
 	try{

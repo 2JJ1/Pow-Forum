@@ -10,7 +10,7 @@ class ActivityCard extends React.Component {
     delete() {
         if(!confirm("You are about to delete a reply.")) return
 
-        fetch('/api/thread/reply', {
+        fetch('/api/reply', {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -33,7 +33,7 @@ class ActivityCard extends React.Component {
     verify() {
         if(!confirm("You are about to verify a reply.")) return
 
-        fetch('/api/thread/reply/verify', {
+        fetch('/api/reply/verify', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

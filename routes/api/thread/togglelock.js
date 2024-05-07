@@ -1,15 +1,15 @@
 const router = require('express').Router()
 const mongoose = require("mongoose")
 
-const rolesapi = require('../../my_modules/rolesapi')
+const rolesapi = require('../../../my_modules/rolesapi')
 
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 const Threads = mongoose.model('Threads')
 
-// 	/v1/forum/togglethreadlock
+// 	/api/thread
 
 // Locks or unlocks a thread
-router.post('/', async (req, res, next) => {
+router.post('/togglelock', async (req, res, next) => {
 	try{
         let response = {success: false}
 
