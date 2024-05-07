@@ -126,8 +126,7 @@
                     if(res.success){
                         saveDraft = false
                         localStorage.removeItem('thread-draft');
-                        if(res.verificationRequired) alert("Thread submitted and will be posted when a moderator reviews it")
-                        else document.location.href = `/t/${res.tid}`
+                        document.location.href = `/t/${res.tid}`
                     } else {
                         document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
                     }

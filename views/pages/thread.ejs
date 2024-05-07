@@ -101,8 +101,8 @@
                 <% } %>
                 <!--Reply Metadata-->
                 <div class="replycard" data-trid="<%= obj._id %>">
-                    <div style="position: relative">
-                        <p class="note paddingx">
+                    <div class="paddingx" style="position: relative">
+                        <p class="note">
                             <% if(ogTRID === obj._id){ %>
                                 <!--OP-->
                                 Posted 
@@ -116,6 +116,9 @@
                             <!--When this reply was made-->
                             <script>document.write(TimeStamp.Beautify('<%= obj.date %>'))</script>
                         </p>
+                        <% if(obj.verified === false){ %>
+                        <p class="note" style="color: var(--red)">Unverified Post - Will not display publicly until a moderator reviews it</p>
+                        <% } %>
                     </div>
 
                     <!--Reply Content-->
@@ -533,8 +536,7 @@
                     if(res.success){
                         saveDraft = false
                         localStorage.removeItem('reply-draft')
-                        if(res.verificationRequired) document.getElementById('errormessage').innerHTML = "Reply submitted and will be posted when a moderator reviews it"
-                        else document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
+                        document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
                     } else {
                         document.getElementById('errormessage').innerHTML = res.reason || 'Unknown error occured...'
                     }
@@ -690,8 +692,7 @@
                     .then(res => res.json())
                     .then(res => {
                         if(res.success){
-                            if(res.verificationRequired) alert("Comment submitted and will be posted when a moderator reviews it")
-                            else document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
+                            document.location.href = `/t/<%= threadData._id %>?r=${res.replyId}`
                         } 
                         else {
                             alert(res.reason || 'Unknown error occured...')
