@@ -12,7 +12,7 @@
         <link href="/css/acc/manager.css?v=22&v2=2" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdn.tiny.cloud/1/9uay7qr7nh5d5awlk1pnvh19gxm01if2wj3eo9zbeyymy2wu/tinymce/5/tinymce.min.js"></script>
+        <script src="/tinymce/tinymce.min.js"></script>
 	</head>
 	<body class="container">
         <div id="errormsgcontainer" style="display: none;">
@@ -193,8 +193,9 @@
             //Initialize TinyMCE
             tinymce.init({
                 selector: '#signature',
+                license_key: 'gpl',
                 menubar: false,
-                plugins: 'link hr lists codesample',
+                plugins: 'link lists codesample',
                 toolbar: 'bold italic underline strikethrough | alignleft aligncenter alignright | fontsizeselect forecolor | bullist numlist blockquote link hr codesample | undo redo',
                 height: 300,
                 content_style: "p {margin: 0}",
