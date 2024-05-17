@@ -11,6 +11,7 @@
 		<% include ../partials/headimps %>
 		<link href="/css/thread.css?v=22&ib=7" rel="stylesheet" type="text/css">
 		<link href="/css/prism.css" rel="stylesheet" type="text/css">
+        <link href="/css/tinymce-container.css" rel="stylesheet" type="text/css">
         
         <script type="text/javascript" src="/js/timestamp.js?v2=2"></script>
         <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
@@ -504,7 +505,8 @@
                 ],
                 skin: "oxide-dark",
                 content_css: "/css/main.css,/css/themes/night.css?v=22,/css/tinymce.css",
-                placeholder: "What valuable response do you have?"
+                placeholder: "What valuable response do you have?",
+                highlight_on_focus: false,
             }
 
             let replyCreatorEditor

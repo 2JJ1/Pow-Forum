@@ -11,6 +11,7 @@
 		<% include ../partials/headimps %>
         <link href="/css/newthread.css?v=22" rel="stylesheet" type="text/css">
         <link href="/css/prism.css" rel="stylesheet" type="text/css">
+        <link href="/css/tinymce-container.css" rel="stylesheet" type="text/css">
         
         <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
@@ -106,7 +107,8 @@
                     "795548", "Brown",
                 ],
                 skin: "oxide-dark",
-                content_css: "/css/main.css,/css/themes/night.css?v=22,/css/tinymce.css",
+                content_css: "/css/main.css,/css/themes/night.css?v=22,/css/tinymce-content.css",
+                highlight_on_focus: false,
             });
 
             function PostThread(){

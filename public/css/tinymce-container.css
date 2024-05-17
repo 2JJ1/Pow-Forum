@@ -1,0 +1,22 @@
+.tox-editor-header, 
+.tox-toolbar__group > button, 
+.tox-tbtn {
+    background-color: transparent !important;
+}
+
+.tox-editor-header{
+    border-bottom: none !important;
+}
+
+.tox-toolbar__group:not(:first-child){
+    border-left: 1px solid black !important;
+}
+
+.tox-toolbar__group > button, 
+.tox-tbtn {
+    cursor: pointer !important;
+}
+
+.tox .tox-listboxfield .tox-listbox--select, .tox .tox-collection--list .tox-collection__item--enabled{
+    background-color: inherit !important;
+}
