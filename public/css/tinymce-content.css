@@ -3,7 +3,7 @@
 }
 
 .mce-content-body, .mce-content-body:before{
-	padding: var(--less-gap) var(--gap) ;
+	padding: var(--less-gap) var(--gap) !important;
 }
 
 /* For some reason, I have to do this for the before to line up properly... */
