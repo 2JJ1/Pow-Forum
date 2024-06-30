@@ -35,7 +35,7 @@ async function HTMLToOembed(html, options){
         /https:\/\/(.+\.)?giphy\.com/i,
         /https:\/\/(.+\.)?tenor\.com/i,
         /https:\/\/streamable\.com/,
-        /https:\/\/(i\.)?redd\.it/i,
+        /https:\/\/((preview|i)\.)?redd\.it/i,
         /https:\/\/(i\.)?imgur\.com/i,
         /https:\/\/(i\.)?gyazo\.com/i,
         /https:\/\/(cdn|media)\.discordapp\.(com|net)/i,
@@ -58,6 +58,7 @@ async function HTMLToOembed(html, options){
         //Regex considers html encoding
         let links = (fromString ? html : html.textContent).match(/https:\/\/[a-z0-9\-_]+\.[a-z0-9\-_]+[a-z0-9\-_\/\.\?\&=;]+/ig)
         for(let link of [...new Set(links)]){
+            console.log(link)
             let replacement
 
             // Image embeding
