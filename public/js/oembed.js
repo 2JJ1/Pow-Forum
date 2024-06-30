@@ -22,6 +22,22 @@ function replaceTextInDOM(element, pattern, replacement) {
     }
 }
 
+function replaceAnchorInDOM(html, link, replacement) {
+    // Get all anchor tags in the document
+    const anchors = html.querySelectorAll('a');
+  
+    anchors.forEach(anchor => {
+        const href = anchor.getAttribute('href');
+
+        // Check if the href attribute points to an image
+        if (link == href) {
+            let elem = document.createElement("span")
+            elem.innerHTML = "<br>" + replacement
+            anchor.appendChild(elem)
+        }
+    });
+  }
+
 /**
  * Searches for links in the HTML and replaces it with an image tag
  * @param text The text that contains the links
@@ -35,7 +51,7 @@ async function HTMLToOembed(html, options){
         /https:\/\/(.+\.)?giphy\.com/i,
         /https:\/\/(.+\.)?tenor\.com/i,
         /https:\/\/streamable\.com/,
-        /https:\/\/((preview|i)\.)?redd\.it/i,
+        /https:\/\/(.+\.)?redd\.it/i,
         /https:\/\/(i\.)?imgur\.com/i,
         /https:\/\/(i\.)?gyazo\.com/i,
         /https:\/\/(cdn|media)\.discordapp\.(com|net)/i,
@@ -57,7 +73,9 @@ async function HTMLToOembed(html, options){
         //Get all links
         //Regex considers html encoding
         let links = (fromString ? html : html.textContent).match(/https:\/\/[a-z0-9\-_]+\.[a-z0-9\-_]+[a-z0-9\-_\/\.\?\&=;]+/ig)
-        for(let link of [...new Set(links)]){
+        links = [...new Set(links)]
+        if(!fromString) links.push(...[...html.querySelectorAll('a')].map(anchor => anchor.href))
+        for(let link of links){
             let replacement
 
             // Image embeding
@@ -126,7 +144,10 @@ async function HTMLToOembed(html, options){
             let rx = new RegExp(rxString, 'g')
             
             if(fromString) html = html.replaceAll(rx, replacement)
-            else replaceTextInDOM(html, rx, replacement)
+            else {
+                replaceTextInDOM(html, rx, replacement)
+                replaceAnchorInDOM(html, link, replacement)
+            }
         }
     }
     catch(e) {
