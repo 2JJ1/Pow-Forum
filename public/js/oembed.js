@@ -54,6 +54,7 @@ async function HTMLToOembed(html, options){
         /https:\/\/(.+\.)?redd\.it/i,
         /https:\/\/(i\.)?imgur\.com/i,
         /https:\/\/(i\.)?gyazo\.com/i,
+        /https:\/\/(www\.)?roblox\.com/i,
         /https:\/\/(cdn|media)\.discordapp\.(com|net)/i,
         /https:\/\/media\.discordapp\.net/i,
         new RegExp("https?:\/\/([a-zA-Z0-9-]*\.)?" + document.location.origin.replace(/^[^.]+\./g, ""), "i"),
