@@ -81,73 +81,58 @@ router.get('/:forum', async (req, res, next) => {
 		//Reputation must be greater than -10
 		if(reputation<=-10) forumData.canPost = false
 
-		// Gets threads
-		//Fetches the latest threads if that order is selected
-		if(req.query.order === "latestthread"){
-			let filter = {
-				title: new RegExp(other.EscapeRegex(searchQuery), 'i'),
-			}
-
-			if(req.params.forum !== "all")  filter.category = forum
-
-			//Thread rows
-			forumData.threads = await Threads.find(filter).sort({_id: -1}).skip(startingRow).limit(15).lean()
-
-			//Determines how many pages there are for this result
-			forumData.totalPages = await Threads.countDocuments(filter)
-			.then(count => Math.ceil(count / 15))
-		}
 		//default order: latestactive
-		//Fetches latest replies and puts their threads at the top. Note that this enables bumps/necroposting
-		else { 
-			let aggregateQuery = [
-				{
-					$match: {
-						verified: {$ne: false},
-					}
-				},
-				{
-					$sort: {
-						_id: -1,
-					}
-				},
-				{
-					$group: {
-						_id: '$tid',
-						trid : { $first: '$_id' },
-					}
-				},
-				{
-					$sort: {
-						trid: -1,
-					}
-				},
-				{
-					$skip: startingRow,
-				},
-				{
-					$limit: 15,
-				}
-			]
-			if(req.params.forum !== "all") aggregateQuery.unshift({ $match: { category: forum } })
-			let latestActiveThreadIDs = await ThreadReplies
-			.aggregate(aggregateQuery)
-			forumData.threads = []
-			for(let threadId of latestActiveThreadIDs){
-				let thread = await Threads.findById(threadId).lean()
-				if(!thread) {
-					console.log(`Missing thread for tid ${JSON.stringify(threadId)}???`)
-					continue
-				}
-				forumData.threads.push(thread)
-			}
+		// -1 gets oldest reply of each thread, 1 gets newest reply of each thread
+		let sort = req.query.order === "latestthread" ? -1 : 1
 
-			//Determines how many pages there are for this result
-			let totalPagesQuery = {}
-			if(req.params.forum !== "all") totalPagesQuery.category = forum 
-			forumData.totalPages = await Threads.countDocuments(totalPagesQuery)
-			.then(count => Math.ceil(count / 15))
+		// Gets threads
+		let aggregateQuery = [
+			{
+				$match: {
+					verified: {$ne: false},
+				}
+			},
+			{
+				$sort: {
+					_id: sort,
+				}
+			},
+			{
+				$group: {
+					_id: '$tid',
+					trid : { $first: '$_id' },
+				}
+			},
+			{
+				$sort: {
+					trid: -1,
+				}
+			},
+			{
+				$skip: startingRow,
+			},
+			{
+				$limit: 15,
+			}
+		]
+		if(req.params.forum !== "all") aggregateQuery.unshift({ $match: { category: forum } })
+		let latestActiveThreadIDs = await ThreadReplies
+		.aggregate(aggregateQuery)
+		forumData.threads = []
+		for(let threadId of latestActiveThreadIDs){
+			let thread = await Threads.findById(threadId).lean()
+			if(!thread) {
+				console.log(`Missing thread for tid ${JSON.stringify(threadId)}???`)
+				continue
+			}
+			forumData.threads.push(thread)
 		}
+
+		//Determines how many pages there are for this result
+		let totalPagesQuery = {}
+		if(req.params.forum !== "all") totalPagesQuery.category = forum 
+		forumData.totalPages = await Threads.countDocuments(totalPagesQuery)
+		.then(count => Math.ceil(count / 15))
 
 
 		//Compiles the pinned threads if they're viewing the first page
