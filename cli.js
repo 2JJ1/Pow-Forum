@@ -159,12 +159,8 @@ commands.removeadmin = {
 commands.rateuser = {func: RateUser, desc: "Applies a rating from the bot account"}
 async function RateUser(){
 	//Get user id to apply rating to
-	var username = readlineSync.question('Username: ')
-	var uid = await Accounts.findOne({username: new RegExp(`${username}`, 'i')})
-	.then(account=>{
-		if(account) return account._id
-		throw "Could not get uid from username"
-	})
+	var target = readlineSync.question('Username or UID: ')
+	var {uid, username} = await FetchUser(target);
 
 	var diff = parseInt(readlineSync.question('Diff: ')) // Must be a number
 	var comment = readlineSync.question('Comment: ') // "What do you have to say about this user?"
@@ -181,7 +177,7 @@ async function RateUser(){
 		date: new Date(),
 	}).save()
 
-	console.log("Finished")
+	console.log(`Gave ${diff} reputation to ${username}(${uid}) with comment ${comment}`)
 }
 
 //Deletes (any?) data associated with this user
