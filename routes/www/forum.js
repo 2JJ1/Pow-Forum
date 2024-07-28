@@ -28,16 +28,6 @@ router.get('/:forum', async (req, res, next) => {
 			return;
 		}
 
-		// Search query
-		let searchQuery = req.query.search || ""
-		//Forces thread searches to order threads by latest thread
-		if(searchQuery && req.query.order !== "latestthread"){
-			let parsedUrl = queryString.parseUrl(req.protocol + '://' + req.get('host') + req.originalUrl);
-			parsedUrl.query.order = "latestthread"
-			res.redirect(req.originalUrl.split("?").shift() + '?' + queryString.stringify(parsedUrl.query))
-			return;
-		}
-
 		var forum = parseInt(req.params.forum)
 
 		let pagedata = {
@@ -85,12 +75,17 @@ router.get('/:forum', async (req, res, next) => {
 		// -1 gets oldest reply of each thread, 1 gets newest reply of each thread
 		let sort = req.query.order === "latestthread" ? -1 : 1
 
+		let threadReplyMatch = {
+			verified: {$ne: false},
+		}
+		// Search query
+		let searchQuery = other.EscapeRegex(req.query.search || "")
+		if(searchQuery) threadReplyMatch.content = new RegExp(searchQuery, 'i')
+
 		// Gets threads
 		let aggregateQuery = [
 			{
-				$match: {
-					verified: {$ne: false},
-				}
+				$match: threadReplyMatch
 			},
 			{
 				$sort: {
