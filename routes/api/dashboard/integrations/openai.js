@@ -27,7 +27,7 @@ router.post("/openai", async (req, res, next) => {
         })
         let openai = new OpenAIApi(configuration)
         await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             messages: [
                 {role: "user", content: "Hello world!"}
             ],

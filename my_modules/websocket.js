@@ -223,7 +223,7 @@ module.exports = async (socket) => {
 					})
 
 					let aiResponse = await openai.createChatCompletion({
-						model: "gpt-3.5-turbo",
+						model: "gpt-4o-mini",
 						messages: [
 							...aiChatHistory,
 							{role: "user", content: ogMsg.slice(5)}
