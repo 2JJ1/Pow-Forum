@@ -131,7 +131,7 @@ router.get('/:forum', async (req, res, next) => {
 
 
 		//Compiles the pinned threads if they're viewing the first page
-		if(forumData.currentPage === 1){
+		if(forumData.currentPage === 1 && !searchQuery){
 			let pinnedThreads = await PinnedThreads.find()
 			for(let i=pinnedThreads.length-1; i>-1; i--){
 				let pinnedThread = await Threads.findById(pinnedThreads[i]._id).lean()
