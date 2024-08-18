@@ -18,7 +18,7 @@
 				<a href="/profile?uid=<%= profileInfo._id %>"><img class="border1" src="<%= profileInfo.profilepicture %>"></a>
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Threads List</h1>
 			</div>
-			<div class="gapchildren theme1 round border1 threads">
+			<div class="gapchildren round border1 threads">
 				<% if (threads.length <= 0){ %>
 				<p style="text-align: center;">This user has no threads.</p>
 				<% } else { %>
@@ -33,7 +33,7 @@
 				<% } %>
 			</div>
 			<% if(moreAvailable){ %>
-			<button class="theme1 round border1 button btnLoadMore" style="margin: auto">Load More</button
+			<button class="round border1 button btnLoadMore" style="margin: auto">Load More</button
 			><% } %>
 		</main>
 		<% include ../../partials/footer %>

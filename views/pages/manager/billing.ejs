@@ -17,14 +17,14 @@
         <% include ../../partials/global %>
         <main class="screenPadding gapchildren">
             <% include ./nav %>
-            <div class="theme1 round border1 manager_container">
+            <div class="round border1 manager_container">
                 <div class="gapchildren">
                     <h2>Junior Membership</h2>
                     <% if(accInfo.pendingcancellation) { %>
                         <p>Membership cancelation requested, but you will still receive your benefits till the end of your term. Uncancel below to continue your subscription</p>
-                        <button class="theme2 border1" onclick="stripe_uncancel()">Uncancel</button>               
+                        <button class="border1" onclick="stripe_uncancel()">Uncancel</button>               
                     <% } else { %>
-                        <button class="theme2 border1" onclick="stripe_cancel()">Cancel</button>
+                        <button class="border1" onclick="stripe_cancel()">Cancel</button>
                     <% } %>
                 </div>
             </div>

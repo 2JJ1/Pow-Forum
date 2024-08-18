@@ -15,13 +15,13 @@
 		<% include ../partials/global %>
 		<div class="mainxchat">
 			<main style="padding: 12px;">
-				<div class="onlineList theme2 border1 round padding gapchildren">
+				<div class="onlineList border1 round padding gapchildren">
 					<h3>All online users:</h3>
 					<% include ../partials/onlinelist %>
 				</div>
 				<% categoryGroups.forEach(categoryGroup => { %>
-				<div id="<%- categoryGroup.name %>" class="categoryGroup theme1 border1 round">
-					<h2 class="theme2 padding"><%- categoryGroup.name %></h2>
+				<div id="<%- categoryGroup.name %>" class="categoryGroup border1 round">
+					<h2 class="padding"><%- categoryGroup.name %></h2>
 					<div class="gridWrapper">
 						<p class="thead">Category</p>
 						<p class="thead count textCenter">Topics</p>
@@ -53,9 +53,9 @@
 				<% }) %>
 				<% if(Object.keys(supportLinks).length > 0){ %>
 				<div class="buttons">
-					<a href="/c/all" class="btn theme1 round border1"><p>All Threads</p></a>
+					<a href="/c/all" class="btn round border1"><p>All Threads</p></a>
 					<% supportLinks.forEach(supportLink => { %>
-					<a class="btn theme1 round border1" href="<%= supportLink.link %>" <% if(supportLink.newTab){ %>target="_blank"<% } %> title="<%= supportLink.tooltip %>"><%= supportLink.label %></a>
+					<a class="btn round border1" href="<%= supportLink.link %>" <% if(supportLink.newTab){ %>target="_blank"<% } %> title="<%= supportLink.tooltip %>"><%= supportLink.label %></a>
 					<% }) %>
 				</div>
 				<% } %>

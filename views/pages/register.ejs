@@ -28,32 +28,32 @@
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
-            <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="theme1 round border1 padding gapchildren">
+            <form id="registerform" onSubmit={this.SanitizeAndSubmit} class="round border1 padding gapchildren">
                 <h1>Create your <%- powForum.name %> account</h1>
                 <div class="register_inputfield lessgapchildren">
                     <p>Username</p>
-                    <input name="username" type="text" placeholder="Username" class="theme2 round border1 padding"/>
+                    <input name="username" type="text" placeholder="Username" class="round border1 padding"/>
                     <div class="register_highlight"></div>
                 </div>
                 <div class="register_inputfield lessgapchildren">
                     <p>Email</p>
-                    <input name="email" type="email"  placeholder="Email" class="theme2 round border1 padding"/>
+                    <input name="email" type="email"  placeholder="Email" class="round border1 padding"/>
                     <div class="register_highlight"></div>
                 </div>
                 <div id="register_passwords">
                     <div class="register_inputfield lessgapchildren" style="margin-right: 5px">
                         <p>Password</p>
-                        <input name="password" type="password" placeholder="Password" class="theme2 round border1 padding"/>
+                        <input name="password" type="password" placeholder="Password" class="round border1 padding"/>
                         <div class="register_highlight"></div>
                     </div>
                     <div class="register_inputfield lessgapchildren" style="margin-left: 5px">
                         <p>Confirm</p>
-                        <input name="confirmpassword" type="password" placeholder="Confirm" class="theme2 round border1 padding"/>
+                        <input name="confirmpassword" type="password" placeholder="Confirm" class="round border1 padding"/>
                         <div class="register_highlight"></div>
                     </div>
                 </div>
                 <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                <button class="theme2 round border1 padding">Submit</button>
+                <button class="round border1 padding">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: var(--red);"></p>
             </form>

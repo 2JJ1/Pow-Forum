@@ -1,49 +1,40 @@
 :root{
-    --text-muted: hsl(214, calc(var(--saturation-factor, 1) * 4%), 65.3%);
-    --theme1: #232527;
-    --theme2: #181919;
+    --color-background: #16141c;
+    --color-background-weak: #1e2130;
+    --color-accent: hsl(348, 100%, 54%);
+    --color-secondary: #34384e;
+    --color-highlight: rgba(52, 56, 78, 0.5);
+    --color-elevated: #1a1926;
 }
 
 body{
-    background-color: #2f3136;
+    background-color:  var(--color-background);
     color: #ECF0F1;
 }
 
-#navigationbar{
-    background: -webkit-linear-gradient(left,var(--theme2),#282828);
-    background: -o-linear-gradient(left,var(--theme2),#282828);
-    background: -webkit-gradient(linear,left top,right top,from(var(--theme2)),to(#282828));
-    background: linear-gradient(90deg,var(--theme2),#282828);
-}
-
-.theme1{
-    background-color: var(--theme1);
-}
-
-
-.theme2{
-    background-color: var(--theme2);
-}
-
 .border1{
-    border: 1px solid var(--theme2);
+    border: 1px solid var(--color-secondary);
 }
 
 .border1-left{
-    border-left: 1px solid var(--theme2);
+    border-left: 1px solid var(--color-secondary);
 }
 
 .border1-bottom{
-    border-bottom: 1px solid var(--theme2);
+    border-bottom: 1px solid var(--color-secondary);
 }
 
 /* Custom TinyMCE Dark Theme*/
 
 .tox-toolbar__primary, .tox-statusbar, .tox-menu, .tox-dialog, .tox-dialog__header, .tox-selectfield select, 
 .tox-textarea, .tox-dialog__footer{
-    background-color: var(--theme1) !important;
+    background-color: var(--color-background) !important;
 }
 
 code[class*="language-"], pre[class*="language-"]{
-    background-color: var(--theme2);
+    background-color: var(--color-background);
+}
+
+input, select, option, button, textarea {
+    background-color: rgba(0,0,0,0);
 }

@@ -15,13 +15,13 @@
 	<body class="container">
 		<% include ../../partials/global %>
 		<main>
-            <div id="ratingswindow" class="theme1 round border1">
+            <div id="ratingswindow" class="round border1">
                 <a href="/profile?uid=<%= profileInfo._id %>"><img id="pfp" class="border1" src="<%= profileInfo.profilepicture %>"/></a>
                 <br>
                 <p>Your reputation rating for <a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a> <span class="<%= profileInfo.reputation>=0?'positive':'negative' %>">(<%= profileInfo.reputation %>)</span></p>
                 <br/>
                 <!-- How much to diff the user -->
-                <select id="reprating" class="theme2 border1 round">
+                <select id="reprating" class="border1 round">
                     <% if(accInfo.canDiff2){ %><option value="2" class="positive" <%= rating.diff==2 && "selected" %>>Positive (+2)</option><% } %>
                     <option value="1" class="positive" <%= rating.diff==1 && "selected" %>>Positive (+1)</option>
                     <!-- Can only delete a rating if there is a rating -->
@@ -33,7 +33,7 @@
                 <br>
                 <p>What do you want to say about them?</p>
                 <% if(accInfo.banRepNeg){ %><p style="color: var(--red); font-size: 10px;">Note: You are banned from negative repping.</p><% } %>
-                <textarea id="ratingcomment" class="theme2 border1" placeholder="Your opinion on them. Abide by the rules. Negative rep must include a good reason. Payback negative rep is not allowed."><%- rating.comment %></textarea>
+                <textarea id="ratingcomment" class="border1" placeholder="Your opinion on them. Abide by the rules. Negative rep must include a good reason. Payback negative rep is not allowed."><%- rating.comment %></textarea>
                 <br>
                 <button class="round" onclick="SendRating()">Submit</button>
                 <p id="ratingerror"></p>

@@ -45,6 +45,7 @@
     height: 410px;
     margin-right: var(--gap);
     margin-top: var(--gap);
+    background-color: var(--color-background);
 }
 
 #chat-window li{

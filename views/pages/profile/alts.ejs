@@ -18,7 +18,7 @@
 				<a href="/profile?uid=<%= profileInfo._id %>"><img src="<%= profileInfo.profilepicture %>"></a>
 				<h1><a href="/profile?uid=<%= profileInfo._id %>"><%= profileInfo.username %></a>'s Suspected Alternate Accounts</h1>
 			</div>
-			<div class="theme1 round threads gapchildren">
+			<div class="round threads gapchildren">
 				<% if (Object.keys(matches).length <= 0){ %>
 				<p style="text-align: center;">This user has no suspected alternate accounts.</p>
 				<% } else { %>

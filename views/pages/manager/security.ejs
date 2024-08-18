@@ -17,56 +17,56 @@
         <div id="passwordprompt" style="display: none; position: fixed; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); justify-content: center">
             <div style="margin: auto; position: relative;">
                 <p id="btn_exit">X</p>
-                <div class="theme1 round border1" style="padding: 20px 12px;">
+                <div class="round border1" style="padding: 20px 12px;">
                     <p>Enter your current password</p>
                     <br>
-                    <input id="currentpassword" class="theme2 border1" type="password" placeholder="****"/>
-                    <button id="btn_updateinfo" class="theme2 border1">Submit</button>
+                    <input id="currentpassword" class="border1" type="password" placeholder="****"/>
+                    <button id="btn_updateinfo" class="border1">Submit</button>
                 </div>
             </div>
         </div>
         <% include ../../partials/global %>
         <main class="screenPadding gapchildren">
             <% include ./nav %>
-            <div class="theme1 round border1 manager_container gapchildren">
+            <div class="round border1 manager_container gapchildren">
                 <h2>Security</h2>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Password: <span style="font-style: italic; font-size: 14px">Leave field empty if you don't want to change it</span></p>
-                    <input id="newpassword" class="theme2 border1" type="password" placeholder="New password">
-                    <input id="confirmpassword" class="theme2 border1" type="password" placeholder="Confirm password">
+                    <input id="newpassword" class="border1" type="password" placeholder="New password">
+                    <input id="confirmpassword" class="border1" type="password" placeholder="Confirm password">
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Email:</p>
-                    <input id="email" type="text" class="theme2 border1" placeholder="mail@domain.com" value="<%= accInfo.email %>" data-curval="<%= accInfo.email %>">
+                    <input id="email" type="text" class="border1" placeholder="mail@domain.com" value="<%= accInfo.email %>" data-curval="<%= accInfo.email %>">
                 </div>
-                <button class="theme2 border1" type="submit" onclick="PromptPassword()">Save</button>
+                <button class="border1" type="submit" onclick="PromptPassword()">Save</button>
                 <% if(pendingEmailVerification){ %>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor" style="color: var(--red); margin-bottom: 8px;">Your account does not have a verified email, so you may be restricted from posting content. Please check your email for the verification page. If you can't find it, click the resend button.</p>
-                    <button class="theme2 border1" onclick="ResendEmailVerification()">Resend Email Verification</button>
+                    <button class="border1" onclick="ResendEmailVerification()">Resend Email Verification</button>
                 </div>
                 <% } %>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Sign out of all sessions</p>
-                    <button class="theme2 border1" onclick="SecureSignOut()" style="margin-bottom: 8px">Secure Sign Out</button>
+                    <button class="border1" onclick="SecureSignOut()" style="margin-bottom: 8px">Secure Sign Out</button>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Increase account security with two factor authentication</p>
                     <% if(accInfo.tfaEnabled != true) { %>
-                    <button id="btnenabled2fa" class="theme2 border1" onclick="Enable2FA()" style="margin-bottom: 8px">Turn On 2FA</button>
+                    <button id="btnenabled2fa" class="border1" onclick="Enable2FA()" style="margin-bottom: 8px">Turn On 2FA</button>
                     <div id="tfa-qr" style="display: none;">
                         <img src="">
                         <div style="margin-left: 12px;">
                             <p>Scan this code with the Google Authenticator app then submit your authentication code below. It will not activate until verified.</p>
-                            <input id="token2fa" class="theme2 border1" type="number" min="000000" max="999999"/>
+                            <input id="token2fa" class="border1" type="number" min="000000" max="999999"/>
                             <div id="tfaverifbtns">
-                                <button class="theme2 border1" onclick="Verify2FA()">Verify</button>
-                                <button class="theme2 border1" onclick="CancelVerify2FA()">Cancel</button>
+                                <button class="border1" onclick="Verify2FA()">Verify</button>
+                                <button class="border1" onclick="CancelVerify2FA()">Cancel</button>
                             </div>
                         </div>
                     </div>
                     <% } else { %>
-                    <button class="theme2 border1" onclick="Disable2FA()" style="margin-bottom: 8px">Turn Off 2FA</button>
+                    <button class="border1" onclick="Disable2FA()" style="margin-bottom: 8px">Turn Off 2FA</button>
                     <% } %>
                 </div>
             </div>

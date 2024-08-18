@@ -30,26 +30,26 @@
 		<% include ../../partials/global %>
 		<% if(accInfo.isAdmin){ %>
 		<div class="deleteAccount modal">
-            <div id="deleteAccountForm" class="theme1 border1 round gapchildren">
+            <div id="deleteAccountForm" class="border1 round gapchildren">
 				<h2>Delete <%= profileInfo.username %>'s account?</h2>
 				<div class="lessgapchildren">
 					<p>*Password:</p>
-					<input class="theme2 border1 round less-padding" type="password" placeholder="****"/>
+					<input class="border1 round less-padding" type="password" placeholder="****"/>
 				</div>
 				<div class="lessgapchildren">
 					<p>Reason:</p>
-					<input class="theme2 border1 round less-padding reason" type="text" placeholder="Why do you want to delete <%= profileInfo.username %>'s account?"/>
+					<input class="border1 round less-padding reason" type="text" placeholder="Why do you want to delete <%= profileInfo.username %>'s account?"/>
 				</div>
 				<div>
 					<label>
 						Keep forum content <span title="If checked, their account will be deleted, but their content will remain and be anonymized.">(?)</span>:
-						<input class="theme2 border1 round less-padding" type="checkbox"/>
+						<input class="border1 round less-padding" type="checkbox"/>
 					</label>
 				</div>
 				<div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
 				<div class="verticalCenter finalControls">
-					<button id="cancelDeleteAccount" class="theme2 border1 round less-padding">Cancel</button>
-					<button class="theme2 border1 round less-padding" onclick="deleteAccount()">Delete</button>
+					<button id="cancelDeleteAccount" class="border1 round less-padding">Cancel</button>
+					<button class="border1 round less-padding" onclick="deleteAccount()">Delete</button>
 				</div>
             </div>
         </div>
@@ -57,18 +57,18 @@
 		<div class="mainxchat">
 			<main class="gapchildren" style="padding: 12px; max-width: 1040px; margin: auto;">
 				<% if(!viewingSelf && accInfo.isModerator && isLowerRanked){ %>
-				<div class="theme1 round border1 padding gapchildren" style="overflow: hidden;">
+				<div class="round border1 padding gapchildren" style="overflow: hidden;">
 					<p>Moderator Controls:</p>
 					<div>
-						<button id="btnResetPFP" class="theme2 border1 round less-padding">Reset Profile Picture</button>
-						<button id="btnToggleLockAccount" class="theme2 border1 round less-padding"><% if('locked' in profileInfo){ %>Unlock<% } else { %>Lock<% } %> Account</button>
+						<button id="btnResetPFP" class="border1 round less-padding">Reset Profile Picture</button>
+						<button id="btnToggleLockAccount" class="border1 round less-padding"><% if('locked' in profileInfo){ %>Unlock<% } else { %>Lock<% } %> Account</button>
 						<% if(accInfo.isAdmin){ %>
-						<button class="theme2 border1 round less-padding" onclick="DisplayAccountDeleteModal()">Delete Account</button>
+						<button class="border1 round less-padding" onclick="DisplayAccountDeleteModal()">Delete Account</button>
 						<% } %>
 					</div>
 				</div>
 				<% } %>
-				<div id="intro" class="theme1 round border1 padding gapchildren">
+				<div id="intro" class="round border1 padding gapchildren">
 					<div class="basicdata">
 						<img id="profile_mainprofilepicture" class="border1" src="<%= profileInfo.profilepicture %>" alt="Profile Picture"/>
 						<div>
@@ -113,7 +113,7 @@
 					</div>
 				</div>
 				<% if(profileInfo.signature){ %>
-				<div class="theme1 padding border1 round">
+				<div class="padding border1 round">
 					<div id="signature">
 						<%- profileInfo.signature %>
 					</div>
@@ -122,20 +122,20 @@
 				<div id="profile_contentcontainer" style="display: flex">
 					<div id="profile_sidecards" class="gapchildren">
 						<% if(profileInfo.biography){ %>
-						<div class="theme1 profile_content round border1"}>
+						<div class="profile_content round border1"}>
 							<p class="profile_sidecard">Bio</p>
 							<p class="biography"><%- profileInfo.biography %></p>
 						</div>
 						<% } %>
 						<% if(profileInfo.badges.length > 0){ %>
-						<div class="theme1 profile_content profile_badges round border1">
+						<div class="profile_content profile_badges round border1">
 							<p class="profile_sidecard">Badges</p>
 							<% profileInfo.badges.map(badges => { %>
 							<img src="<%= badges %>" alt="badge" style="width: 220px;"/>
 							<% }) %>
 						</div>
 						<% } %>
-						<div class="theme1 profile_content round border1">
+						<div class="profile_content round border1">
 							<p class="profile_sidecard">Etc</p>
 							<% if(!viewingSelf && allowDMs){ %><p class="cursorpointer" onclick="LoadConversation(<%= profileInfo._id %>); OpenChat()">Send Message</p><% } %>
 							<a href="/profile/threads?uid=<%= profileInfo._id %>">Threads List</a><br>
@@ -146,7 +146,7 @@
 						<h2>Activity Feed</h2>
 						<div class="activitycards">
 							<% for (var i=0; i<activityFeed.length; i++){ %>
-							<div class="theme1 activitycard round border1">
+							<div class="activitycard round border1">
 								<% if(isLowerRanked){ %><p class="delete" data-trid="<%= activityFeed[i]._id %>">x</p><% } %>
 								<p>
 									<% if(activityFeed[i].isOP){ %>
@@ -169,7 +169,7 @@
 							<% } %>
 							<% if(activityFeed.length<=0){ %><p style="text-align: center;">This user has no activity on the forum...</p><% } %>
 						</div>
-						<% if(moreFeedAvailable){ %><button class="theme1 border1 button btnLoadMore" style="margin: auto;">Load More</button><% } %>
+						<% if(moreFeedAvailable){ %><button class="border1 button btnLoadMore" style="margin: auto;">Load More</button><% } %>
 					</div>
 				</div>
 			</main>
@@ -232,7 +232,7 @@
 						feed[i].content = await HTMLToOembed(feed[i].content, { fileDomainWhitelist: true })
 
 						let html = 
-                        `<div class="theme1 activitycard round border1 padding">`
+                        `<div class="activitycard round border1 padding">`
 							<% if(isLowerRanked){ %>+ "<p class=\"delete\" data-trid=\"" + feed[i]._id + "\">x</p>"<% } %>
                             if(feed[i].isOP) html += "Created a new thread"
                             else {

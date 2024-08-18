@@ -26,31 +26,30 @@
 	</head>
 	<body class="container">
 		<main style="display: flex; min-height: 100vh;">
-                <div id="login_leftpanel" style="flex: 1; background-color: #8e44ad;"></div>
-                <div id="login_rightpanel" style="flex: 1; display: flex; padding: 45px; align-items: center;">
-                    <a href="/" style="position: absolute; top: 20px;">Back To Home</a>
-                    <div id="loginContainer" class="gapchildren">
-                        <h1>Log in to <%- powForum.name %></h1>
-                        <form id="login_form" method="post" autocomplete="off" class="gapchildren">
-                            <div class="lessgapchildren">
-                                <p>Username</p>
-                                <input type="text" name="username" placeholder="Username" class="theme2 round border1 padding"/>
-                            </div>
-                            <div class="lessgapchildren">
-                                <p>Password</p>
-                                <input type="password" name="password" placeholder="****" class="theme2 round border1 padding"/>
-                            </div>
-                            <div class="lessgapchildren">
-                                <p>2FA Token <span style="color: grey;">- Leave empty if not applicable</span></p>
-                                <input type="text" name="token2fa" placeholder="000000" class="theme2 round border1 padding"/>
-                            </div>
-                            <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                            <button class="theme2 round border1 padding">Submit</button>
-                        </form>
-                        <p><a href="/register">Register</a> | <a href="/recovery">Forgot username/password</a></p>
-                        <p id="req_Response" style="text-align: center; color: var(--red);"></p>
-                    </div>
+            <div id="login_rightpanel" style="flex: 1; display: flex; padding: 45px; align-items: center;">
+                <a href="/" style="position: absolute; top: 20px;">Back To Home</a>
+                <div id="loginContainer" class="gapchildren">
+                    <h1>Log in to <%- powForum.name %></h1>
+                    <form id="login_form" method="post" autocomplete="off" class="gapchildren">
+                        <div class="lessgapchildren">
+                            <p>Username</p>
+                            <input type="text" name="username" placeholder="Username" class="round border1 padding"/>
+                        </div>
+                        <div class="lessgapchildren">
+                            <p>Password</p>
+                            <input type="password" name="password" placeholder="****" class="round border1 padding"/>
+                        </div>
+                        <div class="lessgapchildren">
+                            <p>2FA Token <span style="color: grey;">- Leave empty if not applicable</span></p>
+                            <input type="text" name="token2fa" placeholder="000000" class="round border1 padding"/>
+                        </div>
+                        <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
+                        <button class="round border1 padding">Submit</button>
+                    </form>
+                    <p><a href="/register">Register</a> | <a href="/recovery">Forgot username/password</a></p>
+                    <p id="req_Response" style="text-align: center; color: var(--red);"></p>
                 </div>
+            </div>
 		</main>
 		
 		<script>

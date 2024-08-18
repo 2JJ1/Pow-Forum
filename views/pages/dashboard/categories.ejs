@@ -16,87 +16,87 @@
 	<body class="container">
         <% include ../../partials/global %>
         <div class="addcategory modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Add Category</h2>
                 <div class="lessgapchildren">
                     <p>Category name:</p>
-                    <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
+                    <input name="name" class="border1 round less-padding" type="text" placeholder="Category name..."/>
                 </div>
                 <div class="verticalCenter">
-                    <button name="cancel" class="theme2 border1 round less-padding">Cancel</button>
-                    <button type="submit" class="theme2 border1 round less-padding">Add</button>
+                    <button name="cancel" class="border1 round less-padding">Cancel</button>
+                    <button type="submit" class="border1 round less-padding">Add</button>
                 </div>
             </div>
         </div>
         <div class="editcategorygroup modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Edit Category</h2>
                 <div>
                     <p>Change category name:</p>
-                    <input class="theme2 border1 round less-padding" type="text" placeholder="Sub-category name..."/>
+                    <input class="border1 round less-padding" type="text" placeholder="Sub-category name..."/>
                 </div>
                 <div class="subModals">
-                    <button name="addSubCategory" class="theme2 border1 round less-padding">Add sub-category</button>
-                    <button name="delete" class="theme2 border1 round less-padding">Delete category</button>
+                    <button name="addSubCategory" class="border1 round less-padding">Add sub-category</button>
+                    <button name="delete" class="border1 round less-padding">Delete category</button>
                 </div>
-                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+                <button type="submit" class="border1 round less-padding">Okay</button>
             </div>
         </div>
         <div class="addsubcategory modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Add new sub-category to <span class="categorygroup">X</span></h2>
                 <div class="lessgapchildren">
                     <p>Name:</p>
-                    <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
+                    <input name="name" class="border1 round less-padding" type="text" placeholder="Category name..."/>
                 </div>
                 <div class="lessgapchildren">
                     <p>Description:</p>
-                    <input name="description" class="theme2 border1 round less-padding" type="text" placeholder="What is this category about?"/>
+                    <input name="description" class="border1 round less-padding" type="text" placeholder="What is this category about?"/>
                 </div>
                 <div class="lessgapchildren">
                     <p>Required Roles:</p>
                     <p>Optional- What roles are required to post here?</p>
-                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
+                    <input name="requiredRoles" class="border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
                 </div>
-                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+                <button type="submit" class="border1 round less-padding">Okay</button>
             </div>
         </div>
         <div class="editcategory modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Edit Subcategory</h2>
                 <div class="lessgapchildren">
                     <p>Subcategory name:</p>
-                    <input class="newName theme2 border1 round less-padding" type="text" placeholder="Category name..."/>
+                    <input class="newName border1 round less-padding" type="text" placeholder="Category name..."/>
                 </div>
                 <div class="lessgapchildren">
                     <p>Description:</p>
-                    <input class="newDescription theme2 border1 round less-padding" type="text" placeholder="Description..."/>
+                    <input class="newDescription border1 round less-padding" type="text" placeholder="Description..."/>
                 </div>
                 <div class="lessgapchildren">
                     <p>Required Roles:</p>
                     <p>Optional- What roles are required to post here?</p>
-                    <input name="requiredRoles" class="theme2 border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
+                    <input name="requiredRoles" class="border1 round less-padding" type="text" placeholder='admin, moderator, patron, vip...'/>
                 </div>
                 <div class="subModals">
-                    <button name="changeGroup" class="theme2 border1 round less-padding">Change Category</button>
-                    <button name="deleteCategory" class="theme2 border1 round less-padding">Delete Subcategory</button>
+                    <button name="changeGroup" class="border1 round less-padding">Change Category</button>
+                    <button name="deleteCategory" class="border1 round less-padding">Delete Subcategory</button>
                 </div>
-                <button type="submit" class="theme2 border1 round less-padding">Okay</button>
+                <button type="submit" class="border1 round less-padding">Okay</button>
             </div>
         </div>
         <div class="requestPassword modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Enter your password</h2>
-                <input class="theme2 border1 round less-padding" type="password" placeholder="*****"/>
-                <button type="submit" class="theme2 border1 round less-padding">Submit</button>
+                <input class="border1 round less-padding" type="password" placeholder="*****"/>
+                <button type="submit" class="border1 round less-padding">Submit</button>
             </div>
         </div>
         <div class="changecategoriesgroup modal">
-            <div class="theme1 border1 round gapchildren">
+            <div class="border1 round gapchildren">
                 <h2>Choose new group for <span class="categoryName">X</span></h2>
                 <div class="categorygroupoptions gapchildren">
                     <% for(let group of categories){ %>
-                    <button class="theme2 border1 round less-padding"><%- group.name %></button>
+                    <button class="border1 round less-padding"><%- group.name %></button>
                     <% } %>
                 </div>
             </div>
@@ -109,7 +109,7 @@
             <p>Add, edit, or remove (sub)categories here</p>
             <hr>
             <% categories.forEach(group => { %>
-            <div class="theme1 border1 padding round gapchildren">
+            <div class="border1 padding round gapchildren">
                 <div class="categorygroup editable">
                     <span class="edit" onclick="EditCategoryGroup(this)"></span>
                     <h2><%- group.name %></h2>
@@ -128,7 +128,7 @@
                 <% }) %>
             </div>
             <% }) %>
-            <button class="theme1 border1 round less-padding" onclick="ModalAddCategory()">Add Category</button>
+            <button class="border1 round less-padding" onclick="ModalAddCategory()">Add Category</button>
         </main>
         <% include ../../partials/footer %>
 		<script>

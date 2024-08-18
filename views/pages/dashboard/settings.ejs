@@ -14,22 +14,22 @@
 	<body class="container">
         <% include ../../partials/global %>
         <main class="gapchildren">
-            <div id="metadata" class="integrationSection theme1 border1 round padding">
+            <div id="metadata" class="integrationSection border1 round padding">
                 <p class="header">Metadata</p>
                 <p class="subtext">To send emails securely and reliably, we use <a href="https://mailgun.com" target="_blank">Mailgun</a>.</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>Forum Name</p>
-                        <input name="name" class="theme2 border1 round less-padding" type="text" placeholder="What is the name of your forum?" value="<%= name %>"/>
+                        <input name="name" class="border1 round less-padding" type="text" placeholder="What is the name of your forum?" value="<%= name %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>Description</p>
-                        <input name="description" class="theme2 border1 round less-padding" type="text" placeholder="How would you describe this forum?" value="<%= description %>"/>
+                        <input name="description" class="border1 round less-padding" type="text" placeholder="How would you describe this forum?" value="<%= description %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMetadata()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateMetadata()">Save</button>
             </div>
             
         </main>

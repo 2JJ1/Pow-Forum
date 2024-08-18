@@ -16,90 +16,90 @@
 	<body class="container">
         <% include ../../partials/global %>
         <main class="gapchildren">
-            <div class="integrationSection theme1 border1 round padding">
+            <div class="integrationSection border1 round padding">
                 <p class="header">Mailgun Configuration (Required)</p>
                 <p class="subtext">To send emails securely and reliably, we use <a href="https://mailgun.com" target="_blank">Mailgun</a>.</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>Mailgun Domain</p>
-                        <input class="mailgunDomain theme2 border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.MAILGUN_DOMAIN %>"/>
+                        <input class="mailgunDomain border1 round less-padding" type="text" placeholder="mg.yourdomain.com" value="<%= process.env.MAILGUN_DOMAIN %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>API Key</p>
-                        <input class="mailgunSecret theme2 border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.MAILGUN_APIKEY ? "****" : "" %>"/>
+                        <input class="mailgunSecret border1 round less-padding" type="text" placeholder="yourmailgunapikeyhere" value="<%= process.env.MAILGUN_APIKEY ? "****" : "" %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateMailgun()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateMailgun()">Save</button>
             </div>
-            <div class="integrationSection theme1 border1 round padding">
+            <div class="integrationSection border1 round padding">
                 <p class="header">Cloudflare Turnstile</p>
                 <p class="subtext"><a href="https://www.cloudflare.com/products/turnstile/" target="_blank">Cloudflare Turnstile</a> is used to protect resource sensitive pages like account registration and thread posting from bot behavior</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>API Key</p>
-                        <input class="grecaptcha2Secret theme2 border1 round less-padding" type="text" placeholder="your-api-key-here" value="<%= process.env.CAPTCHA_APIKEY ? "****" : "" %>"/>
+                        <input class="grecaptcha2Secret border1 round less-padding" type="text" placeholder="your-api-key-here" value="<%= process.env.CAPTCHA_APIKEY ? "****" : "" %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>Site Key</p>
-                        <input class="grecaptcha2Public theme2 border1 round less-padding" type="text" placeholder="your-site-key-here" value="<%= process.env.CAPTCHA_SITEKEY %>"/>
+                        <input class="grecaptcha2Public border1 round less-padding" type="text" placeholder="your-site-key-here" value="<%= process.env.CAPTCHA_SITEKEY %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateGrecaptcha2()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateGrecaptcha2()">Save</button>
             </div>
-            <div class="integrationSection theme1 border1 round padding">
+            <div class="integrationSection border1 round padding">
                 <p class="header">Stripe Configuration</p>
                 <p class="subtext">Stripe is used to collect debit and credit card monthly payments for the premium membership</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>API Private Key</p>
-                        <input class="stripeSecret theme2 border1 round less-padding" type="text" placeholder="sk_live_xxxxx" value="<%= process.env.STRIPE_PRIVATE_KEY ? "****" : "" %>"/>
+                        <input class="stripeSecret border1 round less-padding" type="text" placeholder="sk_live_xxxxx" value="<%= process.env.STRIPE_PRIVATE_KEY ? "****" : "" %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>API Public Key</p>
-                        <input class="stripePublic theme2 border1 round less-padding" type="text" placeholder="pk_live_xxxxx" value="<%= process.env.STRIPE_PUBLIC_KEY %>"/>
+                        <input class="stripePublic border1 round less-padding" type="text" placeholder="pk_live_xxxxx" value="<%= process.env.STRIPE_PUBLIC_KEY %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>Webhook Private Key</p>
-                        <input class="stripeWebhookSecret theme2 border1 round less-padding" type="text" placeholder="whsec_xxxxx" value="<%= process.env.STRIPE_WEBHOOK_PRIVATE_KEY ? "****" : "" %>"/>
+                        <input class="stripeWebhookSecret border1 round less-padding" type="text" placeholder="whsec_xxxxx" value="<%= process.env.STRIPE_WEBHOOK_PRIVATE_KEY ? "****" : "" %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateStripe()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateStripe()">Save</button>
             </div>
-            <div class="integrationSection theme1 border1 round padding">
+            <div class="integrationSection border1 round padding">
                 <p class="header">Coinbase Commerce Configuration</p>
                 <p class="subtext">Coinbase Commerce is used to collect Crypto payments for one month of a premium membership</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>API Key</p>
-                        <input class="coinbaseSecret theme2 border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_API_KEY ? "****" : "" %>"/>
+                        <input class="coinbaseSecret border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_API_KEY ? "****" : "" %>"/>
                     </div>
                     <div class="lessgapchildren">
                         <p>Webhook Secret Key</p>
-                        <input class="coinbaseWebhookSecret theme2 border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_WEBHOOK_SECRET ? "****" : "" %>"/>
+                        <input class="coinbaseWebhookSecret border1 round less-padding" type="text" placeholder="your-key-here" value="<%= process.env.COINBASE_WEBHOOK_SECRET ? "****" : "" %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateCoinbaseCommerce()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateCoinbaseCommerce()">Save</button>
             </div>
-            <div class="integrationSection theme1 border1 round padding">
+            <div class="integrationSection border1 round padding">
                 <p class="header">OpenAI Configuration</p>
                 <p class="subtext">OpenAI is used to enable the AI chat bot for premium members</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
                         <p>API Key</p>
-                        <input class="openaiSecret theme2 border1 round less-padding" type="text" placeholder="sk-xxxx" value="<%= process.env.OPENAI_API_KEY ? "****" : "" %>"/>
+                        <input class="openaiSecret border1 round less-padding" type="text" placeholder="sk-xxxx" value="<%= process.env.OPENAI_API_KEY ? "****" : "" %>"/>
                     </div>
                 </div>
                 <br>
-                <button class="btnSave theme2 border1 round less-padding" onclick="UpdateOpenai()">Save</button>
+                <button class="btnSave border1 round less-padding" onclick="UpdateOpenai()">Save</button>
             </div>
         </main>
         <script>

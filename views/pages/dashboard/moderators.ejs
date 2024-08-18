@@ -17,7 +17,7 @@
         <% include ../../partials/global %>
         <main class="gapchildren">
             <h1>Moderator Dashboard</h1>
-            <div class="theme1 border1 round padding gapchildren">
+            <div class="border1 round padding gapchildren">
                 <h2>Moderator List</h2>
                 <% moderators.forEach(moderator => { %>
                 <p class="modcontainer" data-uid="<%= moderator._id %>">
@@ -26,11 +26,11 @@
                 </p>
                 <% }) %>
             </div>
-            <div class="theme1 border1 round padding gapchildren">
+            <div class="border1 round padding gapchildren">
                 <h2>Add moderator</h2>
                 <div>
-                    <input type="text" name="addmodusername" placeholder="Username" class="theme2 border2 round padding">
-                    <button class="theme2 border1 round padding" name="addmod">+</button>
+                    <input type="text" name="addmodusername" placeholder="Username" class="border2 round padding">
+                    <button class="border1 round padding" name="addmod">+</button>
                 </div>
             </div>
         </main>

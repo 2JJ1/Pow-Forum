@@ -111,8 +111,8 @@ pre code *{
     --font-size: 16px;
     --gap: 12px;
     --less-gap: 9px;
-    --round: 16px;
-    --less-round: 9px;
+    --round: 8px;
+    --less-round: 5px;
     --red: #C0392B;
     --green: #27AE60;
     --link: rgb(52, 152, 219);

@@ -19,7 +19,7 @@
             <div class="logs">
                 <% for(var i=0; i<logs.length; i++){ %>
                 <% var log = logs[i] %>
-                <div class="log theme1 border1 round">
+                <div class="log border1 round">
                     <p class="timestamp"><script>document.write(TimeStamp.Beautify('<%= log.timestamp %>'))</script></p>
                     <% if(log.type === "delete-thread"){ %>
                     <p><a href="/profile?uid=<%= log.byUID %>"><b><%= log.byUsername %></b></a> deleted thread #<%= log.tid %> by <a href="/profile?uid=<%= log.targetUID %>"><b><%= log.targetUsername %></b></a>.</p>
@@ -69,8 +69,8 @@
                 <% } %>
             </div>
             <br>
-            <button class="theme1 button border1 round btnPrevPage">Previous Page</button>
-            <button class="theme1 button border1 round btnNextPage">Next Page</button>
+            <button class="button border1 round btnPrevPage">Previous Page</button>
+            <button class="button border1 round btnNextPage">Next Page</button>
 		</main>
         <% include ../../partials/footer %>
         <script>

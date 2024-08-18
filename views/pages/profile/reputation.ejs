@@ -15,7 +15,7 @@
 	<body class="container">
 		<% include ../../partials/global %>
 		<main class="gapchildren">
-            <div id="accheader" class="theme1 round border1">
+            <div id="accheader" class="round border1">
                 <a href="/profile?uid=<%= profileInfo._id %>">
                     <img id="pfp" class="round" src="<%= profileInfo.profilepicture %>" alt="profile picture"/>
                 </a>
@@ -27,7 +27,7 @@
             <div id="reputationcontainer">
                 <% for(var i=0; i<repcards.length; i++){ %>
                     <% var repCard=repcards[i] %>
-                <div class="repcard theme1 round border1" data-id="<%= repCard._id %>">
+                <div class="repcard round border1" data-id="<%= repCard._id %>">
                     <% if(repCard.canDelete && repCard.diff < 0){ %><button class="btnDelete">X</button><% } %>
                     <p>
                         <% if(repCard.diff < 0 && !repCard.canDelete && !isMod && repCard._from!=1){ %>

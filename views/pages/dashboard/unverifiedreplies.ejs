@@ -22,7 +22,7 @@
             <div class="threads">
                 <% for(var i=0; i<replies.length; i++){ %>
                 <% let reply = replies[i] %>
-                <div class="reply theme1 border1 round padding" data-trid="<%- reply._id %>">
+                <div class="reply border1 round padding" data-trid="<%- reply._id %>">
                     <div>
                         <p><script>document.write(TimeStamp.Beautify('<%= reply.date %>'))</script> | </p>
                         <p>By <a href="/profile?uid=<%= replies[i].uid %>" class="<%- reply.user.highestRole %>"><%- replies[i].user.username %></a>(<span class="<% if(reply.user.reputation>0){ %>good<% } %><% if(reply.user.reputation<0){ %>bad<% } %>"><%= reply.user.reputation %></span>) | </p>
@@ -33,9 +33,9 @@
                     <br>
                     <div class="verticalCenter gapchildrenx">
                         <% if(reply.deletable){ %>
-                        <button class="theme2 button border1 round bad btnDeleteReply">Delete</button>
+                        <button class="button border1 round bad btnDeleteReply">Delete</button>
                         <% } %>
-                        <button class="theme2 button border1 round btnVerifyReply">Verify</button>
+                        <button class="button border1 round btnVerifyReply">Verify</button>
                     </div>
                 </div>
                 <br>
@@ -43,8 +43,8 @@
             </div>
             <br>
             <div class="pagination">
-                <button class="theme1 button border1 round btnPrevPage">Previous Page</button>
-                <button class="theme1 button border1 round btnNextPage">Next Page</button>
+                <button class="button border1 round btnPrevPage">Previous Page</button>
+                <button class="button border1 round btnNextPage">Next Page</button>
             </div>
 		</main>
         <% include ../../partials/footer %>

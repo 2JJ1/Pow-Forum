@@ -72,7 +72,7 @@ footer{
     background-color: #2ecc71;
 }
 </style>
-<footer class="theme1">
+<footer>
 	<ul class="footerlinks">
 		<% powForum.footerLinks.forEach(footerLink => { %>
 		<li><a href="<%= footerLink.link %>" <% if(footerLink.newTab){ %>target="_blank"<% } %> title="<%= footerLink.tooltip %>"><%= footerLink.label %></a></li>

@@ -15,22 +15,22 @@
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
-            <div id="registerform" class="theme1 round border1 padding gapchildren">
+            <div id="registerform" class="round border1 padding gapchildren">
                 <h1><%- powForum.name %> Account Password Reset</h1>
                 <div id="register_passwords">
                     <div class="register_inputfield lessgapchildren" style="margin-right: 5px">
                         <p>Password</p>
-                        <input id="password" class="theme2 border1 round padding" type="password"  placeholder="Password"/>
+                        <input id="password" class="border1 round padding" type="password"  placeholder="Password"/>
                         <div class="register_highlight"></div>
                     </div>
                     <br/>
                     <div class="register_inputfield lessgapchildren" style="margin-left: 5px">
                         <p>Confirm</p>
-                        <input id="confirmpassword" class="theme2 border1 round padding" type="password" placeholder="Confirm"/>
+                        <input id="confirmpassword" class="border1 round padding" type="password" placeholder="Confirm"/>
                         <div class="register_highlight"></div>
                     </div>
                 </div>
-                <button class="theme2 border1 round padding" onclick="ResetPassword()">Submit</button>
+                <button class="border1 round padding" onclick="ResetPassword()">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: var(--red);"></p>
             </div>

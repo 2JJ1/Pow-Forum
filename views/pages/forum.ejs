@@ -17,7 +17,7 @@
 		<% include ../partials/global %>
         <div class="mainxchat">
             <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
-                <div class="theme2 round border1 padding">
+                <div class="round border1 padding">
                     <p>
                         <a href="/">Categories</a> > 
                         <% if(subcategory.name !== "All Subcategories"){ %>
@@ -28,16 +28,16 @@
                     <p><%- subcategory.description %></p>
                 </div>
                 <div class="forumMenu">
-                    <select id="order" class="theme1 border1">
+                    <select id="order" class="border1">
                         <option value="latestactive">Sort latest active</option>
                         <option value="latestthread">Sort latest topic</option>
                     </select>
-                    <input id="searchbar" class="theme1 border1" type="text" placeholder="Search..." autocomplete="off"/>
+                    <input id="searchbar" class="border1" type="text" placeholder="Search..." autocomplete="off"/>
                     <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 round border1 padding">New Thread</a>
+                    <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
                     <% } %>
                 </div>
-                <table class="forumcontainer theme1 round border1 padding">
+                <table class="forumcontainer round border1 padding">
                     <thead>
                         <tr>
                             <% if(subcategory.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
@@ -78,7 +78,7 @@
                     </tbody>
                 </table>
                 <div style="display: flex">
-                    <div class="theme2 round border1" style="flex: 1; margin-right: 15px;">
+                    <div class="round border1" style="flex: 1; margin-right: 15px;">
                         <div id="paginator" class="padding" style="text-align: center; display: flex; justify-content: space-around;">
                             <% if(forumData.currentPage > 2){ %><span onclick="ChangePage(0)"> << </span> <% } %>
                             <% if(forumData.currentPage > 1){ %><span onclick="ChangePage('<%= forumData.currentPage - 1 %>')"> < </span> <% } %>
@@ -88,10 +88,10 @@
                         </div>
                     </div>
                     <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="theme1 round border1 padding">New Thread</a>
+                    <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
                     <% } %>
                 </div>
-                <div class="theme2 border1 round padding gapchildren">
+                <div class="border1 round padding gapchildren">
                     <h3>Users browsing <%= subcategory.name %>:</h3>
                     <% include ../partials/onlinelist %>
                 </div>

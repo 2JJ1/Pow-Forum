@@ -23,7 +23,7 @@
         <% if (accInfo._id){ %>
         <li class='navItem navHeader_dropmenu navbell'>
             <span class="dropmenu-title notifbell" title="Notifications"><% if(accInfo.notifications.length > 0){ %><span class="notifcount"><%= accInfo.notifications.length %></span><% } %></span>
-            <div class="menu theme1 round border1">
+            <div class="menu round border1">
                 <% if(accInfo.notifications.length <= 0){ %>
                 <p>No notifications</p>
                 <% } else { %>
@@ -52,7 +52,7 @@
         </li>
         <li class='navItem navHeader_dropmenu'>
             <p class="dropmenu-title" title="Account options"><%= accInfo.username %></p>
-            <div class="menu theme1 round border1">
+            <div class="menu round border1">
                 <a href='/profile'>Profile</a>
                 <a href='/manager/info' title="Manage your account">Account</a>
                 <p class="dropMenu_option" onclick="logout()">Logout

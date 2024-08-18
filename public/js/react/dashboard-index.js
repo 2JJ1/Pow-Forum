@@ -65,7 +65,7 @@ class ActivityCard extends React.Component {
 
     render(){
         return (
-            <div className="theme1 activitycard round border1 padding">
+            <div className="activitycard round border1 padding">
                 <div className="controls verticalCenter gapchildrenx" style={{float: "right"}}>
                     { this.props.feed.verified === false && <p className="green" onClick={this.verify.bind(this)} title="Verify">✅</p>}
                     { this.props.feed.isLowerRanked && <p className="red" onClick={this.delete.bind(this)} title="Delete">🗑️</p> }
@@ -143,7 +143,7 @@ class ActivityFeed extends React.Component {
                     this.state.feed.map((feed) => <ActivityCard key={feed._id} feed={feed} deleteActivityCard={this.deleteActivityCard.bind(this)}/> )
                     }
                 </div>
-                {this.state.moreFeedAvailable && <button className="theme1 border1 button btnLoadMore" onClick={this.loadActivityFeed.bind(this)}>Load More</button>}
+                {this.state.moreFeedAvailable && <button className="border1 button btnLoadMore" onClick={this.loadActivityFeed.bind(this)}>Load More</button>}
             </div>
         );
     }

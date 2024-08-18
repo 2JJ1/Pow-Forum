@@ -17,17 +17,17 @@
 	</head>
 	<body class="container">
         <div id="errormsgcontainer" style="display: none;">
-            <div class="theme1 border1 round">
+            <div class="border1 round">
                 <h2 style="color: var(--red); text-align: center;">Error</h2>
                 <p id="ErrorMessage" style="text-align: center">Unknown error</p>
                 <br>
-                <button onclick="HideError()" class="theme2 border1 round">Okay</button>
+                <button onclick="HideError()" class="border1 round">Okay</button>
             </div>
         </div>
         <% include ../../partials/global %>
         <main class="screenPadding gapchildren">
             <% include ./nav %>
-            <div class="manager_container pfpOptions gapchildren theme1 round border1">
+            <div class="manager_container pfpOptions gapchildren round border1">
                 <h2>Profile Picture <span style="color: gray; font-size: 12px;">2MB max file size</span></h2>
                 <div>
                     <img class="pfpPreview border1" src="<%= accInfo.profilepicture %>">
@@ -36,72 +36,72 @@
                             <div>
                                 <input id="avatarfile" name="avatar" type="file" accept="image/x-png,image/gif,image/jpeg,image/webp">
                             </div>
-                            <button class="theme2 round border1" type="submit">Upload & Save</button>
+                            <button class="round border1" type="submit">Upload & Save</button>
                         </form>
                         <p>OR</p>
-                        <button id="useGravatar" class="theme2 round border1">Use Gravatar</button>
+                        <button id="useGravatar" class="round border1">Use Gravatar</button>
                     </div>
                 </div>
             </div>
-            <div class="manager_container gapchildren theme1 round border1">
+            <div class="manager_container gapchildren round border1">
                 <h2>Account Info</h2>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Username:</p>
-                    <input id="username" class="theme2 border1" type="text" placeholder="<%= accInfo.username %>" value="<%= accInfo.username %>" data-curval="<%= accInfo.username %>">
+                    <input id="username" class="border1" type="text" placeholder="<%= accInfo.username %>" value="<%= accInfo.username %>" data-curval="<%= accInfo.username %>">
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Short Introduction:</p>
-                    <input id="intro" class="theme2 border1" type="text" placeholder="Describe yourself..." value="<%- accInfo.biography %>" data-curval="<%- accInfo.biography %>">
+                    <input id="intro" class="border1" type="text" placeholder="Describe yourself..." value="<%- accInfo.biography %>" data-curval="<%- accInfo.biography %>">
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Title:</p>
-                    <input id="alias" class="theme2 border1" type="text" placeholder="MyNickname" value="<%- accInfo.alias %>" data-curval="<%- accInfo.alias %>">
+                    <input id="alias" class="border1" type="text" placeholder="MyNickname" value="<%- accInfo.alias %>" data-curval="<%- accInfo.alias %>">
                 </div>
                 <h2>Social Media</h2>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">YouTube Channel Link:</p>
-                    <input id="youtube" class="theme2 border1" type="text" placeholder="https://youtube.com/..." value="<%= accInfo.medias.youtube %>" data-curval="<%= accInfo.medias.youtube %>"/>
+                    <input id="youtube" class="border1" type="text" placeholder="https://youtube.com/..." value="<%= accInfo.medias.youtube %>" data-curval="<%= accInfo.medias.youtube %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">GitHub Username:</p>
-                    <input id="github" class="theme2 border1" type="text" placeholder="GitHub-Username" value="<%= accInfo.medias.github %>" data-curval="<%= accInfo.medias.github %>"/>
+                    <input id="github" class="border1" type="text" placeholder="GitHub-Username" value="<%= accInfo.medias.github %>" data-curval="<%= accInfo.medias.github %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Discord Contact:</p>
-                    <input id="discordtag" class="theme2 border1" type="text" placeholder="DisplayName#0000" value="<%= accInfo.medias.discordtag %>" data-curval="<%= accInfo.medias.discordtag %>"/>
+                    <input id="discordtag" class="border1" type="text" placeholder="DisplayName#0000" value="<%= accInfo.medias.discordtag %>" data-curval="<%= accInfo.medias.discordtag %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Discord Server Invite:</p>
-                    <input id="discord" class="theme2 border1" type="text" placeholder="https://discordapp.com/..." value="<%= accInfo.medias.discord %>" data-curval="<%= accInfo.medias.discord %>"/>
+                    <input id="discord" class="border1" type="text" placeholder="https://discordapp.com/..." value="<%= accInfo.medias.discord %>" data-curval="<%= accInfo.medias.discord %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">V3rmillion Profile Link:</p>
-                    <input id="v3rmillion" class="theme2 border1" type="text" placeholder="https://v3rmillion.net/..." value="<%= accInfo.medias.v3rmillion %>" data-curval="<%= accInfo.medias.v3rmillion %>"/>
+                    <input id="v3rmillion" class="border1" type="text" placeholder="https://v3rmillion.net/..." value="<%= accInfo.medias.v3rmillion %>" data-curval="<%= accInfo.medias.v3rmillion %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Snapchat Username:</p>
-                    <input id="snapchat" class="theme2 border1" type="text" placeholder="Username" value="<%= accInfo.medias.snapchat %>" data-curval="<%= accInfo.medias.snapchat %>"/>
+                    <input id="snapchat" class="border1" type="text" placeholder="Username" value="<%= accInfo.medias.snapchat %>" data-curval="<%= accInfo.medias.snapchat %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Twitter Handle:</p>
-                    <input id="twitter" class="theme2 border1" type="text" placeholder="@MyHandle123" value="<%= accInfo.medias.twitter %>" data-curval="<%= accInfo.medias.twitter %>"/>
+                    <input id="twitter" class="border1" type="text" placeholder="@MyHandle123" value="<%= accInfo.medias.twitter %>" data-curval="<%= accInfo.medias.twitter %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Facebook Page Link:</p>
-                    <input id="facebook" class="theme2 border1" type="text" placeholder="https://facebook.com/..." value="<%= accInfo.medias.facebook %>" data-curval="<%= accInfo.medias.facebook %>"/>
+                    <input id="facebook" class="border1" type="text" placeholder="https://facebook.com/..." value="<%= accInfo.medias.facebook %>" data-curval="<%= accInfo.medias.facebook %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Personal Website:</p>
-                    <input id="website" class="theme2 border1" type="text" placeholder="https://link.com/" value="<%= accInfo.medias.website %>" data-curval="<%= accInfo.medias.website %>"/>
+                    <input id="website" class="border1" type="text" placeholder="https://link.com/" value="<%= accInfo.medias.website %>" data-curval="<%= accInfo.medias.website %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <h2>Etc</h2>
                     <div class="lessgapchildren">
                         <p class="manager_descriptor">Forum Signature:</p>
-                        <textarea id="signature" class="theme2 border1 round" placeholder="Random quote here..." data-curval="<%= accInfo.signature %>"><%= accInfo.signature %></textarea>
+                        <textarea id="signature" class="border1 round" placeholder="Random quote here..." data-curval="<%= accInfo.signature %>"><%= accInfo.signature %></textarea>
                     </div>
                 </div>
-                <button id="saveinfo" class="theme2 round border1" type="submit">Save</button>
+                <button id="saveinfo" class="round border1" type="submit">Save</button>
                 <p id="errormsg" style="color: var(--red); text-align: center"><p>
 			</div>
         </main>

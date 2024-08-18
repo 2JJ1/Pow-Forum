@@ -15,13 +15,13 @@
 		<% include ../../partials/global %>
 		<main class="gapchildren">
 			<form id="searchbar">
-				<input name="username" class="theme1 border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
+				<input name="username" class="border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
 			</form>
 			<% if(accounts.length > 0){ %>
             <div id="cards">
                 <% for (var key in accounts){ %>
                 <% var account = accounts[key]; %>
-                <a class="userCard theme1 border1 round" href="/profile?uid=<%= account._id %>">
+                <a class="userCard border1 round" href="/profile?uid=<%= account._id %>">
                     <img src="<%= account.profilepicture %>"/>
                     <div>
                         <p class="<%= account.highestRole %>"><%= account.username %></p>
@@ -39,7 +39,7 @@
 			<% } else { %>
 			<p id="zeromatches">0 matches</p>
 			<% } %>
-			<% if(loadMore){ %><button id="btnLoadMore" class="theme1 border1 round button">Load More</button><% } %>
+			<% if(loadMore){ %><button id="btnLoadMore" class="border1 round button">Load More</button><% } %>
 		</main>
 		<% include ../../partials/footer %>
 		<script>
@@ -68,7 +68,7 @@
 
 					for(let account of accounts){
 						document.getElementById("cards").innerHTML += (
-							`<a class=\"userCard theme1 border1 round\" href=\"/profile?uid=${account._id}\">` +
+							`<a class=\"userCard border1 round\" href=\"/profile?uid=${account._id}\">` +
 								`<img class=\"round\" src=\"${account.profilepicture}\"/>` +
 								"<div>" +
 									`<p class="${account.highestRole}">${account.username}</p>` +

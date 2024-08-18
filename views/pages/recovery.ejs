@@ -28,24 +28,24 @@
 	</head>
 	<body class="container">
         <main style="display: flex; min-height: 100vh;">
-            <div id="registerform" class="theme1 round border1 padding gapchildren">
+            <div id="registerform" class="round border1 padding gapchildren">
                 <div class="descriptor">
                     <h1><%- powForum.name %> Account Recovery</h1>
                     <p>Fill in only one field</p>
                 </div>
                 <div class="register_inputfield lessgapchildren">
                     <p>Forgot your username? Enter your email</p>
-                    <input id="email" class="theme2 border1 round padding" type="email" placeholder="Email" autoComplete="off"/>
+                    <input id="email" class="border1 round padding" type="email" placeholder="Email" autoComplete="off"/>
                     <div class="register_highlight"></div>
                 </div>
                 <p style="text-align: center"> OR </p>
                 <div class="register_inputfield lessgapchildren">
                     <p>Forgot your password? Enter your username</p>
-                    <input id="username" class="theme2 border1 round padding" type="text" placeholder="Username" autoComplete="off"/>
+                    <input id="username" class="border1 round padding" type="text" placeholder="Username" autoComplete="off"/>
                     <div class="register_highlight"></div>
                 </div>
                 <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                <button class="theme2 border1 round padding" onclick="RequestRecovery()">Submit</button>
+                <button class="border1 round padding" onclick="RequestRecovery()">Submit</button>
                 <a href="/login">Back to Login</a>
                 <p id="req_Response" style="text-align: center; color: var(--red);"></p>
             </div>

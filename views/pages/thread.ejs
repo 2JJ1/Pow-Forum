@@ -32,22 +32,22 @@
 	<body class="container">
         <% if(threadData.canChangeForum){ %>
         <div id="ForumChanger">
-            <div class="theme1 round border1 lessgapchildren">
+            <div class="round border1 lessgapchildren">
                 <% categoryGroups.forEach(categoryGroup => { %>
                 <h3><%- categoryGroup.name %></h3>
                 <% let categoryList = categories.filter(category => category.category === categoryGroup.name) %>
                 <% categoryList.forEach(category => { %>
-                <button class="theme2 border1" data-category="<%= category._id %>"><%- category.name %></button>
+                <button class="border1" data-category="<%= category._id %>"><%- category.name %></button>
                 <% }) %>
                 <% }) %>
-                <button class="theme2 border1" onclick="$('#ForumChanger').hide('fast')">Cancel</button>
+                <button class="border1" onclick="$('#ForumChanger').hide('fast')">Cancel</button>
             </div>
         </div>
         <% } %>
 		<% include ../partials/global %>
         <div class="mainxchat">
             <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
-                <div class="theme2 round border1 padding">
+                <div class="round border1 padding">
                     <p>
                         <a href="/">Categories</a> > 
                         <a href="/#<%- threadData.category.category %>"><%- threadData.category.category %></a> >
@@ -60,18 +60,18 @@
                 </div>
                 <div style="text-align: right">
                     <% if(threadData.canChangeForum){ %>
-                    <button id="btn_changeforum" class="theme1 round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Category</button>
+                    <button id="btn_changeforum" class="round border1 btnThreadControl" onclick="$('#ForumChanger').css('display', 'flex')">Change Category</button>
                     <% } %>
 
                     <% if(threadData.canChangeForum){ %>
-                    <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadLock(<%= !threadData.locked %>)"><% if(threadData.locked){ %>Unlock<% }else{ %>Lock<% } %></button>
+                    <button class="round border1 btnThreadControl" onclick="ToggleThreadLock(<%= !threadData.locked %>)"><% if(threadData.locked){ %>Unlock<% }else{ %>Lock<% } %></button>
                     <% } %>
 
                     <% if(clientIsMod){ %>
-                    <button class="theme1 round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
+                    <button class="round border1 btnThreadControl" onclick="ToggleThreadPin(<%= !threadData.pinned %>)"><% if(threadData.pinned){ %>Unpin<% }else{ %>Pin<% } %></button>
                     <% } %>
                     <% if(threadData.canReply){ %>
-                    <a href="#replyform" class="theme1 round border1 btn_newrelpy">New Reply</a>
+                    <a href="#replyform" class="round border1 btn_newrelpy">New Reply</a>
                     <% } %>
                 </div> 
                 <% var lastReplier = null; %>
@@ -79,8 +79,8 @@
                 <% var nextUId = threadData.replies[index+1] && threadData.replies[index+1].uid %>
                 <!--Open new reply group if previous replier is different-->
                 <% if(lastReplier !== obj.uid) { %>
-                <div class="theme1 replygroup round border1">
-                    <div class="theme2 thread_replierdata">
+                <div class="replygroup round border1">
+                    <div class="thread_replierdata">
                         <a href="/profile?uid=<%= obj.uid %>"><div style="background-image: url('<%= obj.account.profilepicture %>')" class="thread_pfp"></div></a>
                         <div class="userdesc" style="flex: 1">
                             <a href="/profile?uid=<%= obj.uid %>"><p class="username <%= obj.account.highestRole %>">
@@ -131,8 +131,8 @@
                     <% } %>
                     ><%- obj.content %></div>
                     <div class="replyEditorControls hidden padding">
-                        <button name="cancel" class="theme2 round border1 padding">Cancel</button>
-                        <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                        <button name="cancel" class="round border1 padding">Cancel</button>
+                        <button name="save" class="round border1 padding">Save Changes</button>
                     </div>
 
                     <!--Comments-->
@@ -189,8 +189,8 @@
                                         <% } %>
                                         ><%- comment.content %></div>
                                         <div class="replyEditorControls hidden padding">
-                                            <button name="cancel" class="theme2 round border1 padding">Cancel</button>
-                                            <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                                            <button name="cancel" class="round border1 padding">Cancel</button>
+                                            <button name="save" class="round border1 padding">Save Changes</button>
                                         </div>
                                         <ul class="reply_menu verticalCenter gapchildrenx">
                                             <li><p class="btnLikeReply verticalCenter <% if(comment.liked){ %>liked<% } %>" data-trid="<%= comment._id %>"><%= comment.likes %></p></li>
@@ -212,7 +212,7 @@
                             <% }) %>
                         </div>
                         <% if(obj.moreCommentsAvailable) { %>
-                        <button class="theme2 border1 round padding" onclick="LoadComments(this)">Load more</button>
+                        <button class="border1 round padding" onclick="LoadComments(this)">Load more</button>
                         <% } %>
                     </div>
                     <% } %>
@@ -241,14 +241,14 @@
                 <!--Close reply group if the next replier is different-->
                 <% if(nextUId !== obj.uid){ %>
                     <% if(obj.account.signature){ %>
-                    <div class="signature theme2 padding"><%- obj.account.signature %></div>
+                    <div class="signature padding"><%- obj.account.signature %></div>
                     <% } %>
                 </div>
                 <% } %>
                 <% lastReplier = obj.uid %>
                 <% }) %>
                 <% if(threadData.canReply){ %>
-                <div id="replyform" class="theme1 round border1">
+                <div id="replyform" class="round border1">
                     <% if(!accInfo._id){ %>
                     <a href="/login" class="requireLogin round">
                         <p>Login to unlock the reply editor</p>
@@ -258,23 +258,23 @@
                     <textarea id="editor"></textarea>
                     <div class="lessgapchildren padding">
                         <div class="grecaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
-                        <button class="theme2 button" onclick="PostReply()">Post Reply</button>
+                        <button class="button" onclick="PostReply()">Post Reply</button>
                         <p id="errormessage" style="color: var(--red); text-align: center"></p>
                     </div>
                 </div>
                 <% } %>
                 <div style="text-align: right">
                     <% if((threadData.currentPage - 1) > 0) { %>
-                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="theme1 round border1 btn_newrelpy">Prev</a>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage - 1 %>" class="round border1 btn_newrelpy">Prev</a>
                     <% } %>
                     <% if(threadData.nextPageAvailable) { %>
-                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage + 1 %>" class="theme1 round border1 btn_newrelpy">Next</a>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.currentPage + 1 %>" class="round border1 btn_newrelpy">Next</a>
                     <% } %>
                     <% if(threadData.nextPageAvailable) { %>
-                    <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="theme1 round border1 btn_newrelpy">>>></a>
+                    <a href="/t/<%= threadData._id %>?page=<%= threadData.totalPages %>" class="round border1 btn_newrelpy">>>></a>
                     <% } %>
                 </div>
-                <div class="theme2 border1 round gapchildren padding">
+                <div class="border1 round gapchildren padding">
                     <h3>Users viewing this thread:</h3>
                     <% include ../partials/onlinelist %>
                 </div>
@@ -773,8 +773,8 @@
                                     ${comment.reputation <= 0 ? 'onclick="warnLinks(event)"' : ""}
                                     >${comment.content}</div>
                                     <div class="replyEditorControls hidden padding">
-                                        <button name="cancel" class="theme2 round border1 padding">Cancel</button>
-                                        <button name="save" class="theme2 round border1 padding">Save Changes</button>
+                                        <button name="cancel" class="round border1 padding">Cancel</button>
+                                        <button name="save" class="round border1 padding">Save Changes</button>
                                     </div>
                                     <ul class="reply_menu verticalCenter gapchildrenx">
                                         <li><p class="btnLikeReply verticalCenter ${comment.liked ? "liked" : ""}" data-trid="${comment._id}">${comment.likes}</p></li>
