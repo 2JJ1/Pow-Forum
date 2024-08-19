@@ -85,7 +85,7 @@ class ActivityCard extends React.Component {
                         </React.Fragment>
                     }
                     {":"} 
-                    <a href={`/t/${this.props.feed.tid}`}> <span className="threadTitle">{this.props.feed.threadTitle}</span></a>
+                    <a href={`/t/${this.props.feed.tid}`}> <span className="threadTitle" dangerouslySetInnerHTML={{ __html: this.props.feed.threadTitle }}/></a>
                 </p>
                 <div className="threadContent" dangerouslySetInnerHTML={{__html: this.state.content}}></div>
             </div>
