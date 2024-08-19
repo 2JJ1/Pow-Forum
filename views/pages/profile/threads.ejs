@@ -68,6 +68,13 @@
 					if(!moreAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
 				})
 			}
+
+			document.querySelectorAll('img').forEach(img => {
+			img.onerror = function() {
+				if(this.onerror) return
+				this.onerror = null; // Prevents loop if default image fails
+				this.src = '/images/placeholder-img.svg';
+			};
 		</script>
 		<% } %>
 	</body>
