@@ -8,40 +8,45 @@
 		<title>Account Search | <%- powForum.name %></title>
 		
 		<% include ../../partials/headimps %>
-		<link href="/css/profile/search.css?v=24" rel="stylesheet" type="text/css">
+		<link href="/css/profile/search.css?v=24&v2=3" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="/js/timestamp.js?v2=2"></script>   
 	</head>
 	<body class="container">
 		<% include ../../partials/global %>
-		<main class="gapchildren">
-			<form id="searchbar">
-				<input name="username" class="border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
-			</form>
-			<% if(accounts.length > 0){ %>
-            <div id="cards">
-                <% for (var key in accounts){ %>
-                <% var account = accounts[key]; %>
-                <a class="userCard border1 round" href="/profile?uid=<%= account._id %>">
-                    <img src="<%= account.profilepicture %>"/>
-                    <div>
-                        <p class="<%= account.highestRole %>"><%= account.username %></p>
-                        <p>Joined <%= account.creationdate %></p>
-						<p>
-							Reputation: 
-							<span class="<%= account.reputation >= 0 ? "positive" : "negative" %>">
-								<%= account.reputation %>
-							</span>
-						</p>
-                    </div>
-                </a>
-                <% } %>
-            </div>
-			<% } else { %>
-			<p id="zeromatches">0 matches</p>
-			<% } %>
-			<% if(loadMore){ %><button id="btnLoadMore" class="border1 round button">Load More</button><% } %>
-		</main>
-		<% include ../../partials/footer %>
+		<div class="mainxchat">
+			<div>
+				<main class="gapchildren">
+					<form id="searchbar">
+						<input name="username" class="border1 round" type="text" value="<%= username %>" placeholder="Who do you want to search for?">
+					</form>
+					<% if(accounts.length > 0){ %>
+					<div id="cards">
+						<% for (var key in accounts){ %>
+						<% var account = accounts[key]; %>
+						<a class="userCard border1 round" href="/profile?uid=<%= account._id %>">
+							<img src="<%= account.profilepicture %>"/>
+							<div>
+								<p class="<%= account.highestRole %>"><%= account.username %></p>
+								<p>Joined <%= account.creationdate %></p>
+								<p>
+									Reputation: 
+									<span class="<%= account.reputation >= 0 ? "positive" : "negative" %>">
+										<%= account.reputation %>
+									</span>
+								</p>
+							</div>
+						</a>
+						<% } %>
+					</div>
+					<% } else { %>
+					<p id="zeromatches">0 matches</p>
+					<% } %>
+					<% if(loadMore){ %><button id="btnLoadMore" class="border1 round button">Load More</button><% } %>
+					<% include ../../partials/footer %>
+				</main>
+			</div>
+			<% include ../../partials/chatwindow %>
+		</div>
 		<script>
 			document.getElementById("searchbar").onsubmit = function(e){
 				e.preventDefault()
