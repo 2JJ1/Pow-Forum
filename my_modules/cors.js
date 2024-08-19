@@ -2,6 +2,7 @@ var cors = require('cors');
 
 const AccountCorsOptions = {
 	origin: [
+		process.env.FORUM_URL,
 		'https://wearedevs.net', 
 		'https://www.wearedevs.net',
 		'https://api.wearedevs.net', 
