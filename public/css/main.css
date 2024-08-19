@@ -9,7 +9,7 @@
 }
 
 body{
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -231,6 +231,20 @@ pre code *{
 .mainxchat{
     display: flex;
     position: relative;
+    flex: 1;
+    height: 1%;
+}
+
+.mainxchat > div:first-of-type{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    height: 100%;
+}
+
+.mainxchat #chat-window{
+    height: 100%;
 }
 
 /* Modal design */

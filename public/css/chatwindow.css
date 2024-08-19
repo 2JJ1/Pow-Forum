@@ -1,26 +1,10 @@
-@media only screen and (max-width: 1300px) {
-    body #chat-window{
-        position: fixed;
-        bottom: var(--gap);
-        right: var(--gap);
-        z-index: 2;
-        margin-right: 0;
-        margin-top: 0;
-    }
-
-    body .chat-btnminimize{
-        display: block;
-    }
-}
-
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 850px) {
     body #chat-window{
         min-width: 100%;
         min-height: 100%;
         bottom: 0;
         right: 0;
         border-radius: 0;
-        padding-top: 45px;
         resize: none;
     }
 
@@ -36,6 +20,7 @@
     padding: var(--gap);
     cursor: pointer;
     opacity: 0.85;
+    background-color: var(--color-background);
 }
 
 #chat-window{
@@ -43,9 +28,8 @@
     flex-direction: column;
     width: 310px;
     height: 410px;
-    margin-right: var(--gap);
-    margin-top: var(--gap);
     background-color: var(--color-background);
+    border-left: 1px solid var(--color-secondary);
 }
 
 #chat-window li{
@@ -100,7 +84,6 @@
 
 .chat-btnminimize{
     cursor: pointer;
-    display: none;
 }
 
 .chat-group{

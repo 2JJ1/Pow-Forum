@@ -1,7 +1,7 @@
 <% if(accInfo._id){ %>
 <link href="/css/chatwindow.css?v=23&v2=7" rel="stylesheet" type="text/css">
 <p class="chat-btnopen border1 round">Open Chat</p>
-<div id="chat-window" class="round border1 less-padding">
+<div id="chat-window" class="less-padding">
     <div id="chat-windowheader">
         <p class="chat-btnlist">&lt;<span class="userlistnotif" title="online"></span></p>
         <p class="chat-headername">Loading chat...</p>
@@ -16,7 +16,6 @@
         </div>
     </div>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script>
         let chatWindow = document.querySelector('#chat-window')
 
@@ -261,45 +260,6 @@
 
             //If the conversation is clear, clear lastChat
             if(!document.querySelector("chat-group")) lastChat = {}
-        })
-
-        interact('#chat-window')
-        .resizable({
-            edges: { top: true, bottom: true, left: true },
-            listeners: {
-                move(event) {
-                    var target = event.target
-                    var x = (parseFloat(target.getAttribute('data-x')) || 0)
-                    var y = (parseFloat(target.getAttribute('data-y')) || 0)
-
-                    // update the element's style
-                    target.style.width = event.rect.width + 'px'
-                    target.style.height = event.rect.height + 'px'
-
-
-                    target.style.transform = 'translate(' + x + 'px,' + y + 'px)'
-
-                    target.setAttribute('data-x', x)
-                    target.setAttribute('data-y', y)
-                }
-            },
-            modifiers: [
-                // keep the edges inside the parent
-                interact.modifiers.restrictEdges({
-                    outer: '.mainxchat'
-                }),
-                // minimum size
-                interact.modifiers.restrictSize({
-                    min: { 
-                        width: 310, 
-                        height: 410, 
-                    },
-                    max: {
-                        height: 600
-                    }
-                })
-            ],
-            inertia: true
         })
     </script>
 </div>

@@ -16,89 +16,91 @@
 	<body class="container">
 		<% include ../partials/global %>
         <div class="mainxchat">
-            <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
-                <div class="round border1 padding">
-                    <p>
-                        <a href="/">Categories</a> > 
-                        <% if(subcategory.name !== "All Subcategories"){ %>
-                        <a href="/#<%- subcategory.category %>"><%- subcategory.category %></a> >
-                        <% } %>
-                    </p>
-                    <h1><%- subcategory.name %></h1>
-                    <p><%- subcategory.description %></p>
-                </div>
-                <div class="forumMenu">
-                    <select id="order" class="border1">
-                        <option value="latestactive">Sort latest active</option>
-                        <option value="latestthread">Sort latest topic</option>
-                    </select>
-                    <input id="searchbar" class="border1" type="text" placeholder="Search..." autocomplete="off"/>
-                    <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
-                    <% } %>
-                </div>
-                <table class="forumcontainer round border1 padding">
-                    <thead>
-                        <tr>
-                            <% if(subcategory.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
-                            <th>Topic</th>
-                            <th class="not-mobile">Replies</th>
-                            <th class="not-mobile">Views</th>
-                            <th class="not-mobile">Last Replier</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <% for(index in forumData.threads){ %>
-                        <% let thread = forumData.threads[index] %>
-                        <tr>
-                            <% if(subcategory.name === "All Threads"){ %> 
-                            <td class="not-mobile"><a href="/<%- thread.category %>"><%- thread.category %></a></td>
+            <div>
+                <main class="screenPadding gapchildren" style="max-width: 1100px; margin: auto">
+                    <div class="round border1 padding">
+                        <p>
+                            <a href="/">Categories</a> > 
+                            <% if(subcategory.name !== "All Subcategories"){ %>
+                            <a href="/#<%- subcategory.category %>"><%- subcategory.category %></a> >
                             <% } %>
-                            <td>
-                                <a class="thread-title" href="/t/<%= thread._id %>">
-                                    <% if(thread.pinned){ %><span class="pin" title="This thread contains important imformation."></span><% } %> 
-                                    <%- thread.title %>
-                                </a>
-                                <p style="font-size: 12; color: gray">
-                                    <a href="/profile?uid=<%= thread.OPUID %>"><%= thread.OPName %></a>
-                                        - <script>document.write(TimeStamp.Beautify('<%- thread.date %>'))</script>
-                                </a>
-                            </td>
-                            <td class="not-mobile"> <%= thread.replies %> </td>
-                            <td class="not-mobile"> <%= thread.views %> </td>
-                            <td class="not-mobile">
-                                <% if("LRName" in thread){ %>
-                                    <a href="/profile?uid=<%= thread.LRUID %>"><%= thread.LRName %></a>
-                                <% } else { %>
-                                    <%= "-No Reply-" %>
-                                <% } %>
-                            </td>
-                        </tr>
-                    <% } %>
-                    </tbody>
-                </table>
-                <div style="display: flex">
-                    <div class="round border1" style="flex: 1; margin-right: 15px;">
-                        <div id="paginator" class="padding" style="text-align: center; display: flex; justify-content: space-around;">
-                            <% if(forumData.currentPage > 2){ %><span onclick="ChangePage(0)"> << </span> <% } %>
-                            <% if(forumData.currentPage > 1){ %><span onclick="ChangePage('<%= forumData.currentPage - 1 %>')"> < </span> <% } %>
-                            <p><%= forumData.currentPage %></p>
-                            <% if(forumData.currentPage < forumData.totalPages){ %><span onclick="ChangePage('<%= forumData.currentPage + 1 %>')"> > </span> <% } %>
-                            <% if(forumData.currentPage + 1 < forumData.totalPages ){ %><span onclick="ChangePage('<%= forumData.totalPages %>')"> >> </span> <% } %>
-                        </div>
+                        </p>
+                        <h1><%- subcategory.name %></h1>
+                        <p><%- subcategory.description %></p>
                     </div>
-                    <% if(forumData.canPost){ %> 
-                    <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
-                    <% } %>
-                </div>
-                <div class="border1 round padding gapchildren">
-                    <h3>Users browsing <%= subcategory.name %>:</h3>
-                    <% include ../partials/onlinelist %>
-                </div>
-            </main>
+                    <div class="forumMenu">
+                        <select id="order" class="border1">
+                            <option value="latestactive">Sort latest active</option>
+                            <option value="latestthread">Sort latest topic</option>
+                        </select>
+                        <input id="searchbar" class="border1" type="text" placeholder="Search..." autocomplete="off"/>
+                        <% if(forumData.canPost){ %> 
+                        <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
+                        <% } %>
+                    </div>
+                    <table class="forumcontainer round border1 padding">
+                        <thead>
+                            <tr>
+                                <% if(subcategory.name === "All Threads"){ %><th class="not-mobile">Sub-Category</th><% } %>
+                                <th>Topic</th>
+                                <th class="not-mobile">Replies</th>
+                                <th class="not-mobile">Views</th>
+                                <th class="not-mobile">Last Replier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% for(index in forumData.threads){ %>
+                            <% let thread = forumData.threads[index] %>
+                            <tr>
+                                <% if(subcategory.name === "All Threads"){ %> 
+                                <td class="not-mobile"><a href="/<%- thread.category %>"><%- thread.category %></a></td>
+                                <% } %>
+                                <td>
+                                    <a class="thread-title" href="/t/<%= thread._id %>">
+                                        <% if(thread.pinned){ %><span class="pin" title="This thread contains important imformation."></span><% } %> 
+                                        <%- thread.title %>
+                                    </a>
+                                    <p style="font-size: 12; color: gray">
+                                        <a href="/profile?uid=<%= thread.OPUID %>"><%= thread.OPName %></a>
+                                            - <script>document.write(TimeStamp.Beautify('<%- thread.date %>'))</script>
+                                    </a>
+                                </td>
+                                <td class="not-mobile"> <%= thread.replies %> </td>
+                                <td class="not-mobile"> <%= thread.views %> </td>
+                                <td class="not-mobile">
+                                    <% if("LRName" in thread){ %>
+                                        <a href="/profile?uid=<%= thread.LRUID %>"><%= thread.LRName %></a>
+                                    <% } else { %>
+                                        <%= "-No Reply-" %>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                    <div style="display: flex">
+                        <div class="round border1" style="flex: 1; margin-right: 15px;">
+                            <div id="paginator" class="padding" style="text-align: center; display: flex; justify-content: space-around;">
+                                <% if(forumData.currentPage > 2){ %><span onclick="ChangePage(0)"> << </span> <% } %>
+                                <% if(forumData.currentPage > 1){ %><span onclick="ChangePage('<%= forumData.currentPage - 1 %>')"> < </span> <% } %>
+                                <p><%= forumData.currentPage %></p>
+                                <% if(forumData.currentPage < forumData.totalPages){ %><span onclick="ChangePage('<%= forumData.currentPage + 1 %>')"> > </span> <% } %>
+                                <% if(forumData.currentPage + 1 < forumData.totalPages ){ %><span onclick="ChangePage('<%= forumData.totalPages %>')"> >> </span> <% } %>
+                            </div>
+                        </div>
+                        <% if(forumData.canPost){ %> 
+                        <a href="/c/<%= subcategory._id %>/newthread" class="round border1 padding">New Thread</a>
+                        <% } %>
+                    </div>
+                    <div class="border1 round padding gapchildren">
+                        <h3>Users browsing <%= subcategory.name %>:</h3>
+                        <% include ../partials/onlinelist %>
+                    </div>
+		            <% include ../partials/footer %>
+                </main>
+            </div>
             <% include ../partials/chatwindow %>
 		</div>
-		<% include ../partials/footer %>
 		
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script>
