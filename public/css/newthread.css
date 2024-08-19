@@ -51,7 +51,7 @@
 
 .signature{
     padding: 12px;
-    border-top: 1px solid #CCCCCC;
+    border-top: 1px solid var(--color-secondary);
     max-height: 85px;
     overflow-y: auto;
 }

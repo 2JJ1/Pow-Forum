@@ -39,6 +39,7 @@
     display: flex;
     padding: var(--gap);
     margin-bottom: var(--gap);
+    border-bottom: 1px solid var(--color-secondary);
 }
 
 .thread_replycontent{
@@ -65,7 +66,7 @@
 }
 
 .signature{
-    border-top: 1px solid #CCCCCC;
+    border-top: 1px solid var(--color-secondary);
     max-height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
