@@ -59,7 +59,7 @@ ul, ol{
 }
 
 hr{
-    border-top: 1px solid #7F8C8D;
+    border-top: 1px solid var(--color-secondary);
     margin: var(--gap) 0;
 }
 
