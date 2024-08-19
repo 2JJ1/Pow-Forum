@@ -33,7 +33,7 @@ function replaceAnchorInDOM(html, link, replacement) {
         if (link == href) {
             let elem = document.createElement("span")
             elem.innerHTML = "<br>" + replacement
-            anchor.appendChild(elem)
+            anchor.replaceWith(elem)
         }
     });
   }
