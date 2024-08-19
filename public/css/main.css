@@ -8,8 +8,9 @@
     box-sizing: border-box;
 }
 
-body{
-    height: 100vh;
+html, body{
+    max-height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }

@@ -1,5 +1,5 @@
 <% if(accInfo._id){ %>
-<link href="/css/chatwindow.css?v=24&v2=7" rel="stylesheet" type="text/css">
+<link href="/css/chatwindow.css?v=24&v2=9" rel="stylesheet" type="text/css">
 <p class="chat-btnopen border1 round">Open Chat</p>
 <div id="chat-window" class="less-padding">
     <div id="chat-windowheader">
@@ -24,13 +24,16 @@
             document.querySelector('.chat-btnopen').style.display = "none"
             chatWindow.style.display = "flex"
             localStorage.setItem('chatMinimized', 0)
+            if(window.innerWidth <= 850) document.querySelector('.mainxchat > div:first-of-type').style.display = 'none'
             //Auto scroll to bottom to view latest message
             document.querySelector('.chat-groups').scrollTop = document.querySelector('.chat-groups').scrollHeight
         }
         document.querySelector('.chat-btnopen').onclick = OpenChat
         document.querySelector('.chat-btnminimize').onclick = function(){
+
             document.querySelector('.chat-btnopen').style.display = "block"
             chatWindow.style.display = "none"
+            if(window.innerWidth <= 850) document.querySelector('.mainxchat > div:first-of-type').style.display = 'flex'
             localStorage.setItem('chatMinimized', 1)
         }
 
