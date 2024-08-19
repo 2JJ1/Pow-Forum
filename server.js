@@ -29,8 +29,8 @@ async function CleanMongoDatabase(){
 	//Deletes forum audit logs older than 30 days
 	await mongoose.model("ForumAuditLogs").deleteMany({time: {$lt: Date.now() - 1000*60*60*24*30}})
 
-	//Deletes messages older than 14 days
-	await mongoose.model("Messages").deleteMany({time: {$lt: Date.now() - 1000*60*60*24*14}})
+	//Deletes messages older than 90 days
+	await mongoose.model("Messages").deleteMany({time: {$lt: Date.now() - 1000*60*60*24*90}})
 
 	//Removes premium from expired Crypto payers
 	let expiredPremiumMembers = await Accounts.find({premium_expires: {$lt: new Date()}})
