@@ -70,12 +70,14 @@ button{
 /* Scrollbar Mods */
 
 ::-webkit-scrollbar {
-    width: 9px;
+    width: 5px;
 }
 
 ::-webkit-scrollbar-track {
     background-color: #7F8C8D;
     background-color: rgba(128,128,128,0.3);
+    margin: 5px;
+    border-radius: 4px;
 }
  
 ::-webkit-scrollbar-thumb {
@@ -242,6 +244,7 @@ pre code *{
     flex: 1;
     overflow: auto;
     height: 100%;
+    margin-right: 5px;
 }
 
 .mainxchat #chat-window{
