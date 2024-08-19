@@ -8,7 +8,6 @@
     body #navigationbar{
         display: flex;
         flex-direction: column;
-        position: sticky;
     }
 
     body #navigationbar ul{
@@ -62,6 +61,8 @@ header li {
     display: flex;
     align-items: center;
     padding: 3px 25px;
+    position: sticky; /* Considers pages where scroll isn't limited to <main> */
+    background-color: var(--color-background);
 }
 
 #navigationbar #foologo{
