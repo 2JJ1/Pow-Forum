@@ -16,15 +16,21 @@ router.get('/', async (req, res, next) => {
 	try {
 		let response = {success: false}
 
-		let filterUsername = req.query.username
-		if(filterUsername){ 
-			if(typeof filterUsername !== "string") throw "Invalid username"
-			if(!/^\w+$/.test(filterUsername)) throw "Invalid username"
+		let {username, fromuid} = req.query
+
+		if(username){ 
+			if(typeof username !== "string") throw "Invalid username"
+			if(!/^\w+$/.test(username)) throw "Invalid username"
+		}
+
+		if("fromuid" in req.query){
+			fromuid = parseInt(fromuid)
+			if(isNaN(fromuid)) throw "Invalid user id"
 		}
 
 		let filter = {}
-		if(filterUsername) filter.username = new RegExp(EscapeRegex(filterUsername))
-		if(req.query.fromuid) filter._id = {$gt: req.query.fromuid}
+		if(username) filter.username = new RegExp(EscapeRegex(username))
+		if(fromuid) filter._id = {$gt: fromuid}
 
         let accounts = await Accounts.find(filter).sort({_id: 1}).limit(16).lean()
         for(let account of accounts){
