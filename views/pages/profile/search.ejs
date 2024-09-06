@@ -57,8 +57,8 @@
 				window.location.href = "/profile/search?username=" + username
 			}
 
-			<% if(accounts.length > 0){ %>
-			var latestUID = <%= accounts.length>1 ? accounts[accounts.length-1]._id : 0 %>
+			<% if(loadMore){ %>
+			var latestUID = <%= accounts[accounts.length-1]._id %>
 			document.getElementById("btnLoadMore").onclick = function(){
 				fetch(`/api/account/search?username=<%= username %>&fromuid=${latestUID}`, {
 					method: "GET",
