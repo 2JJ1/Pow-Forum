@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
         const event = Webhook.verifyEventBody(req.body, signature, process.env.COINBASE_WEBHOOK_SECRET);
 
         let uid
-        if(event.data.metadata) uid = event.data.metadata.customer_id
+        if(event.data.metadata) uid = parseInt(event.data.metadata.customer_id)
         //Likely is a test event. Use the bot as a test dummy
         if(!uid) uid = 1
 

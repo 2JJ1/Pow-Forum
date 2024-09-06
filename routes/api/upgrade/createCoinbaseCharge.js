@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
                 },
                 pricing_type: "fixed_price",
                 metadata: {
-                    customer_id: req.session.uid
+                    customer_id: parseInt(req.session.uid)
                 },
                 redirect_url: `${process.env.FORUM_URL}/upgrade/pending`,
                 cancel_url: `${process.env.FORUM_URL}/upgrade`,
