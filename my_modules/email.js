@@ -1,3 +1,7 @@
+const mongoose = require("mongoose")
+
+const ForumSettings = mongoose.model("ForumSettings")
+
 module.exports = {
 	//Wraps mailgun sender into promise
 	SendMail: (emaildata) => {
@@ -20,6 +24,42 @@ module.exports = {
 			to: to,
 			subject: subject,
 			text: body
+		};
+
+		return module.exports.SendMail(emaildata)
+	},
+
+	//Formatted email with branding and as html
+	sendEmail: async (options) => {
+		let {recipient, subject, body, viewURL} = options;
+
+		let forumName = (await ForumSettings.findOne({type: "name"})).value;
+
+		let html = `
+			<div style="text-align: center;">
+				<!-- <img src="#" alt="Forum Logo" style="max-width: 100px;"/> -->
+				<h1>${forumName}</h1>
+			</div>
+			<div>
+				<p>Hello ${recipient.username},</p>
+				<br>
+				<div>${body}</div>
+				<br>
+				<a href="${viewURL}" style="background-color: #3498DB; color: white; padding: 7px 12px; border-radius: 8px; text-decoration: none;">View</a>
+				<br>
+			</div>
+			<br>
+			<div style="color: lightgrey;">
+				<p>Do not reply to this auto-generated email as it is unmonitored an uninteractve.</p>
+				<p>If you no longer wish to receive these emails, you may manage notification settings <a href="${process.env.FORUM_URL}/manager/settings">here</a>.</p>
+			</div>
+		`;
+
+		let emaildata = {
+			from: `"noreply" <noreply@${process.env.MAILGUN_DOMAIN}>`,
+			to: recipient.email,
+			subject: `${subject} - ${forumName}`,
+			html
 		};
 
 		return module.exports.SendMail(emaildata)

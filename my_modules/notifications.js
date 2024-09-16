@@ -2,10 +2,12 @@ const mongoose = require("mongoose")
 const webpush = require('web-push');
 
 const accountapi = require('./accountapi');
+const email = require('./email')
 
 const Notifications = mongoose.model("Notifications")
 const NotificationSettings = mongoose.model("NotificationSettings")
 const Sessions = mongoose.model("Sessions")
+const Threads = mongoose.model("Threads")
 
 //Compiles notifications for display
 exports.CompileNotifications = async function(notifications){
@@ -77,6 +79,7 @@ exports.SendNotification = async function(options){
     let notificationSettings = await NotificationSettings.findById(options.recipientid) || {}
 
     let senderAccount = await accountapi.fetchAccount(options.senderid)
+    let recipient = await accountapi.fetchAccount(options.recipientid)
 
     switch(options.type){
         case "threadreply": {
@@ -86,6 +89,7 @@ exports.SendNotification = async function(options){
             if(!options.recipientid) throw new Error("recipientid required")
             if(!options.tid) throw new Error("tid required")
             if(!options.trid) throw new Error("trid required")
+
             await new Notifications({
                 type: options.type,
                 senderid: options.senderid,
@@ -100,6 +104,17 @@ exports.SendNotification = async function(options){
                 ``,
                 `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
             )
+
+            let thread = await Threads.findById(options.tid)
+            let {title} = thread
+
+            await email.sendEmail({
+                recipient, 
+                subject: `New reply from ${senderAccount.username}`, 
+                body: `${senderAccount.username} has replied to your thread, "${title}".<br>`, 
+                viewURL: `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            })
+
             break
         }
         case "threadcomment": {
@@ -109,6 +124,7 @@ exports.SendNotification = async function(options){
             if(!options.recipientid) throw new Error("recipientid required")
             if(!options.tid) throw new Error("tid required")
             if(!options.trid) throw new Error("trid required")
+
             await new Notifications({
                 type: options.type,
                 senderid: options.senderid,
@@ -123,6 +139,16 @@ exports.SendNotification = async function(options){
                 ``,
                 `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
             )
+
+            let thread = await Threads.findById(options.tid)
+            let {title} = thread
+            await email.sendEmail({
+                recipient, 
+                subject: `New thread comment from ${senderAccount.username}`, 
+                body: `${senderAccount.username} has commented on your thread, "${title}".`, 
+                viewURL: `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            })
+
             break
         }
         case "threadreplycomment": {
@@ -132,6 +158,7 @@ exports.SendNotification = async function(options){
             if(!options.recipientid) throw new Error("recipientid required")
             if(!options.tid) throw new Error("tid required")
             if(!options.trid) throw new Error("trid required")
+
             await new Notifications({
                 type: options.type,
                 senderid: options.senderid,
@@ -146,6 +173,16 @@ exports.SendNotification = async function(options){
                 ``,
                 `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
             )
+
+            let thread = await Threads.findById(options.tid)
+            let {title} = thread
+            await email.sendEmail({
+                recipient, 
+                subject: `New reply comment from ${senderAccount.username}`, 
+                body: `${senderAccount.username} has commented on your your reply from thread, "${title}".`, 
+                viewURL: `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            })
+
             break
         }
         case "threadreplymention": {
@@ -155,6 +192,7 @@ exports.SendNotification = async function(options){
             if(!options.recipientid) throw new Error("recipientid required")
             if(!options.tid) throw new Error("tid required")
             if(!options.trid) throw new Error("trid required")
+
             await new Notifications({
                 type: options.type,
                 senderid: options.senderid,
@@ -169,6 +207,16 @@ exports.SendNotification = async function(options){
                 ``,
                 `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
             )
+
+            let thread = await Threads.findById(options.tid)
+            let {title} = thread
+            await email.sendEmail({
+                recipient, 
+                subject: `New mention from ${senderAccount.username}`, 
+                body: `${senderAccount.username} has mentioned you in thread, "${title}".`, 
+                viewURL: `${process.env.FORUM_URL}/t/${options.tid}?r=${options.trid}`
+            })
+
             break
         }
         case "newrep": {
@@ -219,6 +267,15 @@ exports.SendNotification = async function(options){
                     ``,
                     `${process.env.FORUM_URL}/?openChat=${options.senderid}`
                 )
+
+                let emailBody = `${senderAccount.username} has sent you a new message:<br>` +
+                `"${options.message}"<br><br>`
+                await email.sendEmail({
+                    recipient, 
+                    subject: `New message from ${senderAccount.username}`, 
+                    body: emailBody, 
+                    viewURL: `${process.env.FORUM_URL}/?openChat=${options.senderid}`
+                })
             }
 
             //Sends/saves native push notification

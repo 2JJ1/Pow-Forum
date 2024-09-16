@@ -163,61 +163,61 @@ router.post('/', async (req, res, next) => {
 		const newReply = await new ThreadReplies(replyData)
 		.save()
 
-		//Sends notification to the OP stating someone else has replied to their thread
-		if(
-			//Don't notify self
-			(thread.uid != req.session.uid) && 
-			//Avoid repeat notifications
-			!(await Notifications.findOne({$or: [{type: "threadreply"}, {type: "threadcomment"}], tid, recipientid: thread.uid, senderid: req.session.uid}))
-		){ 
-			await notificationsAPI.SendNotification({
-				webpushsub: req.session.webpushsub, 
-				type: !trid ? "threadreply" : "threadcomment",
-				recipientid: thread.uid,
-				senderid: req.session.uid,
-				tid: tid,
-				trid: newReply._id,
-			})
-		}
-
-		//Notify of comments to original replier
-		if(
-			trid && 
-			//Don't send repeat notification to OP
-			thread.uid != commentingTo.uid &&
-			//Don't notify self
-			commentingTo.uid != req.session.uid &&
-			//Avoid repeat notifications
-			!(await Notifications.findOne({type: "threadreplycomment", tid, recipientid: thread.uid, senderid: req.session.uid}))
-		){
-			await notificationsAPI.SendNotification({
-				webpushsub: req.session.webpushsub, 
-				type: "threadreplycomment",
-				recipientid: commentingTo.uid,
-				senderid: req.session.uid,
-				tid,
-				trid: newReply._id,
-			})
-		}
-
-		//Sends notifications to all mentioned members stating they were mentioned
-		for(var i=0; i<mentionedUIDs.length; i++){
-			//Don't send notification to OP because they already get a "new reply" notif
-			//Don't send notification to self
-			if ((mentionedUIDs[i] != thread.uid) && (mentionedUIDs[i] != req.session.uid)) {
+		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS
+		if(verified) {
+			//Notify OP someone has replied to their thread
+			if(
+				//Don't notify self
+				(thread.uid != req.session.uid) && 
+				//Avoid repeat notifications
+				!(await Notifications.findOne({$or: [{type: "threadreply"}, {type: "threadcomment"}], tid, recipientid: thread.uid, senderid: req.session.uid}))
+			){ 
 				await notificationsAPI.SendNotification({
-					webpushsub: req.session.webpushsub,
-					type: "threadreplymention",
-					recipientid: mentionedUIDs[i],
+					webpushsub: req.session.webpushsub, 
+					type: !trid ? "threadreply" : "threadcomment",
+					recipientid: thread.uid,
 					senderid: req.session.uid,
 					tid: tid,
-					trid: newReply._id
+					trid: newReply._id,
 				})
 			}
-		}
 
-		// NOTE: REAPPLY THIS TO THE VERIFICATION PROCESS
-		if(verified){
+			//Notify of comments to original replier
+			if(
+				trid && 
+				//Don't send repeat notification to OP
+				thread.uid != commentingTo.uid &&
+				//Don't notify self
+				commentingTo.uid != req.session.uid &&
+				//Avoid repeat notifications
+				!(await Notifications.findOne({type: "threadreplycomment", tid, recipientid: thread.uid, senderid: req.session.uid}))
+			){
+				await notificationsAPI.SendNotification({
+					webpushsub: req.session.webpushsub, 
+					type: "threadreplycomment",
+					recipientid: commentingTo.uid,
+					senderid: req.session.uid,
+					tid,
+					trid: newReply._id,
+				})
+			}
+
+			//Sends notifications to all mentioned members stating they were mentioned
+			for(var i=0; i<mentionedUIDs.length; i++){
+				//Don't send notification to OP because they already get a "new reply" notif
+				//Don't send notification to self
+				if ((mentionedUIDs[i] != thread.uid) && (mentionedUIDs[i] != req.session.uid)) {
+					await notificationsAPI.SendNotification({
+						webpushsub: req.session.webpushsub,
+						type: "threadreplymention",
+						recipientid: mentionedUIDs[i],
+						senderid: req.session.uid,
+						tid: tid,
+						trid: newReply._id
+					})
+				}
+			}
+
 			//Adds the active forumer role if they have over 150 replies (Excluding OPs)
 			var threadCount = await Threads.countDocuments({uid: req.session.uid})
 			var replyCount = await ThreadReplies.countDocuments({uid: req.session.uid}) - threadCount
@@ -234,7 +234,8 @@ router.post('/', async (req, res, next) => {
 					})
 				}
 			}
-		} 
+
+		}
 			
 		//Code hasn't exited, so assume success
 		response.replyId = newReply._id

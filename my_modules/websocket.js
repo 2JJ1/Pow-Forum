@@ -278,7 +278,8 @@ module.exports = async (socket) => {
 				await notificationsAPI.SendNotification({ 
 					type: "message", 
 					recipientid: msg.to, 
-					senderid: socket.uid
+					senderid: socket.uid,
+					message: msg.content
 				})
 			}
 
