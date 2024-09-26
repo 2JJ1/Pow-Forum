@@ -21,11 +21,11 @@ router.post('/', async (req, res, next) => {
 		let response = {success: false}
 
 		//Check if user is already logged in.
-		if(req.session.uid) throw "Already logged in";
-
-		//Must complete google captcha first
-		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
-			throw "Captcha failed"
+		if(req.session.uid) {
+			response.success = true
+			res.json(response)
+			return
+		}
 		
 		//Will need both username and password obviously
 		var username = req.body.username

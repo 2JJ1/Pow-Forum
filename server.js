@@ -145,7 +145,8 @@ let sessionConf = {
 	cookie: { 
 		httpOnly: process.env.FORUM_URL && process.env.NODE_ENV !== "development",
 		secure: process.env.FORUM_URL && process.env.NODE_ENV !== "development",
-		maxAge: 1000*60*60*24*365 // (1 week in milliseconds) 1 second -> 1 minute -> 1 hour -> 1 day -> 1 year
+		maxAge: 1000*60*60*24*365,
+		sameSite: 'none'
 	}
 }
 if(process.env.COOKIE_DOMAIN) sessionConf.cookie.domain = process.env.COOKIE_DOMAIN
@@ -208,7 +209,25 @@ http.listen(process.env.PORT || 8087, () => {
 // Socket.io configuration
 
 //Create Socket.io server
-const io = new socketio.Server(http)
+const io = new socketio.Server(http, {
+	cors: {
+	  origin: (origin, callback) => {
+		if (!origin) {
+			// Allow requests from file:// (Tauri) or no-origin requests (undefined or null)
+			callback(null, true);
+		} else {
+			const allowedOrigins = [process.env.FORUM_URL, "http://localhost:1420", "http://localhost:3000", "https://tauri.localhost", "http://tauri.localhost",];
+			if (allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error('Not allowed by CORS'));
+			}
+		}
+	  },
+	  methods: ["GET", "POST"],
+	  credentials: true  // This allows cookies and authentication headers to be sent
+	}
+});
 module.exports.io = io
 
 //Websocket server use session

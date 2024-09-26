@@ -10,19 +10,6 @@
         <link href="/css/login.css?v=26" rel="stylesheet" type="text/css">
         
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <% if( process.env.CAPTCHA_APIKEY && process.env.CAPTCHA_SITEKEY ){ %>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha" async defer></script>
-        <% } else { %>
-        <script>
-            //So attempted usage of captcha doesn't error
-            var grecaptcha = {
-                getResponse: () => {},
-                reset: () => {},
-                execute: () => {},
-                render: () => {},
-            }
-        </script>
-        <% } %>
 	</head>
 	<body class="container">
 		<main style="display: flex; min-height: 100vh;">
@@ -43,7 +30,6 @@
                             <p>2FA Token <span style="color: grey;">- Leave empty if not applicable</span></p>
                             <input type="text" name="token2fa" placeholder="000000" class="round border1 padding"/>
                         </div>
-                        <div class="g-recaptcha" data-sitekey="<%- process.env.CAPTCHA_SITEKEY %>"></div>
                         <button class="round border1 padding">Submit</button>
                     </form>
                     <p><a href="/register">Register</a> | <a href="/recovery">Forgot username/password</a></p>
@@ -64,7 +50,6 @@
                         'Content-Type': "application/json",
                     },
 					body: JSON.stringify({
-                        'g-recaptcha-response': form.get('g-recaptcha-response'),
                         username: form.get('username'),
                         password: form.get('password'),
                         token2fa: form.get('token2fa'),
@@ -80,16 +65,7 @@
                     }
                 })
 				.catch(()=>document.getElementById('req_Response').innerHTML = "Failed to contact the server.")
-
-				grecaptcha.reset();
 			}
-            
-            function captchaErrorCallback() {
-                // Re-initialize reCaptcha
-                grecaptcha.reset();
-                // Fire reCaptcha
-                grecaptcha.execute();
-            }
 		</script>
 	</body>
 </html>
