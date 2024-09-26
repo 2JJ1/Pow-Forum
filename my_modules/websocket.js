@@ -10,6 +10,7 @@ const accountAPI = require('./accountapi');
 const rolesAPI = require('./rolesapi');
 const notificationsAPI = require('./notifications')
 const HandleCommand = require('./chatcommands')
+const buildPFP = require('./buildpfp')
 const { ProcessMentions } = require('./pfapi');
 
 const Messages = mongoose.model("Messages")
@@ -46,7 +47,7 @@ module.exports = async (socket) => {
 		account: {
 			_id: 0,
 			username: "Global Chat",
-			profilepicture: "/images/avatars/anovatar.png",
+			profilepicture: buildPFP("/images/avatars/anovatar.png"),
 		},
 		content: lastGlobalChat.content
 	}]

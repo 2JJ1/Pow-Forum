@@ -1,6 +1,7 @@
 # Custom
-public/images/avatars/
+public/images/avatars/*
 !anovatar.png
+!anovatar.webp
 #public/images/badges/
 analytics-key.json
 guidelines.html
