@@ -111,18 +111,8 @@ router.post('/', async (req, res, next) => {
 			let {discordtag} = req.body
 			if(!discordtag) delete medias.discordtag
 			else {
-				if(discordtag.length < 7) throw "Contact too short"
-				if(discordtag.length > 32 + 5) throw "Contact too long"
-				if(!/^\w{1,32}#[0-9]{4}$/.test(discordtag)) throw "Invalid Discord tag"
+				if(!/^[a-z0-9](?!.*[._]{2})[a-z0-9._]{0,30}[a-z0-9]$/.test(discordtag)) throw "Invalid Discord username"
 				medias.discordtag = escape(discordtag)
-			}
-		}
-		if("discord" in req.body){
-			let {discord} = req.body
-			if(!discord) delete medias.discord
-			else {
-				if(!discord.match(/^(https:\/\/(www\.)?(discord\.(gg|io|me|li|com)|discordapp\.com\/invite)\/.+[a-zA-Z])/)) throw 'Invalid Discord invite link'
-				medias.discord = escape(discord)
 			}
 		}
 		if("website" in req.body){
@@ -131,22 +121,6 @@ router.post('/', async (req, res, next) => {
 			else {
 				if(!other.isSecureURL(website)) throw "Invalid website link"
 				medias.website = escape(website)
-			}
-		}
-		if("v3rmillion" in req.body){
-			let {v3rmillion} = req.body
-			if(!v3rmillion) delete medias.v3rmillion
-			else {
-				if(!v3rmillion.match(/^(https:\/\/)(www\.)?v3rmillion.net\/member\.php.*uid=\d*/)) throw 'Invalid V3rmillion profile link'
-				medias.v3rmillion = escape(v3rmillion)
-			}
-		}
-		if("snapchat" in req.body){
-			let {snapchat} = req.body
-			if(!snapchat) delete medias.snapchat
-			else {
-				if(!snapchat.match(/^\w{3,15}$/)) throw "Invalid Snapchat username"
-				medias.snapchat = escape(snapchat)
 			}
 		}
 		if("twitter" in req.body){

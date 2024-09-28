@@ -47,52 +47,40 @@
                 <h2>Account Info</h2>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Username:</p>
-                    <input id="username" class="border1" type="text" placeholder="<%= accInfo.username %>" value="<%= accInfo.username %>" data-curval="<%= accInfo.username %>">
+                    <input id="username" class="border1" type="text" placeholder="<%= accInfo.username %>" value="<%= accInfo.username %>" data-curval="<%= accInfo.username %>" autocomplete="off">
+                </div>
+                <div class="lessgapchildren">
+                    <p class="manager_descriptor">Nickname:</p>
+                    <input id="alias" class="border1" type="text" placeholder="MyNickname" value="<%- accInfo.alias %>" data-curval="<%- accInfo.alias %>">
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Short Introduction:</p>
                     <input id="intro" class="border1" type="text" placeholder="Describe yourself..." value="<%- accInfo.biography %>" data-curval="<%- accInfo.biography %>">
                 </div>
-                <div class="lessgapchildren">
-                    <p class="manager_descriptor">Title:</p>
-                    <input id="alias" class="border1" type="text" placeholder="MyNickname" value="<%- accInfo.alias %>" data-curval="<%- accInfo.alias %>">
-                </div>
                 <h2>Social Media</h2>
                 <div class="lessgapchildren">
-                    <p class="manager_descriptor">YouTube Channel Link:</p>
-                    <input id="youtube" class="border1" type="text" placeholder="https://youtube.com/..." value="<%= accInfo.medias.youtube %>" data-curval="<%= accInfo.medias.youtube %>"/>
+                    <p class="manager_descriptor">YouTube Channel:</p>
+                    <input id="youtube" class="border1" type="url" placeholder="https://youtube.com/..." value="<%= accInfo.medias.youtube %>" data-curval="<%= accInfo.medias.youtube %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">GitHub Username:</p>
-                    <input id="github" class="border1" type="text" placeholder="GitHub-Username" value="<%= accInfo.medias.github %>" data-curval="<%= accInfo.medias.github %>"/>
+                    <input id="github" class="border1" type="text" placeholder="Username" value="<%= accInfo.medias.github %>" data-curval="<%= accInfo.medias.github %>" autocomplete="off"/>
                 </div>
                 <div class="lessgapchildren">
-                    <p class="manager_descriptor">Discord Contact:</p>
-                    <input id="discordtag" class="border1" type="text" placeholder="DisplayName#0000" value="<%= accInfo.medias.discordtag %>" data-curval="<%= accInfo.medias.discordtag %>"/>
+                    <p class="manager_descriptor">Discord Username:</p>
+                    <input id="discordtag" class="border1" type="text" placeholder="Username" value="<%= accInfo.medias.discordtag %>" data-curval="<%= accInfo.medias.discordtag %>" autocomplete="off"/>
                 </div>
                 <div class="lessgapchildren">
-                    <p class="manager_descriptor">Discord Server Invite:</p>
-                    <input id="discord" class="border1" type="text" placeholder="https://discordapp.com/..." value="<%= accInfo.medias.discord %>" data-curval="<%= accInfo.medias.discord %>"/>
+                    <p class="manager_descriptor">X / Twitter:</p>
+                    <input id="twitter" class="border1" type="text" placeholder="@MyHandle123" value="<%= accInfo.medias.twitter %>" data-curval="<%= accInfo.medias.twitter %>" autocomplete="off"/>
                 </div>
                 <div class="lessgapchildren">
-                    <p class="manager_descriptor">V3rmillion Profile Link:</p>
-                    <input id="v3rmillion" class="border1" type="text" placeholder="https://v3rmillion.net/..." value="<%= accInfo.medias.v3rmillion %>" data-curval="<%= accInfo.medias.v3rmillion %>"/>
-                </div>
-                <div class="lessgapchildren">
-                    <p class="manager_descriptor">Snapchat Username:</p>
-                    <input id="snapchat" class="border1" type="text" placeholder="Username" value="<%= accInfo.medias.snapchat %>" data-curval="<%= accInfo.medias.snapchat %>"/>
-                </div>
-                <div class="lessgapchildren">
-                    <p class="manager_descriptor">Twitter Handle:</p>
-                    <input id="twitter" class="border1" type="text" placeholder="@MyHandle123" value="<%= accInfo.medias.twitter %>" data-curval="<%= accInfo.medias.twitter %>"/>
-                </div>
-                <div class="lessgapchildren">
-                    <p class="manager_descriptor">Facebook Page Link:</p>
-                    <input id="facebook" class="border1" type="text" placeholder="https://facebook.com/..." value="<%= accInfo.medias.facebook %>" data-curval="<%= accInfo.medias.facebook %>"/>
+                    <p class="manager_descriptor">Facebook Page:</p>
+                    <input id="facebook" class="border1" type="url" placeholder="https://facebook.com/..." value="<%= accInfo.medias.facebook %>" data-curval="<%= accInfo.medias.facebook %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <p class="manager_descriptor">Personal Website:</p>
-                    <input id="website" class="border1" type="text" placeholder="https://link.com/" value="<%= accInfo.medias.website %>" data-curval="<%= accInfo.medias.website %>"/>
+                    <input id="website" class="border1" type="url" placeholder="https://link.com/" value="<%= accInfo.medias.website %>" data-curval="<%= accInfo.medias.website %>"/>
                 </div>
                 <div class="lessgapchildren">
                     <h2>Etc</h2>
@@ -157,7 +145,7 @@
 			$("#saveinfo").on("click", function( event ) {
                 var changedData = {}
 
-                var inputs = ['username', 'intro', 'alias', 'youtube', 'github', 'website', 'discord', 'discordtag', 'v3rmillion', 'snapchat', 'twitter', 'facebook']
+                var inputs = ['username', 'intro', 'alias', 'youtube', 'github', 'website', 'discordtag', 'v3rmillion', 'snapchat', 'twitter', 'facebook']
 
                 for(var i=0; i<inputs.length; i++){
                     if($('#' + inputs[i]).val() !== $('#' + inputs[i]).attr('data-curval'))

@@ -65,7 +65,7 @@ main{
     font-weight: 400;
 }
 
-input[type=text], input[type=password], input[type=number]{
+input[type=text], input[type=password], input[type=number], input[type=url]{
     margin-bottom: 8px;
     font-weight: 300;
     font-size: 16px;
@@ -84,6 +84,10 @@ button{
     border-radius: var(--less-round);
     display: block;
     cursor: pointer;
+}
+
+.manager_container .tox-tinymce{
+    border: 1px solid var(--color-secondary);
 }
 
 #manager_updatecardcontainer{
