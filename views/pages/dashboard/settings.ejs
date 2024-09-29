@@ -9,14 +9,13 @@
 		<title>Integrations Dashboard - <%- powForum.name %></title>
 		
 		<% include ../../partials/headimps %>
-        <link href="/css/dashboard/integrations.css?v=26" rel="stylesheet" type="text/css">
+        <link href="/css/dashboard/settings.css?v=26" rel="stylesheet" type="text/css">
 	</head>
 	<body class="container">
         <% include ../../partials/global %>
         <main class="gapchildren">
             <div id="metadata" class="integrationSection border1 round padding">
                 <p class="header">Metadata</p>
-                <p class="subtext">To send emails securely and reliably, we use <a href="https://mailgun.com" target="_blank">Mailgun</a>.</p>
                 <br>
                 <div class="gapchildren">
                     <div class="lessgapchildren">
@@ -31,7 +30,14 @@
                 <br>
                 <button class="btnSave border1 round less-padding" onclick="UpdateMetadata()">Save</button>
             </div>
-            
+            <div id="globalHeadInsert" class="integrationSection border1 round padding gapchildren">
+                <p class="header">Global Head Insert</p>
+                <p class="red">Warning: This can break the website if you don't know what you're doing.</p>
+                <p class="subtext">Add whatever you want in the head tag all across the website.</p>
+                <textarea class="border1 round less-padding" placeholder=""><%- globalHeadInsert || "<style>\n</style>\n<script>\n</script>" %></textarea>
+                <br>
+                <button class="btnSave border1 round less-padding" onclick="updateGlobalHeadInsert()">Save</button>
+            </div>
         </main>
         <script>
             function UpdateMetadata(){
@@ -53,6 +59,27 @@
                 .then(res => res.json())
                 .then(res => {
                     if(res.success) document.location.reload()
+                    else  alert(res.reason || "An unknown server error has occured")
+                })
+            }
+
+            function updateGlobalHeadInsert(){
+                //Compile data
+                let markup = document.querySelector('#globalHeadInsert textarea').value
+
+                //Send update request
+                fetch('/api/dashboard/settings/globalHeadInsert', {
+                    method: "POST",
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        markup, 
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success) alert("Saved")
                     else  alert(res.reason || "An unknown server error has occured")
                 })
             }
