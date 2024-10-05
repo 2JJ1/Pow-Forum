@@ -166,6 +166,10 @@ router.post('/', async (req, res, next) => {
 						'text-align': [/^left$/, /^right$/, /^center$/],
 						'text-decoration': [/^(underline|line-through)$/],
 						}
+					},
+					exclusiveFilter: function(frame) {
+						//Remove empty text nodes
+						return !frame.text.trim();
 					}
 				})
 
