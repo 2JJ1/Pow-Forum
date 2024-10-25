@@ -143,10 +143,10 @@ let sessionConf = {
 	rolling: true, //Resets expiration date
 	resave: true, //Resaves cookie on server. Necessary because of the expiration date being reset
 	cookie: { 
-		httpOnly: process.env.FORUM_URL && process.env.NODE_ENV !== "development",
-		secure: process.env.FORUM_URL && process.env.NODE_ENV !== "development",
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
 		maxAge: 1000*60*60*24*365,
-		sameSite: 'none'
+		sameSite: process.env.NODE_ENV === "production" ? 'none' : 'strict'
 	}
 }
 if(process.env.COOKIE_DOMAIN) sessionConf.cookie.domain = process.env.COOKIE_DOMAIN

@@ -270,6 +270,7 @@ pre code *{
     margin: auto;
     margin: var(--gap);
     padding: var(--gap);
+    background-color: var(--color-background);
 }
 
 .modal input[type="text"], .modal input[type="password"], .modal select{

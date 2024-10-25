@@ -24,7 +24,7 @@
 						<% for (var key in accounts){ %>
 						<% var account = accounts[key]; %>
 						<a class="userCard border1 round" href="/profile?uid=<%= account._id %>">
-							<img src="<%= account.profilepicture %>" onerror="this.src='/images/anovatar.webp'"/>
+							<img src="<%= account.profilepicture %>" onerror="this.src='/images/avatars/anovatar.webp'"/>
 							<div>
 								<p class="<%= account.highestRole %>"><%= account.username %></p>
 								<p>Joined <%= account.creationdate %></p>
@@ -74,7 +74,7 @@
 					for(let account of accounts){
 						document.getElementById("cards").innerHTML += (
 							`<a class=\"userCard border1 round\" href=\"/profile?uid=${account._id}\">` +
-								`<img class=\"round\" src=\"${account.profilepicture}\" onerror="this.src='/images/anovatar.webp'"/>` +
+								`<img class=\"round\" src=\"${account.profilepicture}\" onerror="this.src='/images/avatars/anovatar.webp'"/>` +
 								"<div>" +
 									`<p class="${account.highestRole}">${account.username}</p>` +
 									`<p>Joined ${account.creationdate}</p>` +
