@@ -11,7 +11,8 @@ const rolesAPI = require('./rolesapi');
 const notificationsAPI = require('./notifications')
 const HandleCommand = require('./chatcommands')
 const buildPFP = require('./buildpfp')
-const { ProcessMentions } = require('./pfapi');
+const { ProcessMentions } = require('./pfapi')
+const onlinetracker = require('./onlinetracker')
 
 const Messages = mongoose.model("Messages")
 const Notifications = mongoose.model("Notifications")
@@ -35,6 +36,8 @@ module.exports = async (socket) => {
 
 	//Reject connection if not logged in
 	if (!socket.uid) return socket.disconnect()
+
+	await onlinetracker.track({...socket.request, originalUrl: "/chat", account: await accountAPI.fetchAccount(socket.uid)})
 
 	//Set per user rate limit
 	//One message per second
