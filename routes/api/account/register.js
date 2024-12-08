@@ -42,7 +42,7 @@ router.post('/', async (req, res, next) => {
 	
 		//Validate username
 		if(!username) throw "Missing username"
-		if(!(username.length >= 3 && username.length <= 15)) throw "Username must be 3-15 characters in length"
+		if(!(username.length > 3 && username.length < 15)) throw "Username must be 3-15 characters in length"
 		
 		//No need to escape username because of alphanumeric_ limit
 		if(!other.isAlphaNumeric_(username)) throw "Only letters, numbers, and underscore are allowed"

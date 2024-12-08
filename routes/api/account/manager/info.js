@@ -37,7 +37,7 @@ router.post('/', async (req, res, next) => {
 		if(req.body.username){
 			let username = req.body.username
 			
-			if(!(username.length >= 3 && username.length <= 15)){
+			if(!(username.length > 3 && username.length < 15)){
 				throw "Username must be 3-15 characters in length"
 			}
 			
