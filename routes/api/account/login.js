@@ -6,6 +6,7 @@ const recaptcha = require('../../../my_modules/captcha')
 const tfa = require('../../../my_modules/2fa')
 const accountAPI = require('../../../my_modules/accountapi')
 const pfAPI = require('../../../my_modules/pfapi')
+const rolesAPI = require('../../../my_modules/rolesapi')
 
 const TFAs = mongoose.model("TFAs")
 
@@ -23,6 +24,7 @@ router.post('/', async (req, res, next) => {
 		//Check if user is already logged in.
 		if(req.session.uid) {
 			response.success = true
+			if(req.body.checkPatron) response.isPatron = await rolesAPI.isPatron(req.session.uid)
 			res.json(response)
 			return
 		}
@@ -64,6 +66,7 @@ router.post('/', async (req, res, next) => {
 						
 		//Compile response
 		response.success = true
+		response.isPatron = await rolesAPI.isPatron(accData.roles)
 		res.json(response)
 
 		//Logs their login
