@@ -73,6 +73,10 @@ router.get('/:tid', async (req, res, next) => {
 
         if(result.currentPage > result.totalPages) return res.redirect(302, `/t/${tid}?page=${result.totalPages}`)
 
+        // SEO - Canonical
+        res.locals.canonicalUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`
+        if(req.query.page) res.locals.canonicalUrl += `?page=${req.query.page}`
+
         // Is a notification taking them to a certain reply?
         if(req.query.r){
             let skipToReply = parseInt(req.query.r)
