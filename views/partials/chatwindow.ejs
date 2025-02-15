@@ -88,8 +88,10 @@
             //Saves so the conversation reopens on page load
             localStorage.setItem("viewingChatUID", uid)
 
+            console.log("woahh")
             document.querySelector('.chat-groups').innerHTML = ""
             socket.emit('load-converstion', uid, async function(conversation){
+                console.log(conversation)
                 for(let message of conversation.messages){
                     await DrawChat(message)
                 }
@@ -104,20 +106,18 @@
         //Connect websocket
         var socket = io()
 
-        socket.on("connect", () => {
-            //Open global chat by default
-            setTimeout(function(){
-                if(pFUtils.queryParams.openChat) {
-                    localStorage.setItem("viewingChatUID", pFUtils.queryParams.openChat)
-                    OpenChat()
-                }
+        socket.on("ready", function(){
+            if(pFUtils.queryParams.openChat) {
+                localStorage.setItem("viewingChatUID", pFUtils.queryParams.openChat)
+                OpenChat()
+            }
 
-                LoadConversation(parseInt(localStorage.getItem("viewingChatUID")) || 0)
+            LoadConversation(parseInt(localStorage.getItem("viewingChatUID")) || 0)
+            console.log("Loaded conversation", localStorage.getItem("viewingChatUID")|| 0)
 
-                //Auto-open chat if they did not leave it minimized
-                //Mobile should always start minimized
-                if(localStorage.getItem('chatMinimized') != 1 && screen.width > 400) OpenChat()
-            }, 200)
+            //Auto-open chat if they did not leave it minimized
+            //Mobile should always start minimized
+            if(localStorage.getItem('chatMinimized') != 1 && screen.width > 400) OpenChat()
         })
 
         //Receives global chats
