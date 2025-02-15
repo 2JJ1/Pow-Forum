@@ -101,6 +101,8 @@ module.exports = async (socket) => {
 		socket.join(socket.uid < conversations[i].account._id ? `${socket.uid}:${conversations[i].account._id}` : `${conversations[i].account._id}:${socket.uid}`)
 	}
 
+	socket.emit("ready")
+
 	socket.on("load-converstion", async (uid, ack) => {
 		socket.viewingConvo = uid
 

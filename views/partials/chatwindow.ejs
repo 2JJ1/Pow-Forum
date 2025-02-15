@@ -104,20 +104,17 @@
         //Connect websocket
         var socket = io()
 
-        socket.on("connect", () => {
-            //Open global chat by default
-            setTimeout(function(){
-                if(pFUtils.queryParams.openChat) {
-                    localStorage.setItem("viewingChatUID", pFUtils.queryParams.openChat)
-                    OpenChat()
-                }
+        socket.on("ready", function(){
+            if(pFUtils.queryParams.openChat) {
+                localStorage.setItem("viewingChatUID", pFUtils.queryParams.openChat)
+                OpenChat()
+            }
 
-                LoadConversation(parseInt(localStorage.getItem("viewingChatUID")) || 0)
+            LoadConversation(parseInt(localStorage.getItem("viewingChatUID")) || 0)
 
-                //Auto-open chat if they did not leave it minimized
-                //Mobile should always start minimized
-                if(localStorage.getItem('chatMinimized') != 1 && screen.width > 400) OpenChat()
-            }, 200)
+            //Auto-open chat if they did not leave it minimized
+            //Mobile should always start minimized
+            if(localStorage.getItem('chatMinimized') != 1 && screen.width > 400) OpenChat()
         })
 
         //Receives global chats
