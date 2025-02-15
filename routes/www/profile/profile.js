@@ -26,7 +26,7 @@ router.get('/', async (req, res, next) => {
         //Redirect to login if trying to view self-profile without an account
         if(!queryFor && !req.session.uid) return res.redirect("/login")
         //Sanitize
-        else if(isNaN(queryFor)) return res.status(400).render("400")
+        else if(isNaN(queryFor)) throw "Invalid user id"
 
         pagedata.viewingSelf = queryFor === req.session.uid
         
@@ -58,7 +58,7 @@ router.get('/', async (req, res, next) => {
                 
                 return user
             }
-            else throw "Account doesn't exist"
+            else throw {status: 404, message: "User not found"}
         })
 
         var replies = await ThreadReplies.find({uid: queryFor, verified: {$ne: false}}).sort({_id: -1}).limit(16).lean()

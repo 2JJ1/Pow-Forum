@@ -24,7 +24,7 @@ const DownloadLinks = mongoose.model("DownloadLinks")
 router.get('/:tid', async (req, res, next) => {
     try {
         let tid = req.params.tid
-        if(isNaN(tid)) return next("Invalid thread ID")
+        if(isNaN(tid)) throw "Invalid thread ID"
 
         await Notifications.deleteMany({tid, recipientid: req.session.uid})
         if(req.session.uid) req.account.notifications = await CompileNotifications(req.session.uid)
@@ -39,7 +39,7 @@ router.get('/:tid', async (req, res, next) => {
         //Get forum and topic
         let result = await Threads.findOneAndUpdate({_id: tid}, {$inc: { views: 1 } }).lean()
         //Thread exists, so update view count
-        if(!result)  return res.status(404).render('404', {reason: 'This thread does not exist'})
+        if(!result) throw {status: 404, message: "This thread does not exist"}
 
         result.category = await forumapi.GetSubcategory(result.category)
 
@@ -83,8 +83,8 @@ router.get('/:tid', async (req, res, next) => {
 
             //Handle for comment replies
             let reply = await ThreadReplies.findById(skipToReply).lean()
-            if(!reply) return next("The reply you're trying to skip to does not exist")
-            if(reply.tid != tid) return next("The reply you're trying to skip to does not belong to this thread")
+            if(!reply) throw {status: 404, message: "The reply you're trying to skip to does not exist"}
+            if(reply.tid != tid) throw {status: 404, message: "The reply you're trying to skip to does not belong to this thread"}
             if("trid" in reply) {
                 skipToReply = reply.trid
             }

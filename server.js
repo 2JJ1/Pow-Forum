@@ -182,7 +182,10 @@ app.use(function(err, req, res, next) {
 	try {
 		let isAPIRoute = req.originalUrl.split("/")[1] == "api"
 
-		if (typeof err === "string") {
+		if(err.status === 404) {
+			res.status(404).render("404", {reason: err.message || "This page does not exist"})
+		}
+		else if (typeof err === "string") {
 			if(!isAPIRoute) res.status(400).render("400", {reason: err})
 			else res.status(400).json({success: false, reason: err})
 		}
