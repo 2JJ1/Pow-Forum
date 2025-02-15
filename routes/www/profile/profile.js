@@ -6,7 +6,7 @@ const badges = require("../../../my_modules/badges")
 const rolesapi = require('../../../my_modules/rolesapi')
 const accountAPI = require('../../../my_modules/accountapi')
 const { ProcessMentions } = require('../../../my_modules/pfapi')
-const { monthNames } = require('../../../my_modules/month')
+const monthNames = require('../../../my_modules/month')
 
 const GeneralSettings = mongoose.model("GeneralSettings")
 const ThreadReplies = mongoose.model("ThreadReplies")
@@ -42,16 +42,14 @@ router.get('/', async (req, res, next) => {
                 delete user.roles
 
                 //Shorts join date to eg. Dec 2019
-                var joinDate = new Date(user.creationdate)
-                if(!isNaN(joinDate)){
+                let {creationdate} = user
+                if(!isNaN(creationdate)){
                     //Adds veteran role if account is 1 year old
-                    if(new Date()-joinDate>1000*60*60*24*365) user.badges.push(badges["veteran"])
+                    if(new Date()-creationdate>1000*60*60*24*365) user.badges.push(badges["veteran"])
 
-                    joinDate = `${monthNames[joinDate.getMonth()].substr(0,3)}, ${joinDate.getFullYear()}`
-                    user.joinDate = joinDate
-                    delete user.creationdate
+                    user.creationdate = `${monthNames[creationdate.getMonth()].slice(0,3)}, ${creationdate.getFullYear()}`
                 }
-                else user.joinDate = "???"
+                else user.creationdate = "???"
 
                 //Sum of reputation
                 user.reputation = await accountAPI.SumReputation(queryFor)

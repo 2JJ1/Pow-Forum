@@ -9,7 +9,7 @@ const badges = require("../../my_modules/badges")
 const onlinetracker = require("../../my_modules/onlinetracker")
 const { ProcessMentions } = require('../../my_modules/pfapi')
 const { CompileNotifications } = require('../../my_modules/notifications')
-const { monthNames } = require('../../my_modules/month')
+const monthNames = require('../../my_modules/month')
 
 const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 const Categories = mongoose.model("Categories")
@@ -157,7 +157,7 @@ router.get('/:tid', async (req, res, next) => {
         
                     //Shorts join date to eg. Dec 2019
                     var joinDate = new Date(accountRow.creationdate)
-                    joinDate = `${monthNames[joinDate.getMonth()].substr(0,3)}, ${joinDate.getFullYear()}`
+                    joinDate = `${monthNames[joinDate.getMonth()].slice(0,3)}, ${joinDate.getFullYear()}`
                     accountRow.joinDate = joinDate
         
                     //Sum of reputation

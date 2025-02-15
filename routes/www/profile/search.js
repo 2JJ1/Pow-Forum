@@ -6,7 +6,7 @@ const rolesAPI = require('../../../my_modules/rolesapi')
 const buildpfp = require('../../../my_modules/buildpfp')
 const accountAPI = require('../../../my_modules/accountapi')
 const {EscapeRegex} = require('../../../my_modules/other')
-const { monthNames } = require('../../../my_modules/month')
+const monthNames = require('../../../my_modules/month')
 
 const Accounts = mongoose.model("Accounts")
 
@@ -30,7 +30,7 @@ router.get('/', async (req, res, next) => {
            
             //Shorts join date to eg. Dec 2019
             if(!isNaN(account.creationdate))
-                account.creationdate = `${monthNames[account.creationdate.getMonth()].substring(0,3)}, ${account.creationdate.getFullYear()}`
+                account.creationdate = `${monthNames[account.creationdate.getMonth()].slice(0,3)}, ${account.creationdate.getFullYear()}`
             else account.creationdate = "???"
 
             //For role color

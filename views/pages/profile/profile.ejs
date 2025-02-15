@@ -92,7 +92,7 @@
 										<a href="/profile/rate?uid=<%= profileInfo._id %>">[rate]</a>
 										<% } %>
 									</p>
-									<p>Joined: <%= profileInfo.joinDate %></p>
+									<p>Joined: <%= profileInfo.creationdate %></p>
 									<% if(profileInfo.lastonline && !profileInfo.isOnline){ %>
 									<p>Last online: 
 										<script>document.write(TimeStamp.Beautify('<%= profileInfo.lastonline %>'))</script>
