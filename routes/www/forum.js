@@ -78,26 +78,28 @@ router.get('/:forum', async (req, res, next) => {
 		let threadReplyMatch = {
 			verified: {$ne: false},
 		}
+		// If not viewing all categories, only get threads from the specified category
+		if(req.params.forum !== "all") threadReplyMatch.category = forum
 		// Search query
 		let searchQuery = other.EscapeRegex(req.query.search || "")
 		if(searchQuery) threadReplyMatch.content = new RegExp(searchQuery, 'i')
 
 		// Gets threads
 		let aggregateQuery = [
+			//Filter
 			{
 				$match: threadReplyMatch
 			},
-			{
-				$sort: {
-					_id: sort,
-				}
-			},
+			//Group by thread id
+			//latestthread: get oldest reply
+			//latestactive: Get latest reply
 			{
 				$group: {
 					_id: '$tid',
-					trid : { $first: '$_id' },
+					trid : { [sort < 0 ? "$first" : "$last"]: '$_id' },
 				}
 			},
+			//Put latest results at top
 			{
 				$sort: {
 					trid: -1,
@@ -110,9 +112,7 @@ router.get('/:forum', async (req, res, next) => {
 				$limit: 15,
 			}
 		]
-		if(req.params.forum !== "all") aggregateQuery.unshift({ $match: { category: forum } })
-		let latestActiveThreadIDs = await ThreadReplies
-		.aggregate(aggregateQuery)
+		let latestActiveThreadIDs = await ThreadReplies.aggregate(aggregateQuery).exec()
 		forumData.threads = []
 		for(let threadId of latestActiveThreadIDs){
 			let thread = await Threads.findById(threadId).lean()
