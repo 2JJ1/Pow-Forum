@@ -57,6 +57,7 @@ input, select, option{
     border: 1px solid rgba(0,0,0,0.2); 
     border-radius: var(--round);
     outline: none;
+    background-color: var(--color-background);
 }
 
 .pin{
