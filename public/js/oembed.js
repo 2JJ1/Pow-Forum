@@ -77,6 +77,8 @@ async function HTMLToOembed(html, options){
         links = [...new Set(links)]
         if(!fromString) links.push(...[...html.querySelectorAll('a')].map(anchor => anchor.href))
         for(let link of links){
+            if(!link) continue
+
             let replacement
 
             // Image embeding
