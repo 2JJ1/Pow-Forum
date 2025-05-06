@@ -15,7 +15,7 @@ let schema = mongoose.Schema({
     roles: String,
     creationdate: {
         type: Date,
-        default: new Date(),
+        default: Date.now,
     },
     stripecustomerid: String,
     pendingcancellation: String,
