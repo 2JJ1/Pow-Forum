@@ -5,6 +5,7 @@ const Categories = mongoose.model("Categories")
 const Subcategories = mongoose.model("Subcategories")
 const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
+const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 const accountAPI = require('../../../../my_modules/accountapi')
@@ -27,12 +28,21 @@ router.delete("/deletecategory", async (req, res, next) => {
         //Delete related threads of all child categories
         let subCategories = await Subcategories.find({category: name})
         for(let subCategory of subCategories){
+            //Delete thread replies and it's associated data
+            let cursor = Threads.find({category: subCategory._id}).cursor()
+            for await (const thread of cursor) {
+                let replies = await ThreadReplies.find({tid: thread._id})
+                for (const reply of replies) {
+                    await ThreadReplyReacts.deleteMany({trid: replies._id})
+                }
+            }
+            await ThreadReplies.deleteMany({category: subCategory._id})
+
             //Delete related threads
             await Threads.deleteMany({category: subCategory._id})
-            await ThreadReplies.deleteMany({category: subCategory._id})
-            //TODO- Delete info related to thread replies(reacts...)
-            await subCategory.deleteOne()
         }
+
+        await Subcategories.deleteMany({category: name})
 
 		//Code hasn't exited, so assume success
 		response.success = true
