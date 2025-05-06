@@ -8,7 +8,7 @@
 		<title><%= profileInfo.username %>'s Threads List | <%- powForum.name %></title>
 		
 		<% include ../../partials/headimps %>
-		<link href="/css/profile/threads.css?v=26" rel="stylesheet" type="text/css">
+		<link href="/css/profile/threads.css?v=26&v2=2" rel="stylesheet" type="text/css">
 		<script type="text/javascript" src="/js/timestamp.js?v2=2"></script>   
 	</head>
 	<body class="container">
@@ -33,15 +33,15 @@
 				<% } %>
 			</div>
 			<% if(moreAvailable){ %>
-			<button class="round border1 button btnLoadMore" style="margin: auto">Load More</button
+			<button class="round border1 button btnLoadMore" onclick="loadMore()">Load More</button
 			><% } %>
 		</main>
 		<% include ../../partials/footer %>
 
 		<% if(moreAvailable){ %>
 		<script>
-			var oldestTid = "<%= threads[threads.length-1]._id %>";
-			document.getElementsByClassName("btnLoadMore")[0].onclick = function(){
+			let oldestTid = "<%= threads[threads.length-1]._id %>";
+			function loadMore(){
 				fetch('/api/account/threads?uid=<%= profileInfo._id %>&tid='+oldestTid, {
 					method: "GET",
 					headers: {
@@ -68,13 +68,6 @@
 					if(!moreAvailable) document.getElementsByClassName("btnLoadMore")[0].remove()
 				})
 			}
-
-			document.querySelectorAll('img').forEach(img => {
-			img.onerror = function() {
-				if(this.onerror) return
-				this.onerror = null; // Prevents loop if default image fails
-				this.src = '/images/placeholder-img.svg';
-			};
 		</script>
 		<% } %>
 	</body>

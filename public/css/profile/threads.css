@@ -27,3 +27,7 @@ main{
 .threadmd{
     color: gray;
 }
+
+.btnLoadMore {
+    margin: auto;
+}
