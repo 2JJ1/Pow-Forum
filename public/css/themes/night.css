@@ -7,6 +7,10 @@
     --color-elevated: #1a1926;
 }
 
+div {
+    background-color: var(--color-background);
+}
+
 body{
     background-color:  var(--color-background);
     color: #ECF0F1;
