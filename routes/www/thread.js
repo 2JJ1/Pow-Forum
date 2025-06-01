@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose")
+const { decode } = require('html-entities');
 
 const forumapi = require('../../my_modules/forumapi')
 const rolesapi = require('../../my_modules/rolesapi')
@@ -202,6 +203,11 @@ router.get('/:tid', async (req, res, next) => {
         pagedata.threadData = result
 
         pagedata.onlines = await onlinetracker.retrieve({req})
+
+        // Remove all tags
+        // Decode entities (like &nbsp;)
+        let description = decode(result.replies[0].content).replace(/<\/?[^>]+(>|$)/g, '').replace(/\s+/g, ' ').trim()
+        pagedata.description = description.length > 150 ? description.slice(0, 147) + '...' : description
 
         res.render('pages//thread', pagedata)
     }

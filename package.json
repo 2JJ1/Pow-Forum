@@ -27,6 +27,7 @@
     "formidable": "^1.2.6",
     "gifsicle": "^5.3.0",
     "helmet": "^3.23.3",
+    "html-entities": "^2.6.0",
     "is-animated": "^2.0.2",
     "jimp": "^0.13.0",
     "jsdom": "^16.7.0",
