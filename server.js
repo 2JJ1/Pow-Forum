@@ -109,7 +109,7 @@ app.use(helmet())
 app.use(compression())
 
 //Trust first proxy
-app.set('trust proxy', 1)
+app.set('trust proxy', true)
 
 //set the view engine to ejs
 app.set('view engine', 'ejs')

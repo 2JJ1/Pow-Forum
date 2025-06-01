@@ -28,8 +28,7 @@ router.post('/', async (req, res, next) => {
 		let response = {success: false}
 
 		//Prevent bots/spam with Google captcha
-		if(!await recaptcha.captcha(req.body.grecaptcharesponse, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))) 
-			throw "Captcha failed"
+		if(!await recaptcha.captcha(req.body.grecaptcharesponse, req.ip)) throw "Captcha failed"
 		
 		//Only allow logged in users to view profiles
 		if(!req.session.uid) throw "You must be logged in to post"

@@ -25,8 +25,7 @@ exports.track = async function(req, description="Undisclosed"){
     //Tracks for non-logged in users
     else {
         //Might be a login
-        if(!req.headers?.['x-forwarded-for'] && req.connection?.remoteAddress) return
-        await ActiveUsers.findOneAndUpdate({ip: (req.headers?.['x-forwarded-for'] || req.connection?.remoteAddress)}, {
+        await ActiveUsers.findOneAndUpdate({ip: req.ip}, {
             //The page they're browsing
             path: urlPath,
             time: Date.now()

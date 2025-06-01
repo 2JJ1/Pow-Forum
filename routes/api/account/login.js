@@ -70,7 +70,7 @@ router.post('/', async (req, res, next) => {
 		res.json(response)
 
 		//Logs their login
-		await pfAPI.TrackLogin(accData._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+		await pfAPI.TrackLogin(accData._id, req.ip)
 	} 
 	catch(e){
 		next(e)

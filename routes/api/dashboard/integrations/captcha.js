@@ -30,7 +30,7 @@ router.post("/captcha", async (req, res, next) => {
         updateEnv({CAPTCHA_SITEKEY: public})
 
         //Test is captcha auth is valid
-        await recaptcha.captcha("xxxx", (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+        await recaptcha.captcha("xxxx", req.ip)
         .catch(e => {
             if(e['error-codes'].includes('invalid-input-secret')) {
                 updateEnv({CAPTCHA_APIKEY: "", CAPTCHA_SITEKEY: ""})

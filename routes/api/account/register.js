@@ -31,14 +31,12 @@ router.post('/', async (req, res, next) => {
 		if(req.session.uid) throw "Can't create account while logged in"
 		
 		//Must complete google captcha first
-		let ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress)
-		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], ip)) 
-			throw "Captcha failed"
+		if(!await recaptcha.captcha(req.body['g-recaptcha-response'], req.ip)) throw "Captcha failed"
 
 		let { username, email, password } = req.body
 
 		//Limit accounts per IP
-		if(await pfAPI.CountAccountsOnIp(ip) >= 3) throw "Unwanted activity detected"
+		if(await pfAPI.CountAccountsOnIp(req.ip) >= 3) throw "Unwanted activity detected"
 	
 		//Validate username
 		if(!username) throw "Missing username"
@@ -116,7 +114,7 @@ router.post('/', async (req, res, next) => {
 		res.json(response)
 
 		//Logs their login event
-		await pfAPI.TrackLogin(newAccount._id, (req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+		await pfAPI.TrackLogin(newAccount._id, req.ip)
 	}
 	catch(e){
 		next(e)
