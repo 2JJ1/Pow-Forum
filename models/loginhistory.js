@@ -5,6 +5,9 @@ module.exports = mongoose.model("LoginHistories", {
         type: Number,
         index: true,
     },
-    ip: String,
+    ip: {
+        type: String,
+        index: true,
+    },
     date: Date,
 })
