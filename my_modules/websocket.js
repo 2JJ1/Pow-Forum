@@ -29,6 +29,7 @@ function reloadOpenAI(){
 }
 reloadOpenAI()
 
+//global rate liimiter
 const rateLimitedChats = new RateLimiter({ tokensPerInterval: 10, interval: 5000, fireImmediately: true })
 
 module.exports = async (socket) => {
@@ -40,8 +41,8 @@ module.exports = async (socket) => {
 	await onlinetracker.track({...socket.request, originalUrl: "/chat", account: await accountAPI.fetchAccount(socket.uid)})
 
 	//Set per user rate limit
-	//One message per second
-	socket.rateLimiter = new RateLimiter({ tokensPerInterval: 2, interval: 1000, fireImmediately: true })
+	//One message every 3 seconds
+	socket.rateLimiter = new RateLimiter({ tokensPerInterval: 1, interval: 3000, fireImmediately: true })
 
 	//Conversations list
 	//Grabs global chat info
