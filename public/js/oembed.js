@@ -32,7 +32,7 @@ function replaceAnchorInDOM(html, link, replacement) {
         // Check if the href attribute points to an image
         if (link == href) {
             let elem = document.createElement("span")
-            elem.innerHTML = "<br>" + replacement
+            elem.innerHTML = replacement
             anchor.replaceWith(elem)
         }
     });
