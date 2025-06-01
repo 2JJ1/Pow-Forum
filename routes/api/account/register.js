@@ -54,9 +54,9 @@ router.post('/', async (req, res, next) => {
 		
 		//Validate & sanitze email
 		if(!email) throw "Missing email"
-		email = email.toLowerCase()
-		if(!other.ValidateEmail(email)) throw "Invalid email"
+		email = other.sanitizeGmail(email) //Sanitize gmail addresses to prevent the dot or + method of spam
 		email = escape(email)
+		if(!other.ValidateEmail(email)) throw "Invalid email"
 		if(!isMajorEmailDomain(email)) throw "We only allow email addresses from major email providers, such as Gmail."
 		if(await accountAPI.emailTaken(email)) throw "An account already exists with this email" 
 

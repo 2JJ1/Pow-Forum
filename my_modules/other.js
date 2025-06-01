@@ -101,6 +101,22 @@ class Other {
 		return (false);
 	}
 
+	sanitizeGmail(email) {
+		if (typeof email !== 'string') throw new Error("Input must be a string")
+
+		email = email.trim().toLowerCase()
+
+		if (!email.endsWith('@gmail.com') && !email.endsWith('@googlemail.com')) {
+			return email; // Not a Gmail address — return untouched
+		}
+
+		const [rawUsername] = email.split('@');
+		const username = rawUsername.replace(/\./g, '').split('+')[0];
+
+		return `${username}@gmail.com`; // Normalize domain to gmail.com
+	}
+
+
 	isSecureURL(str) {
 		return /^(https:\/\/).*\..*/.test(str)
 	}

@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
 		//Sets new email
 		if(req.body.hasOwnProperty('email') && req.body.email !== accData.email){
 			let email = escape(req.body.email)
-			email = email.toLowerCase()
+			email = other.sanitizeGmail(email) //Sanitize gmail addresses to prevent the dot or + method of spam
 
 			//Rate limit email changes to once/day to prevent mailgun over charges
 			await Logs.findOne({uid: req.session.uid, action: "update_email", date: {$gte: new Date() - 1000*60*60*24}})
