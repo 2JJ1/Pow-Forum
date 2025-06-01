@@ -12,6 +12,19 @@ const phraseblacklist = require('phrase-blacklist')
 const Accounts = mongoose.model("Accounts")
 const TFAs = mongoose.model("TFAs")
 const Reputations = mongoose.model("Reputations")
+const PasswordResetSessions = mongoose.model("PasswordResetSessions")
+const Sessions = mongoose.model("Sessions")
+const Logs = mongoose.model("Logs")
+const LoginHistories = mongoose.model("LoginHistories")
+const Messages = mongoose.model("Messages")
+const NotificationSettings = mongoose.model("NotificationSettings")
+const Notifications = mongoose.model("Notifications")
+const AltAccounts = mongoose.model("AltAccounts")
+const ActiveUsers = mongoose.model("ActiveUsers")
+const Threads = mongoose.model("Threads")
+const ThreadReplies = mongoose.model("ThreadReplies")
+const PinnedThreads = mongoose.model("PinnedThreads")
+const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 
 exports.GetUsername = async function(userid){
 	let account = await Accounts.findById(userid)
@@ -175,3 +188,81 @@ exports.deleteUploadedProfilePicture = function(uid){
 		}
 	})
 }
+
+exports.deleteAccount = async function (uid, keepForumContent) {
+	//Starts delete process
+	await Accounts.deleteOne({_id: uid})
+	await PasswordResetSessions.deleteOne({uid})
+	await Sessions.deleteMany({session: new RegExp(`"uid":${uid}[},]`)})
+	await Logs.deleteMany({uid})
+	await LoginHistories.deleteMany({uid})
+	await Messages.deleteMany({$or: [{from: uid}, {to: uid}]})
+	await TFAs.deleteOne({_id: uid})
+	await NotificationSettings.deleteOne({_id: uid})
+	await Notifications.deleteMany({$or: [{senderid: uid}, {recipientid: uid}]})
+	await AltAccounts.deleteOne({_id: uid})
+	await ActiveUsers.deleteOne({uid})
+
+	if(!keepForumContent){
+		let threads = await Threads.find({uid})
+		//Deletes replies to their threads
+		for (let thread of threads){
+			await ThreadReplies.deleteMany({tid: thread._id})
+			await PinnedThreads.deleteOne({_id: thread._id})
+		}
+		//Deletes their threads
+		await Threads.deleteMany({uid})
+		//Deletes their replies on other threads
+		await ThreadReplies.deleteMany({uid})
+		await Reputations.deleteMany({$or: [{from: uid}, {for: uid}]})
+		await ThreadReplyReacts.deleteMany({uid})
+	}
+	//Otherwise deletes content that'd be unviewable anyway
+	else{
+		await Reputations.deleteMany({for: uid})
+	}
+}
+
+exports.findAlts = async function ({ uid = null, ip = null }, seen = new Set(), results = { uids: new Set(), ips: new Set() }) {
+    let uidsToCheck = new Set();
+    let ipsToCheck = new Set();
+
+    // Starting from a UID: get its IPs
+    if (uid) {
+        if (seen.has(`uid:${uid}`)) return results;
+        seen.add(`uid:${uid}`);
+
+		//IPs are generally held for at most 7 days
+        const ips = await LoginHistories.find({ uid, date: { $gt: new Date(Date.now() - 1000*60*60*24*7) } }).distinct('ip');
+        ips.forEach(ip => {
+            results.ips.add(ip);
+            ipsToCheck.add(ip);
+        });
+    }
+
+    // Starting from an IP: get its UIDs
+    if (ip) {
+        if (seen.has(`ip:${ip}`)) return results;
+        seen.add(`ip:${ip}`);
+
+        const uids = await LoginHistories.find({ ip }).distinct('uid');
+        uids.forEach(uid => {
+            results.uids.add(uid);
+            uidsToCheck.add(uid);
+        });
+    }
+
+    // Recursive calls
+    for (let ip of ipsToCheck) {
+        await this.findAlts({ ip }, seen, results);
+    }
+
+    for (let altUid of uidsToCheck) {
+        await this.findAlts({ uid: altUid }, seen, results);
+    }
+
+    return {
+        uids: Array.from(results.uids),
+        ips: Array.from(results.ips),
+    };
+};

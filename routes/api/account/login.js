@@ -2,13 +2,13 @@ const router = require('express').Router()
 const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 
-const recaptcha = require('../../../my_modules/captcha')
 const tfa = require('../../../my_modules/2fa')
 const accountAPI = require('../../../my_modules/accountapi')
 const pfAPI = require('../../../my_modules/pfapi')
 const rolesAPI = require('../../../my_modules/rolesapi')
 
 const TFAs = mongoose.model("TFAs")
+const Bans = mongoose.model("Bans")
 
 // 	/api/account/login
 
@@ -30,12 +30,13 @@ router.post('/', async (req, res, next) => {
 		}
 		
 		//Will need both username and password obviously
-		var username = req.body.username
-		var password = req.body.password
+		let { username, password } = req.body
 		if(!username || !password) throw 'Missing username or password'
+
+		if(await Bans.exists({ ip: req.ip })) throw "You are banned"
 				
 		//Fetch account information
-		var accData = await accountAPI.fetchAccount(username)
+		let accData = await accountAPI.fetchAccount(username)
 
 		//Check if an account exists with this username
 		if(!accData) throw "This account does not exist"

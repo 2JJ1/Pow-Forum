@@ -86,13 +86,8 @@ exports.TrackLogin = async function(uid, ip){
 
     // Alt account handler
     //Find other accounts that used the same IP in the past 3 days
-    let possibleAlts = await LoginHistories.distinct('uid', {
-        uid: {$ne: uid},
-        ip,
-        date: {
-            $gt: new Date(Date.now() - 1000*60*60*24*3)
-        }
-    })
+    let possibleAlts = await accountAPI.findAlts({uid})
+    possibleAlts = possibleAlts.uids
     
     //If one is found, add it to their suspected alt accounts list
     if(possibleAlts.length > 0){

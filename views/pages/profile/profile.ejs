@@ -63,6 +63,7 @@
 						<div>
 							<button id="btnResetPFP" class="border1 round less-padding">Reset Profile Picture</button>
 							<button id="btnToggleLockAccount" class="border1 round less-padding"><% if('locked' in profileInfo){ %>Unlock<% } else { %>Lock<% } %> Account</button>
+							<button class="border1 round less-padding" onclick="ban()">Ban</button>
 							<% if(accInfo.isAdmin){ %>
 							<button class="border1 round less-padding" onclick="DisplayAccountDeleteModal()">Delete Account</button>
 							<% } %>
@@ -299,6 +300,26 @@
 				.catch(()=>alert("Failed to contact the server."))
             }
 			<% } %>
+			
+			function ban() {
+				let reason = prompt("Why do you want to ban them?")
+				fetch('/api/dashboard/ban', {
+					method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+					body: JSON.stringify({
+                        uid: <%- profileInfo._id %>,
+						reason,
+                    }),
+				})
+				.then(res => res.json())
+                .then(res => {
+                    if(res.success) document.location.reload()
+                    else alert(res.reason || 'Unknown error occured...')
+                })
+				.catch(()=>alert("Failed to contact the server."))
+			}
 
 			<% if(!viewingSelf && accInfo.isAdmin){ %>
 			function DisplayAccountDeleteModal(){

@@ -23,6 +23,7 @@ async function AdminRequirement(req, res, next){
 //Moderators
 router.use(require('./removeprofilepicture'))
 router.use("/lockaccount", require('./lockaccount'))
+router.use("/ban", require('./ban'))
 
 //Admins
 router.use('/settings', AdminRequirement, require('./settings/router'))

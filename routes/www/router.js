@@ -67,7 +67,7 @@ router.use(async function(req, res, next){
 
 //Sets last online time
 router.use(async function(req, res, next){
-    if(req.session.uid) await Accounts.updateOne({_id: req.session.uid}, {lastonline: new Date()})
+    if(req.session?.uid) await Accounts.updateOne({_id: req.session.uid}, {lastonline: new Date()})
     return next()
 })
 

@@ -16,6 +16,7 @@ const pfAPI = require('../../../my_modules/pfapi')
 
 const ForumSettings = mongoose.model("ForumSettings")
 const Accounts = mongoose.model("Accounts")
+const Bans = mongoose.model("Bans")
 
 // parse application/json
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -58,6 +59,13 @@ router.post('/', async (req, res, next) => {
 		email = escape(email)
 		if(!isMajorEmailDomain(email)) throw "We only allow email addresses from major email providers, such as Gmail."
 		if(await accountAPI.emailTaken(email)) throw "An account already exists with this email" 
+
+		//Prevent banned people from registering
+		if(await Bans.exists({ $or: [
+			{ ip: req.ip },
+			{ email },
+			{ username }
+		] })) throw "Your information is banned from registering"
 
 		//Uses gravatar for pfp if one exists for their email
 		let toAttach = {}

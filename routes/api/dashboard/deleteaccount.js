@@ -6,22 +6,6 @@ const accountAPI = require('../../../my_modules/accountapi')
 const recaptcha = require('../../../my_modules/captcha')
 const rolesAPI = require('../../../my_modules/rolesapi')
 
-const Accounts = mongoose.model("Accounts")
-const PasswordResetSessions = mongoose.model("PasswordResetSessions")
-const Sessions = mongoose.model("Sessions")
-const Logs = mongoose.model("Logs")
-const LoginHistories = mongoose.model("LoginHistories")
-const Messages = mongoose.model("Messages")
-const TFAs = mongoose.model("TFAs")
-const NotificationSettings = mongoose.model("NotificationSettings")
-const Notifications = mongoose.model("Notifications")
-const AltAccounts = mongoose.model("AltAccounts")
-const ActiveUsers = mongoose.model("ActiveUsers")
-const Threads = mongoose.model("Threads")
-const ThreadReplies = mongoose.model("ThreadReplies")
-const PinnedThreads = mongoose.model("PinnedThreads")
-const Reputations = mongoose.model("Reputations")
-const ThreadReplyReacts = mongoose.model("ThreadReplyReacts")
 const ForumAuditLogs = mongoose.model("ForumAuditLogs")
 
 // 	/api/dashboard/account
@@ -53,36 +37,7 @@ router.delete("/", async (req, res, next) => {
         reason = escape(reason)
 
         //Starts delete process
-        await Accounts.deleteOne({_id: uid})
-        await PasswordResetSessions.deleteOne({uid})
-        await Sessions.deleteMany({session: new RegExp(`"uid":${req.session.uid}[},]`)})
-        await Logs.deleteMany({uid})
-        await LoginHistories.deleteMany({uid})
-        await Messages.deleteMany({$or: [{from: uid}, {to: uid}]})
-        await TFAs.deleteOne({_id: uid})
-        await NotificationSettings.deleteOne({_id: uid})
-        await Notifications.deleteMany({$or: [{senderid: uid}, {recipientid: uid}]})
-        await AltAccounts.deleteOne({_id: uid})
-        await ActiveUsers.deleteOne({uid})
-
-        if(!keepForumContent){
-            let threads = await Threads.find({uid})
-            //Deletes replies to their threads
-            for (let thread of threads){
-                await ThreadReplies.deleteMany({tid: thread._id})
-                await PinnedThreads.deleteOne({_id: thread._id})
-            }
-            //Deletes their threads
-            await Threads.deleteMany({uid})
-            //Deletes their replies on other threads
-            await ThreadReplies.deleteMany({uid})
-            await Reputations.deleteMany({$or: [{from: uid}, {for: uid}]})
-            await ThreadReplyReacts.deleteMany({uid})
-        }
-        //Otherwise deletes content that'd be unviewable anyway
-        else{
-            await Reputations.deleteMany({for: uid})
-        }
+        await accountAPI.deleteAccount(uid, keepForumContent)
         
 		//Code hasn't exited, so assume success
 		response.success = true
