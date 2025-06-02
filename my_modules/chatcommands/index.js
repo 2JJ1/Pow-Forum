@@ -3,10 +3,8 @@ var parseArgs = require('minimist')
 
 const commands = {
     //Fun commands
-    "meme": require('./meme'),
     "8ball": require('./8ball'),
     "roast": require('./roast'),
-    //"compile": require('./funcommands/compile'),
 }
 
 module.exports = async function HandleCommand(msg){

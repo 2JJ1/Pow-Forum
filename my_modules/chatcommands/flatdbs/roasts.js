@@ -44,8 +44,6 @@ module.exports = [
 	"I would challenge you to a battle of wits, but it seems you come unarmed",
 	"I would rather be friends with Ajit Pai than you.",
 	"I'd love to stay and chat but I'd rather have type-2 diabetes",
-	"I'm just surprised you haven't yet retired from being a butt pirate.",
-	"I'm not mad. I'm just... disappointed.",
 	"I've never met someone who's at once so thoughtless, selfish, and uncaring of other people's interests, while also having such lame and boring interests of his own. You don't have friends, because you shouldn't.",
 	"I’m betting your keyboard is filthy from all that Cheeto-dust finger typing, you weaboo shut in. ",
 	"If 'unenthusiastic handjob' had a face, your profile picture would be it.",
@@ -116,7 +114,6 @@ module.exports = [
 	"You married Barney.",
 	"Oh my God, look at you. Anyone else hurt in the accident.",
 	"Yo mama so ugly when she looked in the mirror her reflection walked away.",
-	"Your so weak that you can't rip a piece of paper.",
 	"You so ugly when who were born the doctor threw you out the window and the window threw you back.",
 	"I'm busy now. Can I ignore you some other time?",
 	"If ugliness were bricks, you would be the Great Wall of China.",
@@ -137,4 +134,5 @@ module.exports = [
 	"Calling you an idiot would be an insult to all the stupid people.",
 	"You must have been born on a highway. That’s where most accidents happen.",
 	"If genius skips a generation, your children will be brilliant.",
+	"Your face is assymetrical.",
 ]
