@@ -151,9 +151,8 @@ router.post('/', async (req, res, next) => {
 
 				//Sanitize HTML to prevent unauthorized tags (Like <script> to prevent xss)
 				let sanitizedSignatureHTML = sanitizeHtml(signature, {
-					allowedTags: [ 'p', 'a', 'i', 'em', 'strike', 'hr', 'br', 'div', 'span' ],
+					allowedTags: [ 'p', 'i', 'ul', 'em', 'strike', 'hr', 'br', 'div', 'span' ],
 					allowedAttributes: {
-						"a": [ 'href', 'name', 'target' ],
 						"span": ['style'],
 						"p": ["style"],
 					},

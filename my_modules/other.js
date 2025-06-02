@@ -141,10 +141,9 @@ class Other {
 		dirty = stripCombiningMarks(dirty)
 
 		return sanitizeHtml(dirty, {
-			allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+			allowedTags: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'ul', 'ol',
 			'li', 'b', 'i', 'strong', 'em', 'strike', 'hr', 'br', 'div', 'span', 'pre', 'code'],
 			allowedAttributes: {
-				"a": [ 'href', 'name', 'target' ],
 				"span": ['style'],
 				"p": ["style"],
 			},
