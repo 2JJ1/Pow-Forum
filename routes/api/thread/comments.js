@@ -13,31 +13,36 @@ router.get("/comments", async (req, res, next) => {
 	try{
 		let response = {success: false}
 
-		let tid = req.query.tid
-		if(!tid) throw "Incomplete request. Missing thread id"
+		let { tid, fromId } = req.query
+
+		if(!tid) throw "Missing thread id"
+		tid = parseInt(tid)
+		if(!Number.isInteger(tid)) throw "Invalid request"
 
 		let rowsPerPage = 5
-
-		// Unverified replies handling
-        //Filters out unverified replies by other users
-        let verifiedFilter = {
-            $or: [
-                {uid: req.session.uid, verified: false}, 
-                {verified: {$ne: false}
-            }]
-        }
-        //Moderators can see all unverified replies
-        if(await rolesAPI.isModerator(req.session.uid)) verifiedFilter = {}
 
 		let query = { 
 			tid,
 			trid: { $exists: 1 }, 
-			...verifiedFilter
 		}
-		let {fromId} = req.query
-		fromId = parseInt(fromId)
-		if(!Number.isInteger(fromId)) throw "Invalid request"
-		if("fromId" in req.query) query._id = {$gt: fromId}
+
+		// Unverified replies handling
+        //Filters out unverified replies by other users
+		//Moderators can see all unverified replies
+		if(!(await rolesAPI.isModerator(req.session.uid))) {
+			query.$or = [
+                {uid: req.session.uid, verified: false}, 
+                {verified: {$ne: false}}
+			]
+		}
+
+		// Load comments after a specific comment
+		if(fromId) {
+			fromId = parseInt(fromId)
+			if(!Number.isInteger(fromId)) throw "Invalid request"
+			query._id = {$gt: fromId}
+		}
+
 		let replies = await ThreadReplies.find(query, {uid: 1, content: 1, date: 1}).sort({_id: 1}).limit(rowsPerPage + 1).lean()
 		response.moreAvailable = replies.length > rowsPerPage
 		replies = replies.slice(0,rowsPerPage)
