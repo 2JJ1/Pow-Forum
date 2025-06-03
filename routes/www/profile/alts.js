@@ -16,18 +16,23 @@ router.get('/', async (req, res, next) => {
             accInfo: req.account
         }
 
-        var queryFor = req.query.uid || req.session.uid
+        let queryFor = req.query.uid || req.session.uid
         if(!/\d+/.test(queryFor)) throw "Invalid user ID"
         
         // Retrieve main account data
         pagedata.profileInfo = await accountAPI.fetchAccount(queryFor)
         if(!pagedata.profileInfo) throw "Account doesn't exist"
 
-        var doc = await AltAccounts.findById(queryFor)
-        var matches = doc ? doc.matches : {}
+        let doc = await AltAccounts.findById(queryFor)
+        let matches = doc ? doc.matches : {}
 
-        for(var uid in matches){
-            var acc = await Accounts.findById(uid)
+        for(let uid in matches){
+            //Handles past bug where alt tracker tracked the target account
+            if(uid === queryFor) {
+                delete matches[uid]
+                continue
+            } 
+            let acc = await Accounts.findById(uid)
             matches[uid].username = acc ? acc.username : "[Account Deleted]"
         }
 

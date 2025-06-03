@@ -27,7 +27,7 @@ router.post("/", async (req, res, next) => {
         if(!await rolesAPI.isClientOverpowerTarget(req.session.uid, uid)) throw "You lack permissions over this user"
 
         //Ban all recently associated IPs
-        for (let ip of (await accountAPI.findAlts(uid)).ips){
+        for (let ip of (await accountAPI.findAlts({uid})).ips){
             await Bans.findOneAndUpdate({ ip }, { $setOnInsert: { ip } }, { upsert: true })
         }
 

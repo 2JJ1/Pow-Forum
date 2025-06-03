@@ -97,6 +97,8 @@ exports.TrackLogin = async function(uid, ip){
 
         //Update/insert each new possible alt
         for(let altUId of possibleAlts){
+            if(altUId == uid) continue //Skip self
+            
             matches[altUId] = {
                 date: new Date(),
             }
