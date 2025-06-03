@@ -719,12 +719,13 @@
             }
 
             async function LoadComments(buttonElem){
+                let commentOnTrid = buttonElem.closest("[data-trid]").getAttribute("data-trid")
                 let commentGroups = buttonElem.parentElement.querySelector(".commentGroups")
                 let lastCommentGroup = commentGroups.querySelector(".replygroup:last-of-type")
                 let lastCommenter = lastCommentGroup.querySelector(".commentPfp").getAttribute("href").match(/\d+/)[0]
                 let lastCommentId = lastCommentGroup.querySelector(".replycard:last-of-type").getAttribute("data-trid")
 
-                let res = await fetch(`/api/thread/comments?tid=<%= threadData._id %>&fromId=${lastCommentId}`, {
+                let res = await fetch(`/api/thread/comments?trid=${commentOnTrid}&fromId=${lastCommentId}`, {
                     method: "GET",
                     headers: {
                         'Content-Type': 'application/json'

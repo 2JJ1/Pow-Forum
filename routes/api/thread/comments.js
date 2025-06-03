@@ -13,17 +13,16 @@ router.get("/comments", async (req, res, next) => {
 	try{
 		let response = {success: false}
 
-		let { tid, fromId } = req.query
+		let { trid, fromId } = req.query
 
-		if(!tid) throw "Missing thread id"
-		tid = parseInt(tid)
-		if(!Number.isInteger(tid)) throw "Invalid request"
+		if(!trid) throw "Missing thread id"
+		trid = parseInt(trid)
+		if(!Number.isInteger(trid)) throw "Invalid request"
 
 		let rowsPerPage = 5
 
 		let query = { 
-			tid,
-			trid: { $exists: 1 }, 
+			trid,
 		}
 
 		// Unverified replies handling
