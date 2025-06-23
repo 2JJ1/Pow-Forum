@@ -9,17 +9,13 @@
 		<title><%- powForum.name %></title>
 		
 		<% include ../partials/headimps %>
-		<link href="/css/index.css?v=26&v2=1" rel="stylesheet" type="text/css">
+		<link href="/css/index.css?v=26&v2=2" rel="stylesheet" type="text/css">
 	</head>
 	<body class="container">
 		<% include ../partials/global %>
 		<div class="mainxchat">
 			<div>
 				<main style="padding: 12px;">
-					<div class="onlineList border1 round padding gapchildren">
-						<h3>All online users:</h3>
-						<% include ../partials/onlinelist %>
-					</div>
 					<% categoryGroups.forEach(categoryGroup => { %>
 					<div id="<%- categoryGroup.name %>" class="categoryGroup border1 round">
 						<h2 class="padding"><%- categoryGroup.name %></h2>
@@ -52,14 +48,13 @@
 						</div>
 					</div>
 					<% }) %>
-					<% if(Object.keys(supportLinks).length > 0){ %>
-					<div class="buttons">
-						<a href="/c/all" class="btn round border1"><p>All Threads</p></a>
-						<% supportLinks.forEach(supportLink => { %>
-						<a class="btn round border1" href="<%= supportLink.link %>" <% if(supportLink.newTab){ %>target="_blank"<% } %> title="<%= supportLink.tooltip %>"><%= supportLink.label %></a>
-						<% }) %>
-					</div>
-					<% } %>
+					<aside class="gapchildren">
+						<div class="onlineList border1 round padding gapchildren">
+							<h3>All online users:</h3>
+							<% include ../partials/onlinelist %>
+						</div>
+						<a href="/c/all" class="round border1 padding">All Threads</a>
+					</aside>
 	
 					<% include ../partials/footer %>
 				</main>

@@ -8,30 +8,10 @@
     }
 }
 
-@media only screen and (max-width: 760px) {
-    .buttons{
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-}
-
 .onlineList{
     margin-bottom: var(--gap);
     max-height: 156px;
     overflow-y: auto;
-}
-
-.buttons{
-    text-align: right;
-}
-
-.buttons .btn{
-    min-width: 120px;
-    display: inline-block;
-    text-align: center;
-    padding: var(--less-gap) var(--gap);
-    margin-bottom: var(--gap);
 }
 
 main{
@@ -101,4 +81,8 @@ a:visited.thread{
 
 .thead:first-of-type, .thead:nth-child(4), .threadContainer{
     padding: var(--less-gap) var(--gap);
+}
+
+aside a {
+    display: inline-block;;
 }

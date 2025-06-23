@@ -7,7 +7,6 @@ const forumapi = require('../../my_modules/forumapi')
 const {fetchAccount} = require('../../my_modules/accountapi')
 
 const ForumSettings = mongoose.model("ForumSettings")
-const SupportLinks = mongoose.model("SupportLinks")
 const Threads = mongoose.model("Threads")
 const ThreadReplies = mongoose.model("ThreadReplies")
 
@@ -65,8 +64,6 @@ router.get('/', async (req, res, next) => {
 		}
 
 		pagedata.onlines = await onlinetracker.retrieve()
-
-		pagedata.supportLinks = await SupportLinks.find().lean()
 
 		res.render('pages//index', pagedata)
 	} 
